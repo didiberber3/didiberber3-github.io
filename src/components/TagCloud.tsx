@@ -31,7 +31,7 @@ export default function TagCloud({ tags }: TagCloudProps) {
         <Link
           key={tag}
           href={`/tag/${encodeURIComponent(tag)}`}
-          className={`inline-flex items-center px-3 py-1.5 transition-all duration-200 hover:scale-105 ${getTagSize(count)} bg-[var(--tag-bg)] text-[var(--tag-text)] hover:bg-[var(--category-bg)] hover:text-[var(--category-text)] rounded-md border border-[var(--line-light)] dark:border-[var(--line-dark)] hover:shadow-sm`}
+          className={`inline-flex items-center justify-center px-2 py-1 transition-all duration-200 hover:scale-105 text-xs bg-[var(--tag-bg)] text-[var(--tag-text)] hover:bg-[var(--category-bg)] hover:text-[var(--category-text)] rounded-lg border border-[var(--line-light)] dark:border-[var(--line-dark)] hover:shadow-sm font-normal whitespace-nowrap`}
           style={{ 
             opacity: getTagOpacity(count)
           }}

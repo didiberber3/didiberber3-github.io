@@ -58,15 +58,82 @@ export default function MDXContent({ code, frontmatter }: Props) {
       }
     };
 
+    // Add copy buttons to code blocks
+    const addCopyButtons = () => {
+      const codeBlocks = document.querySelectorAll('.prose pre');
+      codeBlocks.forEach((block) => {
+        // Check if copy button already exists
+        if (block.querySelector('.copy-button')) return;
+
+        const code = block.querySelector('code');
+        if (!code) return;
+
+        // Create copy button
+        const copyButton = document.createElement('button');
+        copyButton.className = 'copy-button';
+        copyButton.textContent = 'Copy';
+        
+        // Add click handler
+        copyButton.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(code.textContent || '');
+            copyButton.textContent = 'Copied!';
+            copyButton.classList.add('copied');
+            
+            // Reset after 2 seconds
+            setTimeout(() => {
+              copyButton.textContent = 'Copy';
+              copyButton.classList.remove('copied');
+            }, 2000);
+          } catch (err) {
+            console.error('Failed to copy code:', err);
+            copyButton.textContent = 'Failed';
+            setTimeout(() => {
+              copyButton.textContent = 'Copy';
+            }, 1000);
+          }
+        });
+
+        // Insert button at the beginning of the pre element
+        block.insertBefore(copyButton, block.firstChild);
+      });
+    };
+
     // Run after component mounts
-    setTimeout(() => {
+    const runAllFunctions = () => {
       addHeadingAttributes();
       addSyntaxHighlighting();
-    }, 100);
+      addCopyButtons();
+    };
 
-    // Clean up function
+    // Initial run
+    setTimeout(runAllFunctions, 100);
+
+    // Also run after a delay to ensure MDX content is fully rendered
+    setTimeout(runAllFunctions, 500);
+
+    // Additional runs to ensure elements are added
+    setTimeout(runAllFunctions, 1000);
+    setTimeout(runAllFunctions, 2000);
+
+    // Set up a mutation observer to catch late-rendered content
+    const observer = new MutationObserver(() => {
+      setTimeout(runAllFunctions, 50);
+    });
+
+    const article = document.querySelector('article');
+    if (article) {
+      observer.observe(article, { 
+        childList: true, 
+        subtree: true,
+        attributes: false,
+        characterData: false
+      });
+    }
+
+    // Clean up
     return () => {
-      // Remove any event listeners if needed
+      observer.disconnect();
     };
   }, []);
 

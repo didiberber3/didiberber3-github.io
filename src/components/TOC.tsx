@@ -48,9 +48,9 @@ export default function TOC() {
   if (!toc.length) return null;
 
   return (
-    <aside className="hidden xl:block w-64 flex-shrink-0 ml-auto">
+    <aside className="hidden xl:block w-full flex-shrink-0">
       {/* Key: sticky positioning + independent scrolling */}
-      <div className="sticky top-6 max-h-[calc(100vh-3rem)] overflow-y-auto pl-2 text-xs">
+      <div className="sticky top-6 max-h-[calc(100vh-3rem)] overflow-y-auto pl-2 text-xs overflow-x-hidden">
         <h3 className="text-xs font-semibold mb-2 opacity-70">目录</h3>
         <ul className="space-y-1 text-xs">
           {toc.map(item => (
@@ -61,12 +61,12 @@ export default function TOC() {
             >
               <a 
                 href={`#${item.id}`} 
-                className={`block py-0.5 hover:text-blue-600 dark:hover:text-blue-400 leading-tight text-xs transition-colors
-                  ${item.level === 1 ? 'font-bold opacity-100 text-sm' : ''}
-                  ${item.level === 2 ? 'font-semibold opacity-90' : ''}
-                  ${item.level === 3 ? 'font-medium opacity-80' : ''}
-                  ${item.level === 4 ? 'font-normal opacity-70' : ''}
-                  ${item.level >= 5 ? 'font-normal opacity-60 text-[11px]' : ''}
+                className={`block py-0.5 leading-tight text-xs transition-all duration-200 hover:translate-x-1
+                  ${item.level === 1 ? 'font-bold opacity-100 text-sm hover:text-[var(--article-accent)]' : ''}
+                  ${item.level === 2 ? 'font-semibold opacity-90 hover:text-[var(--article-accent-hover)]' : ''}
+                  ${item.level === 3 ? 'font-medium opacity-80 hover:text-[var(--article-accent)]' : ''}
+                  ${item.level === 4 ? 'font-normal opacity-70 hover:text-[var(--article-accent-hover)]' : ''}
+                  ${item.level >= 5 ? 'font-normal opacity-60 text-[11px] hover:text-[var(--article-accent)]' : ''}
                 `}
               >
                 {item.title}

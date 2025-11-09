@@ -5,7 +5,8 @@ import SeriesTree from '@/components/SeriesTree';
 import GridSeries from '@/components/GridSeries';
 import TagCloud from '@/components/TagCloud';
 
-export const dynamic = 'force-dynamic';
+// Static export configuration
+export const dynamic = 'force-static';
 import type { Post } from '@/lib/posts';
 
 export default async function ArchivePage() {

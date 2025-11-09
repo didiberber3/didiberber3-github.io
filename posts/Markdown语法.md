@@ -1,4 +1,5 @@
 ---
+title: Markdown语法
 tags:
   - 语言
   - 学习
@@ -89,12 +90,12 @@ This is the test (standard)
 3. 邮箱会变成邮箱的**收信人**
 4. **Bold** 语法在这里可用，如果需要转义，请在 `[]` 中添加 `` ` `` 
 [百度](https://baidu.com)
-<https://bing.com>
-<didiberberob@163.com>
+[https://bing.com](https://bing.com)
+[didiberberob@163.com](mailto:didiberberob@163.com)
 
 **[Name](website "Title")**
-**<https://bing.com>
-<didiberberob@163.com>**
+**[https://bing.com](https://bing.com)**
+[didiberberob@163.com](mailto:didiberberob@163.com)
 
 ```
 [Name](website "Title")

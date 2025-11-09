@@ -2,7 +2,7 @@ import { getPosts } from '@/lib/posts';
 import Link from 'next/link';
 import { blogConfig } from '@/lib/config';
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-static';
 import type { Post } from '@/lib/posts';
 
 export default async function CategoryPage() {

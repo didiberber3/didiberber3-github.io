@@ -2,7 +2,6 @@ import { getPosts } from '@/lib/posts';
 import Link from 'next/link';
 import { blogConfig } from '@/lib/config';
 
-export const dynamic = 'force-dynamic';
 import type { Post } from '@/lib/posts';
 
 interface ArchiveDetailPageProps {
@@ -67,3 +66,16 @@ export default async function ArchiveDetailPage({ params }: ArchiveDetailPagePro
     </main>
   );
 }
+
+// 为静态导出生成所有可能的 archive 参数
+export async function generateStaticParams() {
+  const { getPosts } = await import('@/lib/posts');
+  const posts = await getPosts();
+  const archives = [...new Set(posts.map(post => post.archive).filter(Boolean))];
+  
+  return archives.map(archive => ({
+    archive: archive,
+  }));
+}
+
+export const dynamicParams = false;

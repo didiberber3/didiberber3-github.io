@@ -7,8 +7,8 @@ import { blogConfig } from '@/lib/config';
 import 'prismjs/themes/prism-tomorrow.css'; // 添加语法高亮主题
 
 // Allow dynamic params for new posts in development
-export const dynamicParams = true;
-export const dynamic = 'force-dynamic';
+
+
 
 export async function generateStaticParams() {
   try {
@@ -19,6 +19,10 @@ export async function generateStaticParams() {
     return [];
   }
 }
+
+
+
+
 
 export default async function Post({ params }: { params: Promise<{ slug: string }> | { slug: string } }) {
   // Handle both Promise and direct params (Next.js 15+ compatibility)
@@ -131,3 +135,5 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
     </main>
   );
 }
+
+export const dynamicParams = false;

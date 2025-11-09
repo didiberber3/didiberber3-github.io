@@ -1,64 +1,27 @@
-import Link from 'next/link';
 import { getPosts } from '@/lib/posts';
 import { blogConfig } from '@/lib/config';
+import PostList from '@/components/PostList';
 
-// Force dynamic rendering so the posts list reflects newly added files without a rebuild
-export const dynamic = 'force-dynamic';
-import { format } from 'date-fns';
+// Force static generation for GitHub Pages compatibility
+export const dynamic = 'force-static';
 
 export default async function Home() {
   const posts = await getPosts();
+  
   return (
     <main className="max-w-[60%] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-bold mb-8 w-full"><svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" /></svg>{blogConfig.blog.homeTitle} </h1>
-      <ul className="space-y-4">
-        {posts.length === 0 ? (
-          <li className="text-[var(--text-light)] dark:text-[var(--text-dark)] opacity-60">
-            {blogConfig.posts.noPostsMessage}
-          </li>
-        ) : (
-          posts.map(p => (
-            <li key={p.slug}>
-              <Link href={`/posts/${encodeURIComponent(p.slug)}`} className="block hover:opacity-70 transition-opacity">
-                <div className="flex justify-between items-center p-4 border-b border-[var(--line-light)] dark:border-[var(--line-dark)]">
-                  <div className="flex-1">
-                    <span className="text-lg font-semibold">{p.title}</span>
-                    {(p.archive || p.category || p.tags) && (
-                      <div className="flex gap-2 mt-1 flex-wrap">
-                        {p.archive && (
-                          <span className="text-xs bg-[var(--line-light)] dark:bg-[var(--line-dark)] px-2 py-0.5">
-                            {p.archive}
-                          </span>
-                        )}
-                        {p.category && (
-                          <Link
-                            href={`/category/${encodeURIComponent(p.category)}`}
-                            className="text-xs bg-[var(--category-bg)] text-[var(--category-text)] px-2 py-1 rounded-md border border-[var(--line-light)] dark:border-[var(--line-dark)] hover:opacity-80 transition-opacity"
-                          >
-                            {p.category}
-                          </Link>
-                        )}
-                        {p.tags && p.tags.map((tag, index) => (
-                          <Link
-                            key={index}
-                            href={`/tag/${encodeURIComponent(tag)}`}
-                            className="text-xs bg-[var(--tag-bg)] text-[var(--tag-text)] px-2 py-1 rounded-sm border border-[var(--line-light)] dark:border-[var(--line-dark)] hover:opacity-80 transition-opacity"
-                          >
-                            {tag}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <span className="text-sm text-[var(--text-light)] dark:text-[var(--text-dark)] ml-4 opacity-60">
-                    {format(new Date(p.date), blogConfig.posts.dateFormat)}
-                  </span>
-                </div>
-              </Link>
-            </li>
-          ))
-        )}
-      </ul>
+      <h1 className="text-3xl font-bold mb-8 w-full">
+        <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+        </svg>
+        {blogConfig.blog.homeTitle}
+      </h1>
+      
+      <PostList 
+        posts={posts} 
+        titleSize="2xl"
+        emptyMessage={blogConfig.posts.noPostsMessage}
+      />
     </main>
   );
 }

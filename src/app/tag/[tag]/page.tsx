@@ -3,7 +3,7 @@ import { blogConfig } from '@/lib/config';
 import Link from 'next/link';
 import { format } from 'date-fns';
 
-export const dynamic = 'force-dynamic';
+
 
 export default async function TagPage({ params }: { params: Promise<{ tag: string }> | { tag: string } }) {
   const resolvedParams = await Promise.resolve(params);
@@ -83,3 +83,7 @@ export async function generateStaticParams() {
     tag: encodeURIComponent(tag)
   }));
 }
+
+
+
+export const dynamicParams = false;

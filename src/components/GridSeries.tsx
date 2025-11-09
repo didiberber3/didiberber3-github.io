@@ -35,7 +35,7 @@ export default function GridSeries({ archive, title }: GridSeriesProps) {
           <Link
             key={categoryName}
             href={`/category/${encodeURIComponent(categoryName)}`}
-            className="inline-flex items-center px-4 py-2 transition-all duration-200 hover:scale-105 text-base bg-[var(--category-bg)] text-[var(--category-text)] hover:bg-[var(--tag-bg)] hover:text-[var(--tag-text)] rounded-md border border-[var(--line-light)] dark:border-[var(--line-dark)] hover:shadow-md"
+            className="inline-flex items-center px-3 py-1.5 transition-all duration-200 hover:scale-105 text-sm bg-[var(--category-bg)] text-[var(--category-text)] hover:bg-[var(--tag-bg)] hover:text-[var(--tag-text)] rounded-lg border border-[var(--line-light)] dark:border-[var(--line-dark)] hover:shadow-md font-semibold"
           >
             <span className="font-medium">{categoryName}</span>
             <span className="ml-2 text-xs bg-black/10 dark:bg-white/10 px-1.5 py-0.5 rounded-full">

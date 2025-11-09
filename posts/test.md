@@ -1,23 +1,12 @@
 ---
-title: Hello World
-date: 1999-01-08
-series: Getting Started
-category: Note
+title: Test
+date: 2025-01-09
+category: Test
+tags: [Getting Started]
 ---
 
-## 第一段
-
-欢迎使用 Next.js 静态博客！
-
-这是一个功能完整的静态博客系统，支持：
-
-- Markdown 文章编写
-- 明暗主题切换
-- 文章目录（TOC）
-- 系列和分类管理
-- 无限滚动（首页列出所有文章）
-- 404 页面
-- 站点地图自动生成
+# test
+.
 
 ## 第二段
 

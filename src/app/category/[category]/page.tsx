@@ -2,7 +2,6 @@ import { getPosts } from '@/lib/posts';
 import Link from 'next/link';
 import { blogConfig } from '@/lib/config';
 
-export const dynamic = 'force-dynamic';
 import type { Post } from '@/lib/posts';
 
 interface CategoryDetailPageProps {
@@ -67,3 +66,16 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
     </main>
   );
 }
+
+// 为静态导出生成所有可能的 category 参数
+export async function generateStaticParams() {
+  const { getPosts } = await import('@/lib/posts');
+  const posts = await getPosts();
+  const categories = [...new Set(posts.map(post => post.category).filter(Boolean))];
+  
+  return categories.map(category => ({
+    category: category,
+  }));
+}
+
+export const dynamicParams = false;

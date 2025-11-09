@@ -12,6 +12,11 @@
     --tag-text: oklch(0.4 0 0);
     --line-light: oklch(0.9 0 0);
     --archive-bg: oklch(0.85 0 0);
+    
+    /* 文章专用强调色 */
+    --article-accent: oklch(0.35 0.15 145);
+    --article-accent-hover: oklch(0.25 0.18 145);
+    --article-accent-light: oklch(0.96 0.02 145);
   }
   .dark {
     --background: oklch(0.15 0 0);
@@ -22,6 +27,11 @@
     --tag-text: oklch(0.8 0 0);
     --line-dark: oklch(0.3 0 0);
     --archive-bg: oklch(0.35 0 0);
+    
+    /* 文章专用强调色 - 暗色主题 */
+    --article-accent: oklch(0.7 0.15 280);
+    --article-accent-hover: oklch(0.8 0.2 280);
+    --article-accent-light: oklch(0.25 0.05 280);
   }
   html {
     scroll-behavior: smooth;
@@ -34,22 +44,132 @@
   }
 }
 
-/* 文章标题样式 - 移除下划线，悬停时显示 */
+/* 文章标题样式 - 使用article强调色，加粗，取消下划线 */
 .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
-  @apply no-underline hover:underline transition-all duration-200 cursor-pointer;
+  @apply no-underline font-black transition-all duration-300 cursor-pointer;
   position: relative;
+  color: var(--article-accent);
+}
+
+.prose h1 {
+  @apply text-4xl;
+}
+
+.prose h2 {
+  @apply text-3xl;
+}
+
+.prose h3 {
+  @apply text-2xl;
+}
+
+.prose h4 {
+  @apply text-xl;
+}
+
+.prose h5, .prose h6 {
+  @apply text-lg;
+}
+
+/* 标题悬停效果 - 醒目效果 */
+.prose h1:hover, .prose h2:hover, .prose h3:hover, 
+.prose h4:hover, .prose h5:hover, .prose h6:hover {
+  color: var(--article-accent-hover);
+  transform: translateX(4px);
 }
 
 .prose h1:hover::before, .prose h2:hover::before, .prose h3:hover::before, 
 .prose h4:hover::before, .prose h5:hover::before, .prose h6:hover::before {
   content: attr(data-level);
-  @apply absolute -left-6 text-gray-400 dark:text-gray-600 text-sm font-mono opacity-70;
+  @apply absolute -left-6 text-sm font-mono opacity-70;
+  color: var(--article-accent);
 }
 
-/* 代码块自动换行 + 横向滚动 */
-.prose pre {
-  @apply max-w-full overflow-x-auto;
+/* 链接样式 - 取消下划线 */
+.prose a {
+  @apply no-underline transition-all duration-200;
+  color: var(--article-accent);
 }
+
+.prose a:hover {
+  color: var(--article-accent-hover);
+  text-decoration: none;
+}
+
+/* 代码块样式 - 增强识别度，限定长度，添加滑动条 */
+.prose pre {
+  @apply rounded-lg my-6;
+  background: var(--article-accent-light);
+  border: 1px solid var(--article-accent);
+  position: relative;
+  max-width: 100%;
+  overflow-x: auto;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
 .prose pre code {
-  @apply whitespace-pre-wrap break-all;
+  @apply block p-4 text-sm font-mono;
+  color: var(--foreground);
+  background: transparent;
+  white-space: pre;
+  line-height: 1.5;
+  min-width: fit-content;
+}
+
+/* 行内代码样式 - 增强识别度 */
+.prose code:not(pre code) {
+  @apply px-2 py-1 text-sm rounded font-mono;
+  background: var(--article-accent-light);
+  color: var(--article-accent);
+  border: 1px solid var(--article-accent);
+  font-weight: 600;
+}
+
+
+/* 代码块复制按钮 */
+.prose pre .copy-button {
+  @apply absolute top-2 right-12 px-2 py-1 text-xs rounded;
+  background: var(--article-accent);
+  color: var(--background);
+  border: none;
+  cursor: pointer;
+  font-family: monospace;
+  font-weight: 500;
+  opacity: 0.8;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.prose pre .copy-button:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.prose pre .copy-button:active {
+  transform: scale(0.95);
+}
+
+.prose pre .copy-button.copied {
+  background: var(--article-accent-hover);
+}
+
+/* 滚动条样式 */
+.prose pre::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.prose pre::-webkit-scrollbar-track {
+  background: var(--article-accent-light);
+  border-radius: 4px;
+}
+
+.prose pre::-webkit-scrollbar-thumb {
+  background: var(--article-accent);
+  border-radius: 4px;
+}
+
+.prose pre::-webkit-scrollbar-thumb:hover {
+  background: var(--article-accent-hover);
 }

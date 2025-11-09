@@ -49,11 +49,11 @@ export async function getPosts(): Promise<Post[]> {
         const folderName = path.dirname(relativePath);
         
         return {
-            slug: decodeURIComponent(slug),
+            slug: slug.replace(/\\/g, '/'), // 统一使用正斜杠，避免路径分隔符问题
             title: data.title || path.basename(file, path.extname(file)),
             date: data.date || '1970-01-01',
             archive: data.archive || undefined,
-            category: data.category || (folderName !== '.' ? folderName : undefined),
+            category: data.category || undefined, // 移除动态文件夹检测，只使用frontmatter
             tags: data.tags ? (Array.isArray(data.tags) ? data.tags : [data.tags]) : undefined,
         };
     }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -66,7 +66,8 @@ export async function getPost(slug: string) {
   const files = getAllMarkdownFiles(postsDir);
   const file = files.find(f => {
     const relativePath = path.relative(postsDir, f);
-    return relativePath.replace(/\.(md|mdx)$/, '') === slug;
+    const fileSlug = relativePath.replace(/\.(md|mdx)$/, '').replace(/\\/g, '/');
+    return fileSlug === slug;
   });
   
   if (!file) {
