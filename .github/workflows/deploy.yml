@@ -13,10 +13,10 @@ jobs:
     
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '20'
         cache: 'npm'
@@ -78,6 +78,14 @@ jobs:
         
         # 添加 .nojekyll 文件防止 Jekyll 处理
         touch .nojekyll
+        echo "" > .nojekyll
+        
+        # 创建 .gitignore 文件确保 Jekyll 不会处理特殊文件
+        echo ".nojekyll" > .gitignore
+        echo "_next/" >> .gitignore
+        echo "node_modules/" >> .gitignore
+        echo ".next/" >> .gitignore
+        echo "out/" >> .gitignore
         
         # 配置 git 用户信息
         git config user.name "github-actions[bot]"
