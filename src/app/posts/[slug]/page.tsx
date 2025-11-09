@@ -1,33 +1,32 @@
 import { getPosts, getPost } from '@/lib/posts';
 import TOC from '@/components/TOC';
+import MetaTags from '@/components/MetaTags';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import MDXContent from './MDXContent';
 import { blogConfig } from '@/lib/config';
 import 'prismjs/themes/prism-tomorrow.css'; // 添加语法高亮主题
 
-// Allow dynamic params for new posts in development
-
-
-
+// 生成静态参数
 export async function generateStaticParams() {
   try {
     const posts = await getPosts();
-    return posts.map(p => ({ slug: p.slug }));
+    return posts.map((post) => ({
+      slug: post.slug,
+    }));
   } catch (error) {
-    console.error('Error generating static params:', error);
+    console.error('Error generating static params for posts:', error);
     return [];
   }
 }
-
-
-
-
 
 export default async function Post({ params }: { params: Promise<{ slug: string }> | { slug: string } }) {
   // Handle both Promise and direct params (Next.js 15+ compatibility)
   const resolvedParams = await Promise.resolve(params);
   const slug = resolvedParams.slug;
+  
+  console.log('Post page slug:', slug);
+  console.log('Post page decoded slug:', decodeURIComponent(slug));
 
   let post;
   try {
@@ -49,7 +48,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
       <div className="w-full">
         {/* 第一层：divinfo包含info div - 在最上面 */}
         <div className="divinfo pl-[30px] pr-6">
-          <div className="info mb-8 pl-[30px] pr-6 pt-[200px] pb-[150px]">
+          <div className="info mb-8 pl-0 pr-6 pt-[200px] pb-[150px]">
             <div className="mb-6">
               <Link href="/" className="text-sm text-[var(--text-light)] dark:text-[var(--text-dark)] hover:underline opacity-60">
                 {blogConfig.navigationText.backToHome}
@@ -65,45 +64,23 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
                 })}
               </p>
             )}
-            {(frontmatter?.archive || frontmatter?.category || frontmatter?.tags) && (
-              <div className="flex gap-2 mb-6 flex-wrap">
-                {frontmatter.archive && (
-                  <Link
-                    href={`/archive/${encodeURIComponent(frontmatter.archive)}`}
-                    className="text-xs bg-[var(--line-light)] dark:bg-[var(--line-dark)] px-2 py-1 hover:opacity-70"
-                  >
-                    {frontmatter.archive}
-                  </Link>
-                )}
-                {frontmatter.category && (
-                  <Link
-                    href={`/category/${encodeURIComponent(frontmatter.category)}`}
-                    className="text-sm bg-[var(--category-bg)] text-[var(--category-text)] px-3 py-1 rounded-md border border-[var(--line-light)] dark:border-[var(--line-dark)] hover:opacity-80 transition-opacity"
-                  >
-                    {frontmatter.category}
-                  </Link>
-                )}
-                {frontmatter.tags && (Array.isArray(frontmatter.tags) ? frontmatter.tags : [frontmatter.tags]).map((tag: string, index: number) => (
-                  <Link
-                    key={index}
-                    href={`/tag/${encodeURIComponent(tag)}`}
-                    className="text-xs bg-[var(--tag-bg)] text-[var(--tag-text)] px-2 py-1 rounded-sm border border-[var(--line-light)] dark:border-[var(--line-dark)] hover:opacity-80 transition-opacity inline-flex items-center"
-                  >
-                    {tag}
-                  </Link>
-                ))}
-              </div>
-            )}
+            <MetaTags 
+              post={{
+                ...frontmatter,
+                slug: slug,
+                date: frontmatter?.date || ''
+              } as any} 
+            />
           </div>
         </div>
 
         {/* 第二层：包含article和aside的div，70%和30%宽度 */}
         <div className="flex gap-8 pl-[30px] pr-6">
-          {/* Article: 70%宽度，正常向下扩展 */}
-          <article className="w-[85%] min-w-0">
+          {/* Article: 75%宽度，正常向下扩展 */}
+          <article className="w-[75%] min-w-0">
             <div className="px-6 py-2 prose prose-sm dark:prose-invert max-w-none prose-headings:scroll-mt-20">
               {/* Constrain only the readable content, not the headings */}
-              <div className="px-4 max-w-3xl">
+              <div className="pl-16 pr-8 max-w-2xl">
                 {code && (
                   <MDXContent
                     code={code}
@@ -124,8 +101,8 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
             </div>
           </article>
 
-          {/* Aside: 20%宽度，TOC悬浮跟随 */}
-          <aside className="w-[20%] min-w-0">
+          {/* Aside: 25%宽度，TOC悬浮跟随 */}
+          <aside className="w-[25%] min-w-0">
             <div className="sticky top-6">
               <TOC />
             </div>
@@ -135,5 +112,3 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
     </main>
   );
 }
-
-export const dynamicParams = false;

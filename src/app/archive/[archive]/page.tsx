@@ -1,17 +1,30 @@
 import { getPosts } from '@/lib/posts';
 import Link from 'next/link';
 import { blogConfig } from '@/lib/config';
-
 import type { Post } from '@/lib/posts';
 
 interface ArchiveDetailPageProps {
   params: Promise<{ archive: string }> | { archive: string };
 }
 
+// 生成静态参数
+export async function generateStaticParams() {
+  try {
+    const posts = await getPosts();
+    const archives = [...new Set(posts.flatMap(post => post.archive ? [String(post.archive)] : []))];
+    return archives.map((archive) => ({
+      archive: archive,
+    }));
+  } catch (error) {
+    console.error('Error generating static params for archives:', error);
+    return [];
+  }
+}
+
 export default async function ArchiveDetailPage({ params }: ArchiveDetailPageProps) {
   const resolvedParams = await Promise.resolve(params);
   const archive = decodeURIComponent(resolvedParams.archive);
-  
+
   const posts = await getPosts();
   const archivePosts = posts.filter(p => p.archive === archive);
 
@@ -26,7 +39,7 @@ export default async function ArchiveDetailPage({ params }: ArchiveDetailPagePro
         </Link>
       </div>
       <h1 className="text-3xl font-bold mb-6 w-full">归档: {archive}</h1>
-      
+
       {archivePosts.length === 0 ? (
         <p className="text-[var(--text-light)] dark:text-[var(--text-dark)] opacity-60">
           该归档下暂无文章
@@ -66,16 +79,3 @@ export default async function ArchiveDetailPage({ params }: ArchiveDetailPagePro
     </main>
   );
 }
-
-// 为静态导出生成所有可能的 archive 参数
-export async function generateStaticParams() {
-  const { getPosts } = await import('@/lib/posts');
-  const posts = await getPosts();
-  const archives = [...new Set(posts.map(post => post.archive).filter(Boolean))];
-  
-  return archives.map(archive => ({
-    archive: (archive as string | number).toString(),
-  }));
-}
-
-export const dynamicParams = false;

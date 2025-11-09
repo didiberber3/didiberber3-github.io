@@ -6,7 +6,6 @@
     "dev": "next dev",
     "build": "next build ",
     "deploy": "npm run build && gh-pages -d out",
-    "deploy:gh-pages": "node deploy.js",
     "build:static": "cross-env NEXT_EXPORT=true next build && next-sitemap",
     "start": "next start",
     "lint": "eslint",

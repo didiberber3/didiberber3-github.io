@@ -1,6 +1,7 @@
 ---
 title: Java汇总
 date: 2025-11-08
+archive: 2025
 tags: Java
 category: Note
 ---

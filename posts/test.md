@@ -1,6 +1,7 @@
 ---
 title: Test
 date: 2025-01-09
+archive: 2025
 category: Test
 tags: [Getting Started]
 ---
@@ -42,4 +43,3 @@ function hello() {
 - ✅ 响应式设计
 - ✅ SEO 优化
 - ✅ 自动部署
-

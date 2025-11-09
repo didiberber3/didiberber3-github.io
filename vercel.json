@@ -1,0 +1,15 @@
+{
+  "buildCommand": "npm run build:static",
+  "outputDirectory": "out",
+  "installCommand": "npm ci",
+  "framework": "nextjs",
+  "functions": {},
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "cleanUrls": true,
+  "trailingSlash": true
+}
