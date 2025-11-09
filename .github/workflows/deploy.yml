@@ -41,10 +41,51 @@ jobs:
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
       run: |
-        cd out
-        git init
+        # 备份重要文件到临时目录
+        mkdir -p ../backup
+        cp -r src ../backup/ 2>/dev/null || true
+        cp -r posts ../backup/ 2>/dev/null || true
+        cp package.json ../backup/ 2>/dev/null || true
+        cp -r .github ../backup/ 2>/dev/null || true
+        cp next.config.ts ../backup/ 2>/dev/null || true
+        cp tsconfig.json ../backup/ 2>/dev/null || true
+        cp tailwind.config.* ../backup/ 2>/dev/null || true
+        cp postcss.config.* ../backup/ 2>/dev/null || true
+        cp eslint.config.mjs ../backup/ 2>/dev/null || true
+        cp next-sitemap.config.js ../backup/ 2>/dev/null || true
+        
+        # 清理根目录，保留 .git 和 out
+        find . -maxdepth 1 -not -name "." -not -name ".git" -not -name "out" -exec rm -rf {} +
+        
+        # 将构建文件移动到根目录
+        cp -r out/* .
+        cp -r out/.* . 2>/dev/null || true
+        
+        # 恢复必要的源码文件（用于后续开发）
+        mkdir -p src posts
+        [ -d "../backup/src" ] && cp -r ../backup/src/* src/
+        [ -d "../backup/posts" ] && cp -r ../backup/posts/* posts/
+        [ -f "../backup/package.json" ] && cp ../backup/package.json .
+        [ -d "../backup/.github" ] && cp -r ../backup/.github .
+        [ -f "../backup/next.config.ts" ] && cp ../backup/next.config.ts .
+        [ -f "../backup/tsconfig.json" ] && cp ../backup/tsconfig.json .
+        [ -f "../backup/tailwind.config.js" ] && cp ../backup/tailwind.config.js .
+        [ -f "../backup/tailwind.config.mjs" ] && cp ../backup/tailwind.config.mjs .
+        [ -f "../backup/postcss.config.js" ] && cp ../backup/postcss.config.js .
+        [ -f "../backup/postcss.config.mjs" ] && cp ../backup/postcss.config.mjs .
+        [ -f "../backup/eslint.config.mjs" ] && cp ../backup/eslint.config.mjs .
+        [ -f "../backup/next-sitemap.config.js" ] && cp ../backup/next-sitemap.config.js .
+        
+        # 添加 .nojekyll 文件防止 Jekyll 处理
+        touch .nojekyll
+        
+        # 配置 git 用户信息
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
+        
+        # 添加所有更改并提交
         git add .
-        git commit -m "Deploy to GitHub Pages"
-        git push -f https://${{ secrets.GITHUB_TOKEN }}@github.com/didiberber3/didiberber3-github.io.git HEAD:gh-pages
+        git commit -m "Deploy static site to main branch [skip ci]"
+        
+        # 推送到 main 分支
+        git push
