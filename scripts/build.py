@@ -188,8 +188,10 @@ def generate_index(articles_meta):
     for a in articles_meta:
         cards.append(
             f'<article class="card">\n'
-            f'  <h2><a href="articles/{a["slug"]}.html">{a["title"]}</a></h2>\n'
-            f'  <time>{a["date"]}</time>\n'
+            f'  <a href="articles/{a["slug"]}.html">\n'
+            f'    <span class="prefix">$ cat</span> {a["title"]}\n'
+            f'    <span class="card-date">{a["date"]}</span>\n'
+            f'  </a>\n'
             f'</article>'
         )
 
@@ -200,17 +202,21 @@ def generate_index(articles_meta):
         '<meta charset="UTF-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
         '<title>Java 学习笔记</title>\n'
+        '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
+        '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
+        '<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">\n'
         '<link rel="stylesheet" href="style.css">\n'
         '</head>\n'
         '<body>\n'
-        '<header>\n'
+        '<header class="site-header">\n'
         '  <h1>Java 学习笔记</h1>\n'
-        f'  <p>共 {len(articles_meta)} 篇文章</p>\n'
+        f'  <p class="meta">$ find . -name "*.md" | wc -l <span class="output">{len(articles_meta)}</span></p>\n'
+        '  <hr>\n'
         '</header>\n'
         '<main class="card-list">\n'
         + "\n".join(cards) +
         '\n</main>\n'
-        '<footer>© 2026 Java 学习笔记</footer>\n'
+        '<footer>&copy; 2026</footer>\n'
         '</body>\n'
         '</html>'
     )
