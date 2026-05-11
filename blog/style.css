@@ -5,11 +5,11 @@
 }
 
 body {
-  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", "Consolas", monospace;
-  font-size: 14px;
-  line-height: 1.75;
-  color: #b8ccb8;
-  background: #0d1112;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+  font-size: 15px;
+  line-height: 1.8;
+  color: #2c2c2c;
+  background: #f5f7f4;
 }
 
 /* ── Navigation ── */
@@ -24,22 +24,22 @@ body {
   padding: 0.75rem 0;
   max-width: 800px;
   margin: 0 auto;
-  background: #0d1112;
-  border-bottom: 1px solid #1a2a1e;
+  background: #f5f7f4;
+  border-bottom: 1px solid #d8ddd4;
 }
 
 .top-nav a {
-  color: #50e050;
+  color: #3a7d3a;
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
 }
 
 .top-nav a:hover {
-  color: #70ff70;
+  color: #2d5f2d;
 }
 
 .nav-title {
-  color: #c2d4c2;
+  color: #333;
   font-weight: 600;
   flex: 1;
   overflow: hidden;
@@ -48,8 +48,8 @@ body {
 }
 
 .nav-date {
-  color: #4a5a4a;
-  font-size: 0.82rem;
+  color: #999;
+  font-size: 0.85rem;
   white-space: nowrap;
 }
 
@@ -58,34 +58,34 @@ body {
 .article-content {
   max-width: 800px;
   margin: 2rem auto 4rem;
-  padding: 2rem 0;
+  padding: 0;
 }
 
 .article-content h1 {
-  font-size: 1.4rem;
-  color: #c2d4c2;
+  font-size: 1.5rem;
+  color: #222;
   margin: 2rem 0 1rem;
-  padding-bottom: 0.4rem;
-  border-bottom: 1px solid #2a3a2c;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #d8ddd4;
 }
 
 .article-content h2 {
-  font-size: 1.2rem;
-  color: #a8c0a8;
+  font-size: 1.25rem;
+  color: #333;
   margin: 2.5rem 0 0.8rem;
   padding-bottom: 0.3rem;
-  border-bottom: 1px solid #1a2a1e;
+  border-bottom: 1px solid #e5e8e2;
 }
 
 .article-content h3 {
-  font-size: 1.05rem;
-  color: #a0b8a0;
+  font-size: 1.1rem;
+  color: #444;
   margin: 2rem 0 0.6rem;
 }
 
 .article-content h4, .article-content h5, .article-content h6 {
-  font-size: 0.95rem;
-  color: #90a890;
+  font-size: 1rem;
+  color: #555;
   margin: 1.5rem 0 0.4rem;
 }
 
@@ -94,25 +94,25 @@ body {
 }
 
 .article-content a {
-  color: #50e050;
+  color: #3a7d3a;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .article-content a:hover {
-  color: #70ff70;
+  color: #2d5f2d;
 }
 
 .article-content strong {
-  color: #d0e0d0;
+  color: #1a1a1a;
   font-weight: 600;
 }
 
 /* ── Inline Code ── */
 
 .article-content code {
-  background: #121816;
-  color: #8ab88a;
+  background: #edf0ea;
+  color: #3a7d3a;
   padding: 0.12em 0.35em;
   font-size: 0.88em;
   font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", "Consolas", monospace;
@@ -121,8 +121,8 @@ body {
 /* ── Code Blocks ── */
 
 .article-content pre {
-  background: #0a0f0b;
-  border-left: 2px solid #2a4a2a;
+  background: #edf0ea;
+  border-left: 3px solid #3a7d3a;
   overflow-x: auto;
   margin: 1rem 0;
   padding: 0.8rem 1rem;
@@ -131,8 +131,8 @@ body {
 .article-content pre code {
   background: none;
   padding: 0;
-  font-size: 0.82rem;
-  color: #b0ccb0;
+  font-size: 0.84rem;
+  color: #333;
   line-height: 1.6;
 }
 
@@ -145,19 +145,19 @@ body {
 }
 
 .article-content th, .article-content td {
-  border: 1px solid #1a2a1e;
+  border: 1px solid #d8ddd4;
   padding: 0.4rem 0.7rem;
   text-align: left;
 }
 
 .article-content th {
-  background: #121816;
-  color: #a8c0a8;
+  background: #edf0ea;
+  color: #333;
   font-weight: 600;
 }
 
 .article-content tr:nth-child(even) td {
-  background: #111614;
+  background: #f8f9f6;
 }
 
 /* ── Lists ── */
@@ -172,7 +172,7 @@ body {
 }
 
 .article-content li::marker {
-  color: #4a6a4a;
+  color: #3a7d3a;
 }
 
 /* ── Images ── */
@@ -185,18 +185,18 @@ body {
 /* ── Blockquote ── */
 
 .article-content blockquote {
-  border-left: 2px solid #2a4a2a;
+  border-left: 3px solid #3a7d3a;
   margin: 0.8rem 0;
-  padding: 0.3rem 1rem;
-  background: #111614;
-  color: #90a890;
+  padding: 0.4rem 1rem;
+  background: #edf0ea;
+  color: #555;
 }
 
 /* ── HR ── */
 
 .article-content hr {
   border: none;
-  border-top: 1px solid #1a2a1e;
+  border-top: 1px solid #d8ddd4;
   margin: 2rem 0;
 }
 
@@ -205,42 +205,37 @@ body {
 footer {
   text-align: center;
   padding: 2rem;
-  color: #3a4a3a;
-  font-size: 0.82rem;
-  border-top: 1px solid #1a2a1e;
+  color: #aaa;
+  font-size: 0.85rem;
+  border-top: 1px solid #d8ddd4;
   max-width: 800px;
   margin: 0 auto;
-}
-
-footer a {
-  color: #50e050;
-  text-decoration: none;
 }
 
 /* ── Index Page ── */
 
 .site-header {
   text-align: left;
-  padding: 3rem 0 1rem;
+  padding: 3rem 0 1.5rem;
   max-width: 800px;
   margin: 0 auto;
 }
 
 .site-header h1 {
-  font-size: 1.3rem;
-  color: #c2d4c2;
+  font-size: 1.4rem;
+  color: #222;
   font-weight: 600;
 }
 
 .site-header .meta {
-  color: #4a5a4a;
-  font-size: 0.85rem;
-  margin-top: 0.5rem;
+  color: #999;
+  font-size: 0.9rem;
+  margin-top: 0.4rem;
 }
 
 .site-header hr {
   border: none;
-  border-top: 1px solid #1a2a1e;
+  border-top: 1px solid #d8ddd4;
   margin: 1.2rem 0 0;
 }
 
@@ -250,35 +245,36 @@ footer a {
 }
 
 .card {
-  border-bottom: 1px solid #1a2a1e;
-  padding: 0.9rem 0;
+  border-bottom: 1px solid #e5e8e2;
+  padding: 0.8rem 0;
   transition: background 0.15s;
 }
 
 .card:hover {
-  background: #111614;
+  background: #edf0ea;
 }
 
 .card a {
-  display: block;
-  color: #b8ccb8;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  color: #2c2c2c;
   text-decoration: none;
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .card a:hover {
-  color: #50e050;
+  color: #3a7d3a;
 }
 
-.card .prefix {
-  color: #3a5a3a;
-  font-size: 0.85rem;
-  margin-right: 0.3rem;
+.card .card-title {
+  font-weight: 500;
 }
 
 .card .card-date {
-  color: #3a4a3a;
-  font-size: 0.78rem;
+  color: #aaa;
+  font-size: 0.82rem;
+  white-space: nowrap;
 }
 
 /* ── Mobile ── */

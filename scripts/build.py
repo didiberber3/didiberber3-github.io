@@ -189,7 +189,7 @@ def generate_index(articles_meta):
         cards.append(
             f'<article class="card">\n'
             f'  <a href="articles/{a["slug"]}.html">\n'
-            f'    <span class="prefix">$ cat</span> {a["title"]}\n'
+            f'    <span class="card-title">{a["title"]}</span>\n'
             f'    <span class="card-date">{a["date"]}</span>\n'
             f'  </a>\n'
             f'</article>'
@@ -210,7 +210,7 @@ def generate_index(articles_meta):
         '<body>\n'
         '<header class="site-header">\n'
         '  <h1>Java 学习笔记</h1>\n'
-        f'  <p class="meta">$ find . -name "*.md" | wc -l <span class="output">{len(articles_meta)}</span></p>\n'
+        f'  <p class="meta">共 {len(articles_meta)} 篇文章</p>\n'
         '  <hr>\n'
         '</header>\n'
         '<main class="card-list">\n'
