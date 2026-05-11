@@ -4,6 +4,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
   font-size: 15px;
@@ -22,7 +26,7 @@ body {
   align-items: baseline;
   gap: 1.5rem;
   padding: 0.75rem 0;
-  max-width: 800px;
+  max-width: 1060px;
   margin: 0 auto;
   background: #f5f7f4;
   border-bottom: 1px solid #d8ddd4;
@@ -53,11 +57,90 @@ body {
   white-space: nowrap;
 }
 
+/* ── Layout Wrapper ── */
+
+.main-wrapper {
+  display: flex;
+  max-width: 1060px;
+  margin: 2rem auto 4rem;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+/* ── TOC Sidebar ── */
+
+.toc-toggle {
+  display: none;
+  width: 100%;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  color: #3a7d3a;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #d8ddd4;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.toc-sidebar {
+  position: sticky;
+  top: 5rem;
+  width: 220px;
+  flex-shrink: 0;
+  max-height: calc(100vh - 7rem);
+  overflow-y: auto;
+  padding: 0.25rem 0 0.25rem 1rem;
+  border-left: 1px solid #d8ddd4;
+  font-size: 0.85rem;
+}
+
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toc-item {
+  line-height: 1.7;
+}
+
+.toc-item.toc-h1 {
+  padding-left: 0;
+}
+
+.toc-item.toc-h2 {
+  padding-left: 0.6rem;
+}
+
+.toc-item.toc-h3 {
+  padding-left: 1.2rem;
+}
+
+.toc-item a {
+  color: #777;
+  text-decoration: none;
+  display: block;
+  padding: 0.1rem 0;
+}
+
+.toc-item a:hover {
+  color: #3a7d3a;
+}
+
+.toc-item.active a {
+  color: #3a7d3a;
+  font-weight: 600;
+  border-left: 2px solid #3a7d3a;
+  padding-left: 0.4rem;
+  margin-left: -0.4rem;
+}
+
 /* ── Article Content ── */
 
 .article-content {
-  max-width: 800px;
-  margin: 2rem auto 4rem;
+  flex: 1;
+  min-width: 0;
   padding: 0;
 }
 
@@ -279,9 +362,39 @@ footer {
 
 /* ── Mobile ── */
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   body {
     padding: 0 1rem;
+  }
+
+  .main-wrapper {
+    flex-direction: column;
+    margin: 1rem auto 3rem;
+  }
+
+  .toc-toggle {
+    display: block;
+  }
+
+  .toc-sidebar {
+    display: none;
+    position: static;
+    width: 100%;
+    max-height: none;
+    padding: 0.5rem 0;
+    border-left: none;
+    border-bottom: 1px solid #d8ddd4;
+    font-size: 0.88rem;
+  }
+
+  .toc-sidebar.open {
+    display: block;
+  }
+
+  .toc-item.active a {
+    border-left: none;
+    padding-left: 0;
+    margin-left: 0;
   }
 
   .article-content {
@@ -290,6 +403,7 @@ footer {
 
   .top-nav {
     padding: 0.6rem 0;
+    max-width: 100%;
   }
 
   .site-header {
