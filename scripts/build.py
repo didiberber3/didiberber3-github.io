@@ -213,7 +213,7 @@ def file_hash(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()[:16]
 
 
-def generate_index(articles_meta):
+def generate_index(articles_meta, search_data_json):
     cards = []
     for a in articles_meta:
         cards.append(
@@ -248,24 +248,26 @@ def generate_index(articles_meta):
         + "\n".join(cards) +
         '\n</main>\n'
         '<footer>&copy; 2026</footer>\n'
+        f'<script id="search-data" type="application/json">{search_data_json}</script>\n'
         '<script>\n'
-        'var _searchData = null;\n'
-        'var _searchInput = document.getElementById("searchInput");\n'
-        'var _searchDropdown = document.getElementById("searchDropdown");\n'
-        '_searchInput.addEventListener("input", function(){\n'
-        '  var q = this.value.trim().toLowerCase();\n'
-        '  if (!q) { _searchDropdown.innerHTML = ""; _searchDropdown.classList.remove("show"); return; }\n'
-        '  if (!_searchData) { fetch("search.json").then(r=>r.json()).then(d=>{ _searchData=d; _doSearch(q); }); return; }\n'
-        '  _doSearch(q);\n'
-        '});\n'
-        'function _doSearch(q){\n'
-        '  var r = _searchData.filter(function(i){ return i.title.toLowerCase().includes(q) || i.text.toLowerCase().includes(q); }).slice(0,10);\n'
-        '  if (!r.length) { _searchDropdown.innerHTML = \'<div class="search-empty">无结果</div>\'; }\n'
-        '  else { _searchDropdown.innerHTML = r.map(function(i){ return \'<a class="search-item" href="articles/\'+i.slug+\'.html"><span>\'+_hl(i.title,q)+\'</span><span class="search-date">\'+i.date+\'</span></a>\'; }).join(""); }\n'
-        '  _searchDropdown.classList.add("show");\n'
-        '}\n'
-        'function _hl(t,q){ var i=t.toLowerCase().indexOf(q); if(i<0)return t; return t.slice(0,i)+"<em>"+t.slice(i,i+q.length)+"</em>"+t.slice(i+q.length); }\n'
-        'document.addEventListener("click",function(e){ if(!e.target.closest(".search-wrap"))_searchDropdown.classList.remove("show"); });\n'
+        '(function(){\n'
+        '  var inp = document.getElementById("searchInput");\n'
+        '  var drop = document.getElementById("searchDropdown");\n'
+        '  var data = JSON.parse(document.getElementById("search-data").textContent);\n'
+        '  inp.addEventListener("input", function(){\n'
+        '    var q = this.value.trim().toLowerCase();\n'
+        '    if (!q) { drop.innerHTML = ""; drop.classList.remove("show"); return; }\n'
+        '    _srch(q);\n'
+        '  });\n'
+        '  function _srch(q){\n'
+        '    var r = data.filter(function(i){ return i.title.toLowerCase().indexOf(q)>-1 || i.text.toLowerCase().indexOf(q)>-1; }).slice(0,10);\n'
+        '    if (!r.length) { drop.innerHTML = \'<div class="search-empty">无结果</div>\'; }\n'
+        '    else { drop.innerHTML = r.map(function(i){ return \'<a class="search-item" href="articles/\'+i.slug+\'.html"><span>\'+_hl(i.title,q)+\'</span><span class="search-date">\'+i.date+\'</span></a>\'; }).join(""); }\n'
+        '    drop.classList.add("show");\n'
+        '  }\n'
+        '  function _hl(t,q){ var i=t.toLowerCase().indexOf(q); if(i<0)return t; return t.slice(0,i)+"<em>"+t.slice(i,i+q.length)+"</em>"+t.slice(i+q.length); }\n'
+        '  document.addEventListener("click",function(e){ if(!e.target.closest(".search-wrap")) drop.classList.remove("show"); });\n'
+        '})();\n'
         '</script>\n'
         '</body>\n'
         '</html>'
@@ -324,8 +326,17 @@ def main():
         json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
-    generate_index(articles_meta)
     generate_search_index(articles_meta)
+    search_data_json = SEARCH_PATH.read_text(encoding="utf-8")
+
+    for md_path in md_files:
+        out_path = ARTICLES_DIR / f"{md_path.stem}.html"
+        if out_path.exists():
+            page = out_path.read_text(encoding="utf-8")
+            page = page.replace("{{SEARCH_DATA}}", search_data_json)
+            out_path.write_text(page, encoding="utf-8")
+
+    generate_index(articles_meta, search_data_json)
     print(f"\nDone! {built} built, {skipped} skipped, {len(articles_meta)} total.")
 
 

@@ -33,6 +33,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
 <script>hljs.highlightAll();</script>
+<script id="search-data" type="application/json">{{SEARCH_DATA}}</script>
 <script>
 (function(){
   var toc = document.getElementById('tocNav');
@@ -91,11 +92,10 @@
 (function(){
   var inp = document.getElementById('searchInput');
   var drop = document.getElementById('searchDropdown');
-  var data = null;
+  var data = JSON.parse(document.getElementById('search-data').textContent);
   inp.addEventListener('input', function(){
     var q = this.value.trim().toLowerCase();
     if (!q) { drop.innerHTML = ''; drop.classList.remove('show'); return; }
-    if (!data) { fetch('../search.json').then(function(r){return r.json()}).then(function(d){ data=d; _srch(q); }); return; }
     _srch(q);
   });
   function _srch(q){
