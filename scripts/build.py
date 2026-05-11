@@ -13,6 +13,36 @@ ARTICLES_DIR = BLOG_DIR / "articles"
 TEMPLATE_PATH = BLOG_DIR / "template.html"
 CACHE_PATH = BLOG_DIR / ".cache.json"
 NAV_PATH = BLOG_DIR / "nav.json"
+SEARCH_PATH = BLOG_DIR / "search.json"
+
+
+def strip_md(text):
+    text = re.sub(r"```[\s\S]*?```", " ", text)
+    text = re.sub(r"`[^`]+`", " ", text)
+    text = re.sub(r"!\[[^\]]*\]\([^)]+\)", "", text)
+    text = re.sub(r"\[([^\]]*)\]\([^)]+\)", r"\1", text)
+    text = re.sub(r"^#{1,6}\s+", " ", text, flags=re.MULTILINE)
+    text = re.sub(r"\*{1,2}([^*]+)\*{1,2}", r"\1", text)
+    text = re.sub(r"~~([^~]+)~~", r"\1", text)
+    text = re.sub(r"^\|.*\|$", " ", text, flags=re.MULTILINE)
+    text = re.sub(r"^\s*[-*+]\s+", " ", text, flags=re.MULTILINE)
+    text = re.sub(r"^\s*\d+\.\s+", " ", text, flags=re.MULTILINE)
+    text = re.sub(r"\[TOC\]", "", text)
+    text = re.sub(r"<[^>]+>", "", text)
+    text = re.sub(r"\n{2,}", "\n", text)
+    text = re.sub(r"\s{2,}", " ", text)
+    return text.strip()
+
+
+def generate_search_index(articles_meta):
+    index = []
+    for md_path in sorted(CONTENT_DIR.glob("*.md")):
+        slug = md_path.stem
+        title, date = get_title_date(md_path)
+        raw = md_path.read_text(encoding="utf-8")
+        plain = strip_md(raw)
+        index.append({"title": title, "slug": slug, "date": date, "text": plain})
+    SEARCH_PATH.write_text(json.dumps(index, ensure_ascii=False), encoding="utf-8")
 
 
 def inline_fmt(text):
@@ -207,6 +237,10 @@ def generate_index(articles_meta):
         '<body>\n'
         '<header class="site-header">\n'
         '  <h1>Java 学习笔记</h1>\n'
+        '  <div class="search-wrap">\n'
+        '    <input type="search" class="search-input" id="searchInput" placeholder="搜索..." autocomplete="off">\n'
+        '    <div class="search-dropdown" id="searchDropdown"></div>\n'
+        '  </div>\n'
         f'  <p class="meta">共 {len(articles_meta)} 篇文章</p>\n'
         '  <hr>\n'
         '</header>\n'
@@ -214,6 +248,25 @@ def generate_index(articles_meta):
         + "\n".join(cards) +
         '\n</main>\n'
         '<footer>&copy; 2026</footer>\n'
+        '<script>\n'
+        'var _searchData = null;\n'
+        'var _searchInput = document.getElementById("searchInput");\n'
+        'var _searchDropdown = document.getElementById("searchDropdown");\n'
+        '_searchInput.addEventListener("input", function(){\n'
+        '  var q = this.value.trim().toLowerCase();\n'
+        '  if (!q) { _searchDropdown.innerHTML = ""; _searchDropdown.classList.remove("show"); return; }\n'
+        '  if (!_searchData) { fetch("search.json").then(r=>r.json()).then(d=>{ _searchData=d; _doSearch(q); }); return; }\n'
+        '  _doSearch(q);\n'
+        '});\n'
+        'function _doSearch(q){\n'
+        '  var r = _searchData.filter(function(i){ return i.title.toLowerCase().includes(q) || i.text.toLowerCase().includes(q); }).slice(0,10);\n'
+        '  if (!r.length) { _searchDropdown.innerHTML = \'<div class="search-empty">无结果</div>\'; }\n'
+        '  else { _searchDropdown.innerHTML = r.map(function(i){ return \'<a class="search-item" href="articles/\'+i.slug+\'.html"><span>\'+_hl(i.title,q)+\'</span><span class="search-date">\'+i.date+\'</span></a>\'; }).join(""); }\n'
+        '  _searchDropdown.classList.add("show");\n'
+        '}\n'
+        'function _hl(t,q){ var i=t.toLowerCase().indexOf(q); if(i<0)return t; return t.slice(0,i)+"<em>"+t.slice(i,i+q.length)+"</em>"+t.slice(i+q.length); }\n'
+        'document.addEventListener("click",function(e){ if(!e.target.closest(".search-wrap"))_searchDropdown.classList.remove("show"); });\n'
+        '</script>\n'
         '</body>\n'
         '</html>'
     )
@@ -272,6 +325,7 @@ def main():
     )
 
     generate_index(articles_meta)
+    generate_search_index(articles_meta)
     print(f"\nDone! {built} built, {skipped} skipped, {len(articles_meta)} total.")
 
 

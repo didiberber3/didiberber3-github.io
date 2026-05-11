@@ -10,6 +10,10 @@
 <body>
 <nav class="top-nav">
   <a href="../index.html">&larr; 首页</a>
+  <div class="search-wrap">
+    <input type="search" class="search-input" id="searchInput" placeholder="搜索..." autocomplete="off">
+    <div class="search-dropdown" id="searchDropdown"></div>
+  </div>
   <span class="nav-title">{{TITLE}}</span>
   <time class="nav-date">{{DATE}}</time>
 </nav>
@@ -81,6 +85,27 @@
       }
     });
   });
+})();
+</script>
+<script>
+(function(){
+  var inp = document.getElementById('searchInput');
+  var drop = document.getElementById('searchDropdown');
+  var data = null;
+  inp.addEventListener('input', function(){
+    var q = this.value.trim().toLowerCase();
+    if (!q) { drop.innerHTML = ''; drop.classList.remove('show'); return; }
+    if (!data) { fetch('../search.json').then(function(r){return r.json()}).then(function(d){ data=d; _srch(q); }); return; }
+    _srch(q);
+  });
+  function _srch(q){
+    var r = data.filter(function(i){ return i.title.toLowerCase().indexOf(q)>-1 || i.text.toLowerCase().indexOf(q)>-1; }).slice(0,10);
+    if (!r.length) { drop.innerHTML = '<div class="search-empty">无结果</div>'; }
+    else { drop.innerHTML = r.map(function(i){ return '<a class="search-item" href="../articles/'+i.slug+'.html"><span>'+_hl(i.title,q)+'</span><span class="search-date">'+i.date+'</span></a>'; }).join(''); }
+    drop.classList.add('show');
+  }
+  function _hl(t,q){ var i=t.toLowerCase().indexOf(q); if(i<0)return t; return t.slice(0,i)+'<em>'+t.slice(i,i+q.length)+'</em>'+t.slice(i+q.length); }
+  document.addEventListener('click',function(e){ if(!e.target.closest('.search-wrap')) drop.classList.remove('show'); });
 })();
 </script>
 </body>
