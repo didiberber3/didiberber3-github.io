@@ -1,5 +1,4 @@
-.nojekyll
-_next/
-node_modules/
-.next/
-out/
+blog/articles/
+blog/.cache.json
+blog/nav.json
+blog/index.html

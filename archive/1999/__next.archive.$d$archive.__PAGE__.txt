@@ -1,6 +1,0 @@
-1:"$Sreact.fragment"
-2:I[22016,["/didiberber3-github.io/_next/static/chunks/db0287dad2ab6093.js"],""]
-3:I[97367,["/didiberber3-github.io/_next/static/chunks/ff1a16fafef87110.js","/didiberber3-github.io/_next/static/chunks/247eb132b7f7b574.js"],"OutletBoundary"]
-4:"$Sreact.suspense"
-0:{"buildId":"nwQRXP_YTbTIgqstgLgDV","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"max-w-[60%] mx-auto px-4 py-8","children":[["$","div",null,{"className":"mb-6 flex gap-4","children":[["$","$L2",null,{"href":"/","className":"text-sm text-[var(--text-light)] dark:text-[var(--text-dark)] hover:underline opacity-60","children":"← Way Back Moon"}],["$","$L2",null,{"href":"/archive","className":"text-sm text-[var(--text-light)] dark:text-[var(--text-dark)] hover:underline opacity-60","children":"← Way back Category"}]]}],["$","h1",null,{"className":"text-3xl font-bold mb-6 w-full","children":["归档: ","1999"]}],["$","p",null,{"className":"text-[var(--text-light)] dark:text-[var(--text-dark)] opacity-60","children":"该归档下暂无文章"}]]}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
-5:null
