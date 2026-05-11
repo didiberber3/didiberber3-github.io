@@ -287,12 +287,12 @@ body {
 
 footer {
   text-align: center;
-  padding: 2rem;
-  color: #aaa;
+  padding: 2rem 2rem 3rem;
+  color: #888;
   font-size: 0.85rem;
-  border-top: 1px solid #d8ddd4;
+  border-top: 1px solid #c0c8bc;
   max-width: 800px;
-  margin: 0 auto;
+  margin: 2rem auto 0;
 }
 
 /* ── Index Page ── */
