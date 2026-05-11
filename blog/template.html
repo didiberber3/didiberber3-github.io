@@ -33,7 +33,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
 <script>hljs.highlightAll();</script>
-<script id="search-data" type="application/json">{{SEARCH_DATA}}</script>
 <script>
 (function(){
   var toc = document.getElementById('tocNav');
@@ -92,20 +91,38 @@
 (function(){
   var inp = document.getElementById('searchInput');
   var drop = document.getElementById('searchDropdown');
-  var data = JSON.parse(document.getElementById('search-data').textContent);
+  var sections = [];
+  var content = document.querySelector('.article-content');
+  if (content) {
+    var hs = content.querySelectorAll('h1, h2, h3');
+    hs.forEach(function(h){
+      var text = '';
+      var el = h.nextElementSibling;
+      while (el && !/^H[1-3]$/.test(el.tagName)) {
+        text += ' ' + (el.textContent || '');
+        el = el.nextElementSibling;
+      }
+      sections.push({ id: h.id, title: h.textContent.trim(), text: text.toLowerCase() });
+    });
+  }
+  inp.placeholder = '搜本文...';
   inp.addEventListener('input', function(){
     var q = this.value.trim().toLowerCase();
     if (!q) { drop.innerHTML = ''; drop.classList.remove('show'); return; }
-    _srch(q);
-  });
-  function _srch(q){
-    var r = data.filter(function(i){ return i.title.toLowerCase().indexOf(q)>-1 || i.text.toLowerCase().indexOf(q)>-1; }).slice(0,10);
+    var r = sections.filter(function(s){ return s.title.toLowerCase().indexOf(q)>-1 || s.text.indexOf(q)>-1; }).slice(0,8);
     if (!r.length) { drop.innerHTML = '<div class="search-empty">无结果</div>'; }
-    else { drop.innerHTML = r.map(function(i){ return '<a class="search-item" href="../articles/'+i.slug+'.html"><span>'+_hl(i.title,q)+'</span><span class="search-date">'+i.date+'</span></a>'; }).join(''); }
+    else { drop.innerHTML = r.map(function(s){ return '<a class="search-item" href="#'+s.id+'"><span>'+_hl(s.title,q)+'</span></a>'; }).join(''); }
     drop.classList.add('show');
-  }
+  });
   function _hl(t,q){ var i=t.toLowerCase().indexOf(q); if(i<0)return t; return t.slice(0,i)+'<em>'+t.slice(i,i+q.length)+'</em>'+t.slice(i+q.length); }
   document.addEventListener('click',function(e){ if(!e.target.closest('.search-wrap')) drop.classList.remove('show'); });
+  drop.addEventListener('click',function(e){
+    var a = e.target.closest('a');
+    if (!a) return;
+    e.preventDefault();
+    var target = document.getElementById(a.getAttribute('href').slice(1));
+    if (target) { target.scrollIntoView({behavior:'smooth',block:'start'}); drop.classList.remove('show'); }
+  });
 })();
 </script>
 </body>

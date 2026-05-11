@@ -329,13 +329,6 @@ def main():
     generate_search_index(articles_meta)
     search_data_json = SEARCH_PATH.read_text(encoding="utf-8")
 
-    for md_path in md_files:
-        out_path = ARTICLES_DIR / f"{md_path.stem}.html"
-        if out_path.exists():
-            page = out_path.read_text(encoding="utf-8")
-            page = page.replace("{{SEARCH_DATA}}", search_data_json)
-            out_path.write_text(page, encoding="utf-8")
-
     generate_index(articles_meta, search_data_json)
     print(f"\nDone! {built} built, {skipped} skipped, {len(articles_meta)} total.")
 
