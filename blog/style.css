@@ -16,6 +16,22 @@ body {
   background: #f5f7f4;
 }
 
+/* ── Page Load Animation ── */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.intro,
+.home-section,
+.card-list,
+.share-list,
+.page-header,
+.article-content {
+  animation: fadeUp 0.35s ease;
+}
+
 /* ── Navigation Tabs ── */
 
 .nav-tabs-bar {
@@ -40,7 +56,7 @@ body {
   font-size: 0.9rem;
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
-  transition: all 0.15s;
+  transition: color 0.2s, border-color 0.2s;
 }
 
 .tab:hover {
@@ -99,12 +115,12 @@ body {
   align-items: center;
   gap: 0.3rem;
   padding: 0.3rem 0.8rem;
-  border: 1px solid #3a7d3a;
+  border: 2px solid #3a7d3a;
   color: #3a7d3a;
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 600;
-  transition: all 0.15s;
+  transition: all 0.2s;
   flex-shrink: 0;
 }
 
