@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITLE}} - Java 学习笔记</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<nav class="top-nav top-nav-share">
+  <a href="../index.html">&larr; 首页</a>
+  <span class="share-badge">{{TAG}}</span>
+  <span class="nav-title">{{TITLE}}</span>
+  <a class="share-visit" href="{{URL}}" target="_blank" rel="noopener">访问 &rarr;</a>
+</nav>
+<div class="main-wrapper">
+  <button class="toc-toggle" id="tocToggle">目 录 ▸</button>
+  <aside class="toc-sidebar" id="tocSidebar">
+    <nav class="toc-nav" id="tocNav"></nav>
+  </aside>
+  <main class="article-content">
+  {{CONTENT}}
+  </main>
+</div>
+<footer></footer>
+<script>
+(function(){
+  var toc = document.getElementById('tocNav');
+  var hs = document.querySelectorAll('.article-content h1, .article-content h2, .article-content h3');
+  if (!hs.length) return;
+  var list = document.createElement('ul');
+  list.className = 'toc-list';
+  hs.forEach(function(h){
+    var li = document.createElement('li');
+    li.className = 'toc-item toc-' + h.tagName.toLowerCase();
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    li.appendChild(a);
+    list.appendChild(li);
+  });
+  toc.appendChild(list);
+
+  var toggle = document.getElementById('tocToggle');
+  var sidebar = document.getElementById('tocSidebar');
+  if (toggle && sidebar) {
+    toggle.addEventListener('click', function(){
+      var open = sidebar.classList.toggle('open');
+      toggle.textContent = open ? '目 录 ▾' : '目 录 ▸';
+    });
+    toggle.style.display = '';
+  }
+
+  var items = toc.querySelectorAll('.toc-item a');
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting){
+        items.forEach(function(a){ a.parentElement.classList.remove('active'); });
+        var id = e.target.id;
+        var link = toc.querySelector('a[href="#' + CSS.escape(id) + '"]');
+        if (link) link.parentElement.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-80px 0px -70% 0px' });
+  hs.forEach(function(h){ observer.observe(h); });
+
+  items.forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      var target = document.getElementById(a.getAttribute('href').slice(1));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        toggle.textContent = '目 录 ▸';
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>

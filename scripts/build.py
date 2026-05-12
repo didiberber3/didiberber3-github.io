@@ -1,21 +1,20 @@
-﻿import os
-import re
-import html as html_mod
-import json
-import hashlib
+﻿import os, re, html as html_mod, json, hashlib
 from datetime import datetime
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent
 CONTENT_DIR = BASE / "content"
+NOTES_DIR = CONTENT_DIR / "notes"
+SHARES_DIR = CONTENT_DIR / "shares"
 BLOG_DIR = BASE / "blog"
 ARTICLES_DIR = BLOG_DIR / "articles"
 TEMPLATE_PATH = BLOG_DIR / "template.html"
+SHARE_TEMPLATE_PATH = BLOG_DIR / "share-template.html"
 CACHE_PATH = BLOG_DIR / ".cache.json"
 NAV_PATH = BLOG_DIR / "nav.json"
 SEARCH_PATH = BLOG_DIR / "search.json"
-SHARES_PATH = BASE / "data" / "shares.json"
 
+# ── Utility ──
 
 def strip_md(text):
     text = re.sub(r"```[\s\S]*?```", " ", text)
@@ -34,18 +33,6 @@ def strip_md(text):
     text = re.sub(r"\s{2,}", " ", text)
     return text.strip()
 
-
-def generate_search_index(articles_meta):
-    index = []
-    for md_path in sorted(CONTENT_DIR.glob("*.md")):
-        slug = md_path.stem
-        title, date = get_title_date(md_path)
-        raw = md_path.read_text(encoding="utf-8")
-        plain = strip_md(raw)
-        index.append({"title": title, "slug": slug, "date": date, "text": plain})
-    SEARCH_PATH.write_text(json.dumps(index, ensure_ascii=False), encoding="utf-8")
-
-
 def inline_fmt(text):
     text = re.sub(r"`([^`]+?)`", r"<code>\1</code>", text)
     text = re.sub(r'!\[([^\]]*?)\]\(([^)]+?)\)', r'<img src="\2" alt="\1">', text)
@@ -55,318 +42,252 @@ def inline_fmt(text):
     text = re.sub(r"(?<!\*)\*([^*\n]+?)\*(?!\*)", r"<em>\1</em>", text)
     return text
 
-
 def slugify(text):
     s = re.sub(r"[^\w\u4e00-\u9fff\- ]", "", text)
     s = re.sub(r"\s+", "-", s.strip())
     return s[:50]
 
-
-def render_md(text):
-    lines = text.split("\n")
-    out = []
-    i = 0
-    n = len(lines)
-    in_code = False
-    code_buf = []
-    lang = ""
-    para = []
-    in_list = False
-    list_type = None
-    list_items = []
-
-    def _flush_para():
-        nonlocal para
-        if para:
-            p = " ".join(p for p in para if p)
-            if p:
-                out.append(f"<p>{inline_fmt(p)}</p>")
-            para = []
-
-    def _flush_list():
-        nonlocal in_list, list_type, list_items
-        if in_list and list_items:
-            tag = list_type or "ul"
-            items = "".join(f"<li>{inline_fmt(li)}</li>" for li in list_items)
-            out.append(f"<{tag}>{items}</{tag}>")
-            in_list = False
-            list_type = None
-            list_items = []
-
-    while i < n:
-        line = lines[i]
-        stripped = line.strip()
-
-        if stripped == "[TOC]":
-            i += 1
-            continue
-
-        # code block
-        if stripped.startswith("```"):
-            if in_code:
-                _flush_para()
-                _flush_list()
-                raw = "\n".join(code_buf)
-                out.append(
-                    f'<pre><code class="language-{lang}">{html_mod.escape(raw)}</code></pre>'
-                )
-                code_buf = []
-                in_code = False
-            else:
-                _flush_para()
-                _flush_list()
-                in_code = True
-                lang = stripped[3:].strip()
-                code_buf = []
-            i += 1
-            continue
-
-        if in_code:
-            code_buf.append(line)
-            i += 1
-            continue
-
-        # heading
-        hm = re.match(r"^(#{1,6})\s+(.+)$", line)
-        if hm:
-            _flush_para()
-            _flush_list()
-            lv = len(hm.group(1))
-            txt = hm.group(2).strip()
-            sid = slugify(txt)
-            out.append(f'<h{lv} id="{sid}">{inline_fmt(txt)}</h{lv}>')
-            i += 1
-            continue
-
-        # table
-        if stripped.startswith("|") and stripped.endswith("|") and stripped.count("|") >= 2:
-            _flush_para()
-            _flush_list()
-            rows = []
-            j = i
-            while j < n and lines[j].strip().startswith("|") and lines[j].strip().endswith("|"):
-                r = lines[j].strip()
-                if not re.match(r"^\|[\s\-:|]+\|$", r):
-                    cells = [c.strip() for c in r.split("|")[1:-1]]
-                    rows.append(cells)
-                j += 1
-            if rows:
-                t = "<table>"
-                if rows:
-                    t += "<thead><tr>" + "".join(f"<th>{inline_fmt(c)}</th>" for c in rows[0]) + "</tr></thead>"
-                if len(rows) > 1:
-                    t += "<tbody>" + "".join(
-                        "<tr>" + "".join(f"<td>{inline_fmt(c)}</td>" for c in row) + "</tr>"
-                        for row in rows[1:]
-                    ) + "</tbody>"
-                t += "</table>"
-                out.append(t)
-            i = j
-            continue
-
-        # unordered list
-        ulm = re.match(r"^(\s*)[\-*+]\s+(.+)$", line)
-        if ulm:
-            _flush_para()
-            if not in_list or list_type != "ul":
-                _flush_list()
-                in_list = True
-                list_type = "ul"
-            list_items.append(ulm.group(2))
-            i += 1
-            continue
-
-        # ordered list
-        olm = re.match(r"^\s*(\d+)\.\s+(.+)$", line)
-        if olm:
-            _flush_para()
-            if not in_list or list_type != "ol":
-                _flush_list()
-                in_list = True
-                list_type = "ol"
-            list_items.append(olm.group(2))
-            i += 1
-            continue
-
-        # empty line
-        if not stripped:
-            _flush_para()
-            _flush_list()
-            i += 1
-            continue
-
-        # regular text
-        para.append(stripped)
-        i += 1
-
-    _flush_para()
-    _flush_list()
-    return "\n".join(out)
-
+def parse_frontmatter(raw):
+    clean = raw.replace("\ufeff", "")
+    m = re.match(r"^---\s*\n([\s\S]*?)\n---\s*\n", clean)
+    if m:
+        meta = {}
+        for line in m.group(1).split("\n"):
+            kv = re.match(r"^(\w+):\s*(.+)", line)
+            if kv:
+                meta[kv.group(1).strip()] = kv.group(2).strip()
+        return meta, clean[m.end():]
+    return {}, clean
 
 def get_title_date(md_path):
     name = md_path.stem
     mtime = datetime.fromtimestamp(md_path.stat().st_mtime)
     return name, mtime.strftime("%Y-%m-%d")
 
-
 def file_hash(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()[:16]
 
+# ── Render MD to HTML ──
 
-def generate_index(articles_meta, search_data_json):
-    cards = []
-    for a in articles_meta:
-        cards.append(
-            f'<article class="card">\n'
-            f'  <a href="articles/{a["slug"]}.html">\n'
-            f'    <span class="card-title">{a["title"]}</span>\n'
-            f'    <span class="card-date">{a["date"]}</span>\n'
-            f'  </a>\n'
-            f'</article>'
-        )
+def render_md(text):
+    lines = text.split("\n")
+    out, i, n = [], 0, len(lines)
+    in_code, code_buf, lang = False, [], ""
+    para, in_list, list_type, list_items = [], False, None, []
 
-    html = (
-        '<!DOCTYPE html>\n'
-        '<html lang="zh-CN">\n'
-        '<head>\n'
-        '<meta charset="UTF-8">\n'
-        '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
-        '<title>Java 学习笔记</title>\n'
-        '<link rel="stylesheet" href="style.css">\n'
-        '</head>\n'
-        '<body>\n'
-        '<header class="site-header">\n'
-        '  <h1>Java 学习笔记</h1>\n'
-        '  <div class="search-wrap">\n'
-        '    <input type="search" class="search-input" id="searchInput" placeholder="搜索..." autocomplete="off">\n'
-        '    <div class="search-dropdown" id="searchDropdown"></div>\n'
-        '  </div>\n'
-        f'  <p class="meta">共 {len(articles_meta)} 篇文章</p>\n'
-        '  <hr>\n'
-        '</header>\n'
-        '<main class="card-list">\n'
-        + "\n".join(cards) +
-        '\n<nav class="index-links"><a href="shares.html">分享 &rarr;</a></nav>\n'
-        '</main>\n'
-        '<footer>&copy; 2026</footer>\n'
-        f'<script id="search-data" type="application/json">{search_data_json}</script>\n'
-        '<script>\n'
-        '(function(){\n'
-        '  var inp = document.getElementById("searchInput");\n'
-        '  var drop = document.getElementById("searchDropdown");\n'
-        '  var data = JSON.parse(document.getElementById("search-data").textContent);\n'
-        '  inp.addEventListener("input", function(){\n'
-        '    var q = this.value.trim().toLowerCase();\n'
-        '    if (!q) { drop.innerHTML = ""; drop.classList.remove("show"); return; }\n'
-        '    _srch(q);\n'
-        '  });\n'
-        '  function _srch(q){\n'
-        '    var r = data.filter(function(i){ return i.title.toLowerCase().indexOf(q)>-1 || i.text.toLowerCase().indexOf(q)>-1; }).slice(0,10);\n'
-        '    if (!r.length) { drop.innerHTML = \'<div class="search-empty">无结果</div>\'; }\n'
-        '    else { drop.innerHTML = r.map(function(i){ return \'<a class="search-item" href="articles/\'+i.slug+\'.html"><span>\'+_hl(i.title,q)+\'</span><span class="search-date">\'+i.date+\'</span></a>\'; }).join(""); }\n'
-        '    drop.classList.add("show");\n'
-        '  }\n'
-        '  function _hl(t,q){ var i=t.toLowerCase().indexOf(q); if(i<0)return t; return t.slice(0,i)+"<em>"+t.slice(i,i+q.length)+"</em>"+t.slice(i+q.length); }\n'
-        '  document.addEventListener("click",function(e){ if(!e.target.closest(".search-wrap")) drop.classList.remove("show"); });\n'
-        '})();\n'
-        '</script>\n'
-        '</body>\n'
-        '</html>'
-    )
+    def fp():
+        if para:
+            p = " ".join(p for p in para if p)
+            if p: out.append(f"<p>{inline_fmt(p)}</p>")
+            para.clear()
 
-    (BLOG_DIR / "index.html").write_text(html, encoding="utf-8")
+    def fl():
+        nonlocal in_list, list_type, list_items
+        if in_list and list_items:
+            tag = list_type or "ul"
+            out.append(f"<{tag}>{''.join(f'<li>{inline_fmt(li)}</li>' for li in list_items)}</{tag}>")
+            in_list, list_type, list_items = False, None, []
 
+    while i < n:
+        line, s = lines[i], lines[i].strip()
+        if s == "[TOC]": i += 1; continue
+        if s.startswith("```"):
+            if in_code:
+                fp(); fl(); out.append(f'<pre><code class="language-{lang}">{html_mod.escape(chr(10).join(code_buf))}</code></pre>')
+            else:
+                fp(); fl(); lang = s[3:].strip(); code_buf = []
+            in_code = not in_code; i += 1; continue
+        if in_code: code_buf.append(line); i += 1; continue
 
-def generate_shares():
-    if not SHARES_PATH.exists():
-        return
-    shares = json.loads(SHARES_PATH.read_text(encoding="utf-8"))
-    cards = []
-    for s in shares:
-        tag_html = f'<span class="share-tag">{s["tag"]}</span>'
-        cards.append(
-            f'<article class="share-card">\n'
-            f'  <div class="share-meta">{tag_html}<span class="share-date">{s["date"]}</span></div>\n'
-            f'  <h2><a href="{s["url"]}" target="_blank" rel="noopener">{s["title"]}</a></h2>\n'
-            f'  <p>{s["desc"]}</p>\n'
-            f'  <a class="share-url" href="{s["url"]}" target="_blank" rel="noopener">{s["url"]}</a>\n'
-            f'</article>'
-        )
+        hm = re.match(r"^(#{1,6})\s+(.+)$", line)
+        if hm:
+            fp(); fl(); lv, txt = len(hm.group(1)), hm.group(2).strip()
+            out.append(f'<h{lv} id="{slugify(txt)}">{inline_fmt(txt)}</h{lv}>')
+            i += 1; continue
+
+        if s.startswith("|") and s.endswith("|") and len(s.split("|")) >= 3:
+            fp(); fl(); rows, j = [], i
+            while j < n and (t := lines[j].strip()).startswith("|") and t.endswith("|"):
+                if not re.match(r"^\|[\s\-:|]+\|$", t):
+                    rows.append([c.strip() for c in t.split("|")[1:-1]])
+                j += 1
+            if rows:
+                t = "<table><thead><tr>" + "".join(f"<th>{inline_fmt(c)}</th>" for c in rows[0]) + "</tr></thead>"
+                if len(rows) > 1:
+                    t += "<tbody>" + "".join("<tr>" + "".join(f"<td>{inline_fmt(c)}</td>" for c in r) + "</tr>" for r in rows[1:]) + "</tbody>"
+                out.append(t + "</table>")
+            i = j; continue
+
+        ulm = re.match(r"^\s*[-*+]\s+(.+)$", line)
+        if ulm:
+            fp()
+            if not in_list or list_type != "ul": fl(); in_list, list_type = True, "ul"
+            list_items.append(ulm.group(1)); i += 1; continue
+
+        olm = re.match(r"^\s*\d+\.\s+(.+)$", line)
+        if olm:
+            fp()
+            if not in_list or list_type != "ol": fl(); in_list, list_type = True, "ol"
+            list_items.append(olm.group(1)); i += 1; continue
+
+        if not s: fp(); fl(); i += 1; continue
+
+        para.append(s); i += 1
+
+    fp(); fl()
+    return "\n".join(out)
+
+# ── Search Index ──
+
+def generate_search_index():
+    index = []
+    for md_path in sorted(NOTES_DIR.glob("*.md")):
+        slug = md_path.stem
+        title, date = get_title_date(md_path)
+        raw = md_path.read_text(encoding="utf-8")
+        index.append({"title": title, "slug": slug, "date": date, "text": strip_md(raw)})
+    SEARCH_PATH.write_text(json.dumps(index, ensure_ascii=False), encoding="utf-8")
+
+# ── Index Page ──
+
+def generate_index(notes_meta, shares_meta, search_json):
+    def _card(a):
+        return f'<article class="card"><a href="articles/{a["slug"]}.html"><span class="card-title">{a["title"]}</span><span class="card-date">{a["date"]}</span></a></article>'
+
+    def _share_card(s):
+        return f'<article class="card share-inline"><a href="shared/{s["slug"]}.html"><span class="card-title">{s["title"]}</span><span class="share-tag-mini">{s["tag"]}</span><span class="card-date">{s["date"]}</span></a></article>'
+
+    note_cards = "\n".join(_card(a) for a in notes_meta)
+    share_cards = "\n".join(_share_card(s) for s in shares_meta)
+
+    share_section = ""
+    if shares_meta:
+        share_section = f'<section class="index-section"><h2 class="section-heading">分享 <span class="section-count">{len(shares_meta)}</span></h2><div class="card-list">{share_cards}</div></section>'
 
     html = (
         '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n'
         '<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
-        '<title>分享 - Java 学习笔记</title>\n'
-        '<link rel="stylesheet" href="style.css">\n</head>\n<body>\n'
-        '<header class="site-header">\n'
-        '  <h1>分享</h1>\n'
-        '  <p class="meta"><a href="index.html">&larr; 首页</a> · 共 ' + str(len(shares)) + ' 条分享</p>\n'
-        '  <hr>\n</header>\n'
-        '<main class="share-list">\n' + "\n".join(cards) + '\n</main>\n'
+        '<title>Java 学习笔记</title>\n<link rel="stylesheet" href="style.css">\n</head>\n<body>\n'
+        '<header class="site-header">\n<h1>笔记与分享</h1>\n'
+        '  <div class="search-wrap">\n    <input type="search" class="search-input" id="searchInput" placeholder="搜索..." autocomplete="off">\n'
+        '    <div class="search-dropdown" id="searchDropdown"></div>\n  </div>\n'
+        f'  <p class="meta">{len(notes_meta)} 篇笔记</p>\n  <hr>\n</header>\n'
+        f'<section class="index-section"><h2 class="section-heading">学习笔记 <span class="section-count">{len(notes_meta)}</span></h2>\n'
+        f'<div class="card-list">{note_cards}</div></section>\n'
+        f'{share_section}\n'
+        '<footer>&copy; 2026</footer>\n'
+        f'<script id="search-data" type="application/json">{search_json}</script>\n'
+        '<script>\n'
+        '(function(){var inp=document.getElementById("searchInput");var drop=document.getElementById("searchDropdown");var data=JSON.parse(document.getElementById("search-data").textContent);inp.addEventListener("input",function(){var q=this.value.trim().toLowerCase();if(!q){drop.innerHTML="";drop.classList.remove("show");return;}_srch(q)});function _srch(q){var r=data.filter(function(i){return i.title.toLowerCase().indexOf(q)>-1||i.text.toLowerCase().indexOf(q)>-1}).slice(0,10);if(!r.length){drop.innerHTML=\'<div class="search-empty">\u65e0\u7ed3\u679c</div>\'}else{drop.innerHTML=r.map(function(i){return\'<a class="search-item" href="articles/\'+i.slug+\'.html"><span>\'+_hl(i.title,q)+\'</span><span class="search-date">\'+i.date+\'</span></a>\'}).join("")}drop.classList.add("show")}function _hl(t,q){var i=t.toLowerCase().indexOf(q);if(i<0)return t;return t.slice(0,i)+"<em>"+t.slice(i,i+q.length)+"</em>"+t.slice(i+q.length)}document.addEventListener("click",function(e){if(!e.target.closest(".search-wrap"))drop.classList.remove("show")})})();\n'
+        '</script>\n</body>\n</html>'
+    )
+    (BLOG_DIR / "index.html").write_text(html, encoding="utf-8")
+
+# ── Shares Index Page ──
+
+def generate_shares_page(shares_meta):
+    cards = "\n".join(
+        f'<article class="share-card">'
+        f'<div class="share-meta"><span class="share-tag">{s["tag"]}</span><span class="share-date">{s["date"]}</span></div>'
+        f'<h2><a href="shared/{s["slug"]}.html">{s["title"]}</a></h2>'
+        f'<p>{s["desc"]}</p>'
+        f'<a class="share-url" href="{s["url"]}" target="_blank" rel="noopener">{s["url"]}</a>'
+        f'</article>'
+        for s in shares_meta
+    )
+    html = (
+        '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n'
+        '<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
+        '<title>分享</title>\n<link rel="stylesheet" href="style.css">\n</head>\n<body>\n'
+        '<header class="site-header">\n<h1>分享</h1>\n'
+        f'<p class="meta"><a href="index.html">&larr; 首页</a> \xb7 共 {len(shares_meta)} 条分享</p>\n<hr>\n</header>\n'
+        f'<main class="share-list">{cards}</main>\n'
         '<footer>&copy; 2026</footer>\n</body>\n</html>'
     )
     (BLOG_DIR / "shares.html").write_text(html, encoding="utf-8")
-    print(f"  [shares] {len(shares)} items")
 
+# ── Main ──
 
 def main():
     ARTICLES_DIR.mkdir(parents=True, exist_ok=True)
+    shared_dir = BLOG_DIR / "shared"
+    shared_dir.mkdir(parents=True, exist_ok=True)
 
     cache = {}
     if CACHE_PATH.exists():
         cache = json.loads(CACHE_PATH.read_text(encoding="utf-8"))
 
     template = TEMPLATE_PATH.read_text(encoding="utf-8")
+    share_template = SHARE_TEMPLATE_PATH.read_text(encoding="utf-8")
 
-    md_files = sorted(CONTENT_DIR.glob("*.md"))
-    articles_meta = []
+    # ── Build notes ──
+    notes_meta = []
     built = 0
-    skipped = 0
-
-    for md_path in md_files:
+    for md_path in sorted(NOTES_DIR.glob("*.md")):
         title, date = get_title_date(md_path)
-        fhash = file_hash(md_path)
+        fh = file_hash(md_path)
         slug = md_path.stem
         out_path = ARTICLES_DIR / f"{slug}.html"
         key = str(md_path)
 
         cached = cache.get(key, {})
-        if cached.get("hash") == fhash and out_path.exists():
-            articles_meta.append({"title": title, "date": date, "slug": slug})
-            skipped += 1
-            print(f"  [skip] {title}")
+        if cached.get("hash") == fh and out_path.exists():
+            notes_meta.append({"title": title, "date": date, "slug": slug})
+            print(f"  [skip note] {title}")
             continue
 
-        md_content = md_path.read_text(encoding="utf-8")
-        html_content = render_md(md_content)
-
-        page = template.replace("{{TITLE}}", title)
-        page = page.replace("{{DATE}}", date)
-        page = page.replace("{{CONTENT}}", html_content)
-
+        raw = md_path.read_text(encoding="utf-8")
+        html_content = render_md(raw)
+        page = template.replace("{{TITLE}}", title).replace("{{DATE}}", date).replace("{{CONTENT}}", html_content)
         out_path.write_text(page, encoding="utf-8")
-
-        cache[key] = {"hash": fhash, "title": title, "date": date, "slug": slug}
-        articles_meta.append({"title": title, "date": date, "slug": slug})
+        cache[key] = {"hash": fh, "title": title, "date": date, "slug": slug}
+        notes_meta.append({"title": title, "date": date, "slug": slug})
         built += 1
-        print(f"  [build] {title}")
+        print(f"  [build note] {title}")
 
-    articles_meta.sort(key=lambda x: x["date"], reverse=True)
-    NAV_PATH.write_text(
-        json.dumps(articles_meta, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
-    CACHE_PATH.write_text(
-        json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    # ── Build shares ──
+    shares_meta = []
+    for md_path in sorted(SHARES_DIR.glob("*.md")):
+        title, date = get_title_date(md_path)
+        fh = file_hash(md_path)
+        slug = md_path.stem
+        out_path = shared_dir / f"{slug}.html"
+        key = str(md_path)
 
-    generate_search_index(articles_meta)
-    search_data_json = SEARCH_PATH.read_text(encoding="utf-8")
+        cached = cache.get(key, {})
+        if cached.get("hash") == fh and out_path.exists():
+            shares_meta.append({"title": title, "date": date, "slug": slug, "tag": "", "url": "", "desc": ""})
+            print(f"  [skip share] {title}")
+            continue
 
-    generate_index(articles_meta, search_data_json)
-    generate_shares()
-    print(f"\nDone! {built} built, {skipped} skipped, {len(articles_meta)} total.")
+        raw = md_path.read_text(encoding="utf-8")
+        meta, body = parse_frontmatter(raw)
+        html_content = render_md(body)
+        tag = meta.get("tag", "")
+        url = meta.get("url", "")
+        page = share_template.replace("{{TITLE}}", title).replace("{{TAG}}", tag).replace("{{URL}}", url).replace("{{CONTENT}}", html_content)
+        out_path.write_text(page, encoding="utf-8")
+        cache[key] = {"hash": fh, "title": title, "date": date, "slug": slug, "tag": tag, "url": url}
+        desc = strip_md(body).replace("\n", " ")[:120]
+        shares_meta.append({"title": title, "date": date, "slug": slug, "tag": tag, "url": url, "desc": desc})
+        built += 1
+        print(f"  [build share] {title} (tag={tag})")
 
+    # ── Save cache & nav ──
+    CACHE_PATH.write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8")
+    notes_meta.sort(key=lambda x: x["date"], reverse=True)
+    NAV_PATH.write_text(json.dumps(notes_meta, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    # ── Search index (notes only) ──
+    generate_search_index()
+    search_json = SEARCH_PATH.read_text(encoding="utf-8")
+
+    # ── Generate pages ──
+    generate_index(notes_meta, shares_meta, search_json)
+    if shares_meta:
+        generate_shares_page(shares_meta)
+
+    print(f"\nDone! {built} built, {len(notes_meta)} notes, {len(shares_meta)} shares.")
 
 if __name__ == "__main__":
     main()

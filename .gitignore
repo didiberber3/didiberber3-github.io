@@ -1,4 +1,7 @@
 blog/articles/
+blog/shared/
+blog/shares.html
 blog/.cache.json
 blog/nav.json
 blog/index.html
+data/
