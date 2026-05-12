@@ -14,10 +14,6 @@
     <a href="../notes.html" class="tab active">笔记</a>
     <a href="../shares.html" class="tab">分享</a>
   </div>
-  <div class="nav-info">
-    <span class="nav-title">{{TITLE}}</span>
-    <time class="nav-date">{{DATE}}</time>
-  </div>
 </nav>
 <div class="main-wrapper">
   <button class="toc-toggle" id="tocToggle">目 录 ▸</button>
@@ -25,6 +21,7 @@
     <nav class="toc-nav" id="tocNav"></nav>
   </aside>
   <main class="article-content">
+  <time class="nav-date article-date">{{DATE}}</time>
   {{CONTENT}}
   </main>
 </div>
