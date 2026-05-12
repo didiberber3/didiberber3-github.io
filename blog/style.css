@@ -170,7 +170,7 @@ body {
 .section-head {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   margin-bottom: 0.8rem;
   padding-bottom: 0.4rem;
   border-bottom: 1px solid #e5e8e2;
@@ -182,14 +182,22 @@ body {
   font-weight: 600;
 }
 
-.section-more {
-  font-size: 0.85rem;
+.btn-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.25em 0.65em;
+  font-size: 0.82rem;
   color: #3a7d3a;
+  border: 1px solid #c4d0c0;
   text-decoration: none;
+  transition: all 0.15s;
 }
 
-.section-more:hover {
-  text-decoration: underline;
+.btn-more:hover {
+  background: #3a7d3a;
+  color: #fff;
+  border-color: #3a7d3a;
 }
 
 /* ── Page Header (notes/shares index) ── */
