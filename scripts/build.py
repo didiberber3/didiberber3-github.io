@@ -1,4 +1,4 @@
-import os
+﻿import os
 import re
 import html as html_mod
 import json
@@ -14,6 +14,7 @@ TEMPLATE_PATH = BLOG_DIR / "template.html"
 CACHE_PATH = BLOG_DIR / ".cache.json"
 NAV_PATH = BLOG_DIR / "nav.json"
 SEARCH_PATH = BLOG_DIR / "search.json"
+SHARES_PATH = BASE / "data" / "shares.json"
 
 
 def strip_md(text):
@@ -246,7 +247,8 @@ def generate_index(articles_meta, search_data_json):
         '</header>\n'
         '<main class="card-list">\n'
         + "\n".join(cards) +
-        '\n</main>\n'
+        '\n<nav class="index-links"><a href="shares.html">分享 &rarr;</a></nav>\n'
+        '</main>\n'
         '<footer>&copy; 2026</footer>\n'
         f'<script id="search-data" type="application/json">{search_data_json}</script>\n'
         '<script>\n'
@@ -274,6 +276,38 @@ def generate_index(articles_meta, search_data_json):
     )
 
     (BLOG_DIR / "index.html").write_text(html, encoding="utf-8")
+
+
+def generate_shares():
+    if not SHARES_PATH.exists():
+        return
+    shares = json.loads(SHARES_PATH.read_text(encoding="utf-8"))
+    cards = []
+    for s in shares:
+        tag_html = f'<span class="share-tag">{s["tag"]}</span>'
+        cards.append(
+            f'<article class="share-card">\n'
+            f'  <div class="share-meta">{tag_html}<span class="share-date">{s["date"]}</span></div>\n'
+            f'  <h2><a href="{s["url"]}" target="_blank" rel="noopener">{s["title"]}</a></h2>\n'
+            f'  <p>{s["desc"]}</p>\n'
+            f'  <a class="share-url" href="{s["url"]}" target="_blank" rel="noopener">{s["url"]}</a>\n'
+            f'</article>'
+        )
+
+    html = (
+        '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n'
+        '<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
+        '<title>分享 - Java 学习笔记</title>\n'
+        '<link rel="stylesheet" href="style.css">\n</head>\n<body>\n'
+        '<header class="site-header">\n'
+        '  <h1>分享</h1>\n'
+        '  <p class="meta"><a href="index.html">&larr; 首页</a> · 共 ' + str(len(shares)) + ' 条分享</p>\n'
+        '  <hr>\n</header>\n'
+        '<main class="share-list">\n' + "\n".join(cards) + '\n</main>\n'
+        '<footer>&copy; 2026</footer>\n</body>\n</html>'
+    )
+    (BLOG_DIR / "shares.html").write_text(html, encoding="utf-8")
+    print(f"  [shares] {len(shares)} items")
 
 
 def main():
@@ -330,6 +364,7 @@ def main():
     search_data_json = SEARCH_PATH.read_text(encoding="utf-8")
 
     generate_index(articles_meta, search_data_json)
+    generate_shares()
     print(f"\nDone! {built} built, {skipped} skipped, {len(articles_meta)} total.")
 
 

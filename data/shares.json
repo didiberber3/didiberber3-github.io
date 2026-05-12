@@ -1,0 +1,30 @@
+[
+  {
+    "title": "DevDocs",
+    "url": "https://devdocs.io",
+    "desc": "聚合所有主流编程语言与框架的 API 文档，支持离线搜索，开发必备。",
+    "tag": "工具",
+    "date": "2026-05-12"
+  },
+  {
+    "title": "Tabby",
+    "url": "https://tabby.sh",
+    "desc": "跨平台终端模拟器，支持 SSH、串口连接、插件扩展，替代 Windows Terminal 的轻量选择。",
+    "tag": "软件",
+    "date": "2026-05-12"
+  },
+  {
+    "title": "Excalidraw",
+    "url": "https://excalidraw.com",
+    "desc": "手绘风格在线白板，画架构图、流程图极其顺手，支持协作。",
+    "tag": "工具",
+    "date": "2026-05-12"
+  },
+  {
+    "title": "Quick Reference",
+    "url": "https://wangchujiang.com/reference/",
+    "desc": "程序员速查表，涵盖 Git、Docker、Linux 命令、正则等常用速查。",
+    "tag": "网站",
+    "date": "2026-05-12"
+  }
+]
