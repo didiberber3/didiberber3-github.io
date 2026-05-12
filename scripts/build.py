@@ -148,40 +148,100 @@ def generate_search_index():
         index.append({"title": title, "slug": slug, "date": date, "text": strip_md(raw)})
     SEARCH_PATH.write_text(json.dumps(index, ensure_ascii=False), encoding="utf-8")
 
-# ── Index Page ──
 
-def generate_index(notes_meta, shares_meta, search_json):
-    def _card(a):
-        return f'<article class="card"><a href="articles/{a["slug"]}.html"><span class="card-title">{a["title"]}</span><span class="card-date">{a["date"]}</span></a></article>'
+# ── Home Page ──
 
-    def _share_card(s):
-        return f'<article class="card share-inline"><a href="shared/{s["slug"]}.html"><span class="card-title">{s["title"]}</span><span class="share-tag-mini">{s["tag"]}</span><span class="card-date">{s["date"]}</span></a></article>'
+def generate_home(notes_meta, shares_meta, search_json):
+    note_cards = "\n".join(
+        f'<article class="card"><a href="articles/{a["slug"]}.html"><span class="card-title">{a["title"]}</span><span class="card-date">{a["date"]}</span></a></article>'
+        for a in notes_meta[:6]
+    )
+    share_cards = ""
+    if shares_meta:
+        share_cards = "\n".join(
+            f'<article class="card share-inline"><a href="shared/{s["slug"]}.html"><span class="card-title">{s["title"]}</span><span class="share-tag-mini">{s["tag"]}</span><span class="card-date">{s["date"]}</span></a></article>'
+            for s in shares_meta[:4]
+        )
 
-    note_cards = "\n".join(_card(a) for a in notes_meta)
-    share_cards = "\n".join(_share_card(s) for s in shares_meta)
+    notes_extra = ""
+    if len(notes_meta) > 6:
+        notes_extra = f'<p class="section-more"><a href="notes.html">全部 {len(notes_meta)} 篇 &rarr;</a></p>'
 
     share_section = ""
     if shares_meta:
-        share_section = f'<section class="index-section"><h2 class="section-heading">分享 <span class="section-count">{len(shares_meta)}</span></h2><div class="card-list">{share_cards}</div></section>'
+        share_section = (
+            f'<section class="home-section">'
+            f'<div class="section-head"><h2>分享</h2><a class="section-more-link" href="shares.html">全部 {len(shares_meta)} 条 &rarr;</a></div>'
+            f'<div class="card-list">{share_cards}</div>'
+            f'</section>'
+        )
 
     html = (
         '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n'
         '<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
         '<title>Java 学习笔记</title>\n<link rel="stylesheet" href="style.css">\n</head>\n<body>\n'
-        '<header class="site-header">\n<h1>笔记与分享</h1>\n'
-        '  <div class="search-wrap">\n    <input type="search" class="search-input" id="searchInput" placeholder="搜索..." autocomplete="off">\n'
-        '    <div class="search-dropdown" id="searchDropdown"></div>\n  </div>\n'
-        f'  <p class="meta">{len(notes_meta)} 篇笔记</p>\n  <hr>\n</header>\n'
-        f'<section class="index-section"><h2 class="section-heading">学习笔记 <span class="section-count">{len(notes_meta)}</span></h2>\n'
-        f'<div class="card-list">{note_cards}</div></section>\n'
+        '<header class="intro">\n<h1>记录与分享</h1>\n'
+        f'<p class="tagline">学了 {len(notes_meta)} 篇笔记 &middot; 收藏了 {len(shares_meta)} 条分享</p>\n'
+        '<p class="intro-sub">一个在学 Java 的人</p>\n</header>\n'
+        '<nav class="nav-tabs">\n<a href="index.html" class="tab active">首页</a>\n<a href="notes.html" class="tab">笔记</a>\n<a href="shares.html" class="tab">分享</a>\n</nav>\n'
+        '<section class="home-section">\n<div class="section-head"><h2>最新笔记</h2>\n'
+        f'<a class="section-more-link" href="notes.html">全部 {len(notes_meta)} 篇 &rarr;</a></div>\n'
+        f'<div class="card-list">{note_cards}</div>\n{notes_extra}\n</section>\n'
         f'{share_section}\n'
-        '<footer>&copy; 2026</footer>\n'
-        f'<script id="search-data" type="application/json">{search_json}</script>\n'
-        '<script>\n'
-        '(function(){var inp=document.getElementById("searchInput");var drop=document.getElementById("searchDropdown");var data=JSON.parse(document.getElementById("search-data").textContent);inp.addEventListener("input",function(){var q=this.value.trim().toLowerCase();if(!q){drop.innerHTML="";drop.classList.remove("show");return;}_srch(q)});function _srch(q){var r=data.filter(function(i){return i.title.toLowerCase().indexOf(q)>-1||i.text.toLowerCase().indexOf(q)>-1}).slice(0,10);if(!r.length){drop.innerHTML=\'<div class="search-empty">\u65e0\u7ed3\u679c</div>\'}else{drop.innerHTML=r.map(function(i){return\'<a class="search-item" href="articles/\'+i.slug+\'.html"><span>\'+_hl(i.title,q)+\'</span><span class="search-date">\'+i.date+\'</span></a>\'}).join("")}drop.classList.add("show")}function _hl(t,q){var i=t.toLowerCase().indexOf(q);if(i<0)return t;return t.slice(0,i)+"<em>"+t.slice(i,i+q.length)+"</em>"+t.slice(i+q.length)}document.addEventListener("click",function(e){if(!e.target.closest(".search-wrap"))drop.classList.remove("show")})})();\n'
-        '</script>\n</body>\n</html>'
+        '<footer>&copy; 2026</footer>\n</body>\n</html>'
     )
     (BLOG_DIR / "index.html").write_text(html, encoding="utf-8")
+
+
+# ── Notes Index Page ──
+
+def generate_notes_page(notes_meta, shares_meta):
+    cards = "\n".join(
+        f'<article class="card"><a href="articles/{a["slug"]}.html"><span class="card-title">{a["title"]}</span><span class="card-date">{a["date"]}</span></a></article>'
+        for a in notes_meta
+    )
+    html = (
+        '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n'
+        '<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
+        '<title>笔记 - Java 学习笔记</title>\n<link rel="stylesheet" href="style.css">\n</head>\n<body>\n'
+        '<nav class="nav-tabs-bar">\n<div class="nav-tabs">\n'
+        '<a href="index.html" class="tab">首页</a>\n<a href="notes.html" class="tab active">笔记</a>\n<a href="shares.html" class="tab">分享</a>\n</div>\n'
+        '<div class="nav-info">\n<span class="nav-title">学习笔记</span>\n</div>\n</nav>\n'
+        '<header class="page-header">\n'
+        '  <div class="search-wrap">\n    <input type="search" class="search-input" id="searchInput" placeholder="搜索..." autocomplete="off">\n'
+        '    <div class="search-dropdown" id="searchDropdown"></div>\n  </div>\n'
+        f'  <p class="meta">共 {len(notes_meta)} 篇</p>\n  <hr>\n</header>\n'
+        '<main class="card-list">\n' + cards + '\n</main>\n'
+        '<footer>&copy; 2026</footer>\n'
+        f'<script id="search-data" type="application/json">'
+        + json.dumps(
+            [{"title": a["title"], "slug": a["slug"], "date": a["date"], "text": ""}
+             for a in notes_meta],
+            ensure_ascii=False
+        ) + '</script>\n'
+        '<script>'
+        '(function(){var inp=document.getElementById("searchInput");'
+        'if(!inp)return;var drop=document.getElementById("searchDropdown");'
+        'if(!drop)return;var data=JSON.parse(document.getElementById("search-data").textContent);'
+        'inp.addEventListener("input",function(){var q=this.value.trim().toLowerCase();if(!q){drop.innerHTML="";drop.classList.remove("show");return;}_srch(q)});'
+        'function _srch(q){var r=data.filter(function(i){return i.title.toLowerCase().indexOf(q)>-1||i.text.toLowerCase().indexOf(q)>-1}).slice(0,10);'
+        'if(!r.length){drop.innerHTML=\'<div class="search-empty">\u65e0\u7ed3\u679c</div>\'}'
+        'else{drop.innerHTML=r.map(function(i){return\'<a class="search-item" href="articles/\'+i.slug+\'.html"><span>\'+_hl(i.title,q)+\'</span><span class="search-date">\'+i.date+\'</span></a>\'}).join("")}'
+        'drop.classList.add("show")}'
+        'function _hl(t,q){var i=t.toLowerCase().indexOf(q);if(i<0)return t;return t.slice(0,i)+"<em>"+t.slice(i,i+q.length)+"</em>"+t.slice(i+q.length)}'
+        'document.addEventListener("click",function(e){if(!e.target.closest(".search-wrap"))drop.classList.remove("show")})})();\n'
+        '</script>\n</body>\n</html>'
+    )
+    (BLOG_DIR / "notes.html").write_text(html, encoding="utf-8")
+
+    note_cards_home = "\n".join(
+        f'<article class="card"><a href="articles/{a["slug"]}.html"><span class="card-title">{a["title"]}</span><span class="card-date">{a["date"]}</span></a></article>'
+        for a in notes_meta[:6]
+    )
+
+    # also return preview cards for homepage
+    return note_cards_home
+
 
 # ── Shares Index Page ──
 
@@ -198,10 +258,12 @@ def generate_shares_page(shares_meta):
     html = (
         '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n'
         '<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
-        '<title>分享</title>\n<link rel="stylesheet" href="style.css">\n</head>\n<body>\n'
-        '<header class="site-header">\n<h1>分享</h1>\n'
-        f'<p class="meta"><a href="index.html">&larr; 首页</a> \xb7 共 {len(shares_meta)} 条分享</p>\n<hr>\n</header>\n'
-        f'<main class="share-list">{cards}</main>\n'
+        '<title>分享 - Java 学习笔记</title>\n<link rel="stylesheet" href="style.css">\n</head>\n<body>\n'
+        '<nav class="nav-tabs-bar">\n<div class="nav-tabs">\n'
+        '<a href="index.html" class="tab">首页</a>\n<a href="notes.html" class="tab">笔记</a>\n<a href="shares.html" class="tab active">分享</a>\n</div>\n'
+        '<div class="nav-info">\n<span class="nav-title">分享</span>\n'
+        f'<span class="nav-date">{len(shares_meta)} 条</span>\n</div>\n</nav>\n'
+        f'<main class="share-list" style="margin-top:1.5rem">{cards}</main>\n'
         '<footer>&copy; 2026</footer>\n</body>\n</html>'
     )
     (BLOG_DIR / "shares.html").write_text(html, encoding="utf-8")
@@ -283,7 +345,8 @@ def main():
     search_json = SEARCH_PATH.read_text(encoding="utf-8")
 
     # ── Generate pages ──
-    generate_index(notes_meta, shares_meta, search_json)
+    generate_home(notes_meta, shares_meta, search_json)
+    generate_notes_page(notes_meta, shares_meta)
     if shares_meta:
         generate_shares_page(shares_meta)
 

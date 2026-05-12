@@ -16,30 +16,52 @@ body {
   background: #f5f7f4;
 }
 
-/* ── Navigation ── */
+/* ── Navigation Tabs ── */
 
-.top-nav {
+.nav-tabs-bar {
   position: sticky;
   top: 0;
   z-index: 100;
-  display: flex;
-  align-items: baseline;
-  gap: 1.5rem;
-  padding: 0.75rem 0;
-  max-width: 1060px;
-  margin: 0 auto;
   background: #f5f7f4;
   border-bottom: 1px solid #d8ddd4;
 }
 
-.top-nav a {
-  color: #3a7d3a;
-  text-decoration: none;
-  font-size: 0.9rem;
+.nav-tabs {
+  display: flex;
+  max-width: 800px;
+  margin: 0 auto;
+  gap: 0;
 }
 
-.top-nav a:hover {
-  color: #2d5f2d;
+.tab {
+  padding: 0.6rem 1.2rem;
+  color: #999;
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all 0.15s;
+}
+
+.tab:hover {
+  color: #3a7d3a;
+  border-bottom-color: #b0c8b0;
+}
+
+.tab.active {
+  color: #3a7d3a;
+  border-bottom-color: #3a7d3a;
+  font-weight: 600;
+}
+
+.nav-info {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0.5rem 0;
+  border-top: 1px solid #d8ddd4;
 }
 
 .nav-title {
@@ -56,6 +78,125 @@ body {
   font-size: 0.85rem;
   white-space: nowrap;
 }
+
+.nav-info-share {
+  justify-content: space-between;
+}
+
+.share-badge {
+  font-size: 0.75rem;
+  color: #3a7d3a;
+  background: #edf0ea;
+  border: 1px solid #d4ddd0;
+  padding: 0.15em 0.5em;
+  flex-shrink: 0;
+}
+
+/* ── Visit Button ── */
+
+.btn-visit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.8rem;
+  border: 1px solid #3a7d3a;
+  color: #3a7d3a;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.btn-visit:hover {
+  background: #3a7d3a;
+  color: #fff;
+}
+
+.btn-visit-arrow {
+  font-size: 0.9rem;
+}
+
+/* ── Homepage Intro ── */
+
+.intro {
+  max-width: 800px;
+  margin: 3.5rem auto 1.5rem;
+  padding: 0;
+}
+
+.intro h1 {
+  font-size: 1.6rem;
+  color: #222;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.tagline {
+  color: #888;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.intro-sub {
+  color: #bbb;
+  font-size: 0.82rem;
+  margin-top: 0.2rem;
+}
+
+/* ── Homepage Sections ── */
+
+.home-section {
+  max-width: 800px;
+  margin: 2rem auto;
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #e5e8e2;
+}
+
+.section-head h2 {
+  font-size: 1.05rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.section-more {
+  font-size: 0.85rem;
+  color: #3a7d3a;
+  text-decoration: none;
+}
+
+.section-more:hover {
+  text-decoration: underline;
+}
+
+/* ── Page Header (notes/shares index) ── */
+
+.page-header {
+  max-width: 800px;
+  margin: 0 auto;
+  padding-top: 1.5rem;
+}
+
+.page-header .meta {
+  color: #999;
+  font-size: 0.9rem;
+  margin-top: 0.4rem;
+}
+
+.page-header hr {
+  border: none;
+  border-top: 1px solid #d8ddd4;
+  margin: 1rem 0 0;
+}
+
+/* ── Index Page (legacy top-nav replaced) ── */
 
 /* ── Search ── */
 
@@ -857,12 +998,43 @@ footer {
     padding: 1rem 0;
   }
 
-  .top-nav {
-    padding: 0.6rem 0;
-    max-width: 100%;
+  .nav-info {
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .intro {
+    margin-top: 2rem;
+  }
+
+  .intro h1 {
+    font-size: 1.3rem;
+  }
+
+  .tab {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
   }
 
   .site-header {
     padding: 2rem 0 1rem;
+  }
+
+  .home-section {
+    margin: 1.5rem auto;
+  }
+
+  .btn-visit {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .nav-info-share {
+    flex-wrap: wrap;
+  }
+  .btn-visit {
+    margin-left: auto;
   }
 }

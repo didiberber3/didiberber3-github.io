@@ -7,11 +7,19 @@
 <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-<nav class="top-nav top-nav-share">
-  <a href="../index.html">&larr; 首页</a>
-  <span class="share-badge">{{TAG}}</span>
-  <span class="nav-title">{{TITLE}}</span>
-  <a class="share-visit" href="{{URL}}" target="_blank" rel="noopener">访问 &rarr;</a>
+<nav class="nav-tabs-bar">
+  <div class="nav-tabs">
+    <a href="../index.html" class="tab">首页</a>
+    <a href="../notes.html" class="tab">笔记</a>
+    <a href="../shares.html" class="tab active">分享</a>
+  </div>
+  <div class="nav-info nav-info-share">
+    <span class="share-badge">{{TAG}}</span>
+    <span class="nav-title">{{TITLE}}</span>
+    <a class="btn-visit" href="{{URL}}" target="_blank" rel="noopener">
+      <span class="btn-visit-arrow">▸</span> 访问
+    </a>
+  </div>
 </nav>
 <div class="main-wrapper">
   <button class="toc-toggle" id="tocToggle">目 录 ▸</button>
