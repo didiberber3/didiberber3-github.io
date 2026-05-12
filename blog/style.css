@@ -47,6 +47,7 @@ body {
   max-width: 800px;
   margin: 0 auto;
   gap: 0;
+  align-items: center;
 }
 
 .tab {
@@ -68,6 +69,27 @@ body {
   color: #3a7d3a;
   border-bottom-color: #3a7d3a;
   font-weight: 600;
+}
+
+.tab-visit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.3rem 0.7rem;
+  margin-left: auto;
+  margin-bottom: -1px;
+  font-size: 0.82rem;
+  color: #3a7d3a;
+  border: 2px solid #3a7d3a;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.tab-visit:hover {
+  background: #3a7d3a;
+  color: #fff;
+  border-bottom-color: #3a7d3a;
 }
 
 .nav-info {
