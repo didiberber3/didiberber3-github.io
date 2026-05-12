@@ -260,7 +260,9 @@ def generate_shares_page(shares_meta):
         '<title>分享 - Java 学习笔记</title>\n<link rel="stylesheet" href="style.css">\n</head>\n<body>\n'
         '<nav class="nav-tabs-bar">\n<div class="nav-tabs">\n'
         '<a href="index.html" class="tab">首页</a>\n<a href="notes.html" class="tab">笔记</a>\n<a href="shares.html" class="tab active">分享</a>\n</div>\n</nav>\n'
-        f'<main class="share-list" style="margin-top:1.5rem">{cards}</main>\n'
+        '<header class="page-header">\n'
+        f'  <p class="meta">共 {len(shares_meta)} 条</p>\n  <hr>\n</header>\n'
+        f'<main class="share-list">{cards}</main>\n'
         '<footer>&copy; 2026</footer>\n</body>\n</html>'
     )
     (BLOG_DIR / "shares.html").write_text(html, encoding="utf-8")
