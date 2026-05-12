@@ -165,7 +165,7 @@ def generate_home(notes_meta, shares_meta, search_json):
 
     notes_extra = ""
     if len(notes_meta) > 6:
-        notes_extra = f'<p class="section-more"><a class="btn-more" href="notes.html">{len(notes_meta)} 篇 &rarr;</a></p>'
+        notes_extra = ""
 
     share_section = ""
     if shares_meta:
@@ -186,7 +186,7 @@ def generate_home(notes_meta, shares_meta, search_json):
         '<nav class="nav-tabs">\n<a href="index.html" class="tab active">首页</a>\n<a href="notes.html" class="tab">笔记</a>\n<a href="shares.html" class="tab">分享</a>\n</nav>\n'
         '<section class="home-section">\n<div class="section-head"><h2>最新笔记</h2>\n'
         f'<a class="btn-more" href="notes.html">{len(notes_meta)} 篇 &rarr;</a></div>\n'
-        f'<div class="card-list">{note_cards}</div>\n{notes_extra}\n</section>\n'
+        f'<div class="card-list">{note_cards}</div>\n</section>\n'
         f'{share_section}\n'
         '<footer>&copy; 2026</footer>\n</body>\n</html>'
     )
