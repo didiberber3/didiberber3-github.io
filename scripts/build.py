@@ -261,9 +261,29 @@ def generate_shares_page(shares_meta):
         '<nav class="nav-tabs-bar">\n<div class="nav-tabs">\n'
         '<a href="index.html" class="tab">首页</a>\n<a href="notes.html" class="tab">笔记</a>\n<a href="shares.html" class="tab active">分享</a>\n</div>\n</nav>\n'
         '<header class="page-header">\n'
+        '  <div class="search-wrap">\n    <input type="search" class="search-input" id="searchInput" placeholder="搜索..." autocomplete="off">\n'
+        '    <div class="search-dropdown" id="searchDropdown"></div>\n  </div>\n'
         f'  <p class="meta">共 {len(shares_meta)} 条</p>\n  <hr>\n</header>\n'
         f'<main class="share-list">{cards}</main>\n'
-        '<footer>&copy; 2026</footer>\n</body>\n</html>'
+        '<footer>&copy; 2026</footer>\n'
+        f'<script id="search-data" type="application/json">'
+        + json.dumps(
+            [{"title": s["title"], "slug": s["slug"], "date": s["date"], "text": s["desc"] + " " + s["tag"]}
+             for s in shares_meta],
+            ensure_ascii=False
+        ) + '</script>\n'
+        '<script>'
+        '(function(){var inp=document.getElementById("searchInput");'
+        'if(!inp)return;var drop=document.getElementById("searchDropdown");'
+        'if(!drop)return;var data=JSON.parse(document.getElementById("search-data").textContent);'
+        'inp.addEventListener("input",function(){var q=this.value.trim().toLowerCase();if(!q){drop.innerHTML="";drop.classList.remove("show");return;}_srch(q)});'
+        'function _srch(q){var r=data.filter(function(i){return i.title.toLowerCase().indexOf(q)>-1||i.text.toLowerCase().indexOf(q)>-1}).slice(0,10);'
+        'if(!r.length){drop.innerHTML=\'<div class="search-empty">\u65e0\u7ed3\u679c</div>\'}'
+        'else{drop.innerHTML=r.map(function(i){return\'<a class="search-item" href="shared/\'+i.slug+\'.html"><span>\'+_hl(i.title,q)+\'</span><span class="search-date">\'+i.date+\'</span></a>\'}).join("")}'
+        'drop.classList.add("show")}'
+        'function _hl(t,q){var i=t.toLowerCase().indexOf(q);if(i<0)return t;return t.slice(0,i)+"<em>"+t.slice(i,i+q.length)+"</em>"+t.slice(i+q.length)}'
+        'document.addEventListener("click",function(e){if(!e.target.closest(".search-wrap"))drop.classList.remove("show")})})();\n'
+        '</script>\n</body>\n</html>'
     )
     (BLOG_DIR / "shares.html").write_text(html, encoding="utf-8")
 
