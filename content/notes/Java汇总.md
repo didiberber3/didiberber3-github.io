@@ -5173,9 +5173,16 @@ class Person {      //默认继承Object类,默认比较两个对象是否相等
 
 
 
-### Exercise02 判断
+
+```
+
+
 
 ```java
+### Exercise02 判断
+
+    
+ 
 package com.jl.Object_;  
   
 public class EqualsExercise02 {  
@@ -5202,6 +5209,8 @@ class Person_ {
     public String name;  
 }
 ```
+
+
 
 **FTFTF**
 
@@ -6987,6 +6996,8 @@ public class Student extends Person {
 > 组合使用方法达到封装 `basicInfo()`  
 >
 > 好玩兄弟 好玩
+
+
 
 ```java
 package com.jl.homework342.hm13;
