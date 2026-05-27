@@ -6,3 +6,6 @@ blog/.cache.json
 blog/nav.json
 blog/index.html
 data/
+dist/
+node_modules/
+*.local

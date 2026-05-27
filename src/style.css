@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-radius: 0 !important;
+  }
+
+  body {
+    @apply bg-white text-gray-900 antialiased;
+  }
+}
+
+/* fadeUp animation */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.35s ease-out both;
+}
+
+/* TOC scroll tracking */
+.toc-item.active > a {
+  @apply text-green-600 font-medium;
+}
+
+/* highlight.js theme overrides */
+.prose pre {
+  @apply bg-gray-50 border border-gray-200;
+}
+.prose code {
+  @apply text-sm;
+}
+.prose pre code {
+  @apply bg-transparent border-0 p-0;
+}
