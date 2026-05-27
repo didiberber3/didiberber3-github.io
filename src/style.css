@@ -2,6 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  /* article list cards — shared across Home/Notes/Shares */
+  .article-list {
+    @apply divide-y divide-gray-100;
+  }
+
+  .article-card {
+    @apply transition-colors duration-200;
+  }
+
+  .article-card > a {
+    @apply block py-4 pl-0 border-l-2 border-transparent transition-all duration-200;
+  }
+
+  .article-card:hover > a {
+    @apply pl-4 border-l-green-600 bg-gray-50/60;
+  }
+
+  .article-card:hover h2,
+  .article-card:hover h3 {
+    @apply text-green-600;
+  }
+
+  /* tag chip for shares */
+  .tag {
+    @apply text-xs text-gray-400 border border-gray-300 px-1.5 py-0.5;
+  }
+
+  /* section heading */
+  .section-heading {
+    @apply text-lg font-semibold text-green-600;
+  }
+
+  /* "all N items" button */
+  .btn-more {
+    @apply border-2 border-green-600 text-green-600 px-3 py-0.5 text-xs font-medium hover:bg-green-600 hover:text-white transition-colors;
+  }
+}
+
 @layer base {
   *,
   *::before,

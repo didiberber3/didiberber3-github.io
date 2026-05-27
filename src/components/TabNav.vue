@@ -32,12 +32,8 @@ function go(path: string) {
           v-for="tab in tabs"
           :key="tab.path"
           @click="go(tab.path)"
-          :class="[
-            'px-5 py-3 text-sm border-b-2 transition-colors',
-            isActive(tab.path)
-              ? 'border-green-600 text-green-600 font-medium'
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-          ]"
+          class="tab-btn"
+          :class="{ active: isActive(tab.path) }"
         >
           {{ tab.label }}
         </button>
@@ -48,10 +44,51 @@ function go(path: string) {
         :href="visitUrl"
         target="_blank"
         rel="noopener noreferrer"
-        class="tab-visit border-2 border-green-600 text-green-600 px-4 py-1 text-sm font-medium hover:bg-green-600 hover:text-white transition-colors"
+        class="border-2 border-green-600 text-green-600 px-4 py-1 text-sm font-medium hover:bg-green-600 hover:text-white transition-colors"
       >
         访问
       </a>
     </div>
   </nav>
 </template>
+
+<style scoped>
+.tab-btn {
+  position: relative;
+  overflow: hidden;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.tab-btn:hover {
+  color: #374151;
+}
+
+.tab-btn.active {
+  color: #16a34a;
+  font-weight: 500;
+}
+
+/* left-to-right underline fill */
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #16a34a;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease-out;
+}
+
+.tab-btn.active::after {
+  transform: scaleX(1);
+}
+</style>

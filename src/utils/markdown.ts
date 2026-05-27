@@ -1,9 +1,22 @@
-import { Marked } from 'marked'
+import { Marked, Renderer } from 'marked'
 
-const marked = new Marked({
-  gfm: true,
-  breaks: true,
-})
+function headingId(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/<[^>]+>/g, '')
+    .replace(/[^\w\u4e00-\u9fff]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/^(\d)/, '_$1') || 'heading'
+}
+
+const renderer = new Renderer()
+renderer.heading = function (text: string, level: number): string {
+  const id = headingId(text)
+  return `<h${level} id="${id}">${text}</h${level}>`
+}
+
+const marked = new Marked({ gfm: true, breaks: true })
+marked.use({ renderer })
 
 export interface TocItem {
   level: number

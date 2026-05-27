@@ -37,17 +37,21 @@ const filtered = computed(() => {
         没有匹配的内容
       </div>
 
-      <div class="space-y-4">
-        <article v-for="note in filtered" :key="note.slug" class="border border-gray-200 p-4">
-          <h2 class="text-base font-medium mb-1">
-            <router-link
-              :to="`/note/${note.slug}`"
-              class="text-gray-900 hover:text-green-600 transition-colors"
-            >
+      <div v-else class="article-list">
+        <article
+          v-for="note in filtered"
+          :key="note.slug"
+          class="article-card"
+        >
+          <router-link
+            :to="`/note/${note.slug}`"
+            class="block"
+          >
+            <h2 class="text-base font-medium text-gray-900">
               {{ note.title }}
-            </router-link>
-          </h2>
-          <p v-if="note.date" class="text-xs text-gray-400">{{ note.date }}</p>
+            </h2>
+            <p v-if="note.date" class="text-xs text-gray-400 mt-1">{{ note.date }}</p>
+          </router-link>
         </article>
       </div>
     </div>
