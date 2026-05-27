@@ -10310,3 +10310,5046 @@ class Test {
 }
 ```
 
+
+
+
+
+# 常用类
+
+## 包装类 Wrapper
+
+
+
+1. 针对八种基本定义相应的引用类型 包装类
+2. 有了类的特点，就可以调用类中的方法
+
+| 基本数据类型                                | 包装类      |
+| ------------------------------------------- | ----------- |
+| bool                                        | Boolean     |
+| char                                        | Character   |
+| byte                                        | Byte        |
+| **short**                                   | **Short**   |
+| **int**                                     | **Integer** |
+| **long**                                    | **Long**    |
+| **float**                                   | **Float**   |
+| **double**                                  | **Double**  |
+| 加粗部分的父类为Number Number的父类是Object |             |
+
+
+
+
+
+## Integer
+
+```java
+package com.jl.wrapper;
+
+public class Integer01 {
+	public static void main(String[] args) {
+//		演示int 和Integer 的装箱和拆箱
+//		jdk5之前是手动装拆：
+		int n1 = 100;
+		//装
+		Integer integer = new Integer(n1);
+		Integer integer1 = Integer.valueOf(n1);
+
+		//拆
+		int i = integer.intValue();
+
+//		jdk5以后可以自动装拆
+		int n2 = 200;       //n2为基本数据类型
+//		自动装箱
+		Integer integer2 = n2; //底层使用的Integer.valueOf(n2)
+//		自动拆箱
+
+		int n3 = integer2;  //把对象给数据类型看上去是不行的，实际上底层仍然使用 Integer.valueOf(n2)
+		
+	}
+}
+
+```
+
+
+
+
+
+其他包装类用法类似，不一一举例了。
+
+
+
+```java
+package com.jl.wrapper;
+
+public class WrapperVSString {
+	public static void main(String[] args) {
+
+		//Wrapper(Integer) 转 String
+		Integer i = 100;
+		//方式1
+		String str1 = i + "大力";
+		System.out.println(str1);
+		//方式2
+		String str2 = i.toString();
+		//方式3
+		String str3 = String.valueOf(i);
+
+		//String 转Integer
+		String str4 = "12345";
+		Integer i2 = Integer.parseInt(str4);    //使用到自动装箱
+		Integer i3 = new Integer(str4);
+
+		System.out.println("OK``");
+
+	}
+}
+
+```
+
+
+
+## Integer类和Character类的常用方法
+
+System.out.println(Integer.MIN_ VALUE);//返回最小值System.out.println(Integer.MAX_VALUE);//返回最大值
+System.out.println(Character.isDigit('a'));//判断是不是数字System.out.println(Character.isLetter('a'));//判断是不是字母System.out.println(Character.isUpperCase('a'));//判断是不是大写System.out.println(Character.isLowerCase('a'));//判断是不是小写
+System.out.println(Character.isWhitespace('a'));//判断是不是空格System.out.println(Character.toUpperCase('a'));//转成大写System.out.println(Character.toLowerCase('A'));//转成小写
+
+
+
+
+
+## 练习
+
+```java
+package com.jl.wrapper;
+public class WrapperExercise02 {
+	public static void main(String[] args) {
+		new A().method1();
+	}
+}
+class A {
+	public void method1() {
+		//创建对象
+		Integer i = new Integer(1);
+		Integer j = new Integer(1);
+		System.out.println(i == j); //F
+		//包装int类
+		Integer m = 1;  //Integer.valueOf() 取值范围为 -128~127
+		Integer n = 1;
+		System.out.println(m == n); //true
+		Integer x = 128;
+		Integer y = 128;
+		System.out.println(x == y); //false 不在取值范围内
+
+	}
+}
+
+
+```
+
+
+
+
+
+```java
+package com.jl.wrapper;
+
+public class WrapperExercise03 {
+	public static void main(String[] args) {
+
+		Integer i1 = new Integer(127);
+		Integer i2 = new Integer(127);
+		System.out.println(i1 == i2);   //false         只要是new出来的对象一定是不同的对象,因为是引用对象
+
+		Integer i3 = new Integer(128);
+		Integer i4 = new Integer(128);
+		System.out.println(i3 == i4);   //false     同上
+
+		Integer i5 = 127;
+		Integer i6 = 127;
+		System.out.println(i5 == i6);   //true 范围是-128~127
+
+		Integer i7 = 128;
+		Integer i8 = 128;
+		System.out.println(i7 == i8); //false 超范围 同上
+
+		Integer i9 = 127;
+		Integer i10 = new Integer(127);
+		System.out.println(i9 == i10);  //true          valueOf 从底层取出...new是不同对象
+
+		Integer i11 = 127;
+		int i12 = 127;            //只要有基本数据类型,那么判断的是值是否相等
+		System.out.println(i11 == i12);   //true
+
+		Integer i13 = 128;
+		int i14 = 128;
+		System.out.println(i13 == i14);// true 对比数值 同上
+
+	}
+}
+
+```
+
+
+
+
+
+## String
+
+String对象用于保存字符串，也就是一组字符序列
+
+字符串常量对象是用双引号括起的字符序列，例如 “你好” 等
+
+字符串的字符使用Unicode编码，一个字符不区分字母还是汉字都占用两个字节。
+
+String 的常用构造方法
+
+new String（）；
+
+
+
+```java
+package com.jl.string_;
+
+public class String01 {
+
+	public static void main(String[] args) {
+		//String用于保存字符串，也就是一组字符序列
+		//jack是字符串常量
+		//字符串使用Unicode编码，一个字符两个字节，
+		//String类有很多的构造器，实现构造器的重载
+		//常用的有
+		// String s1= new String();
+		// String s2= new String(String original);
+		// String s3= new String(char[] a);
+		// String s4= new String(char[] a,int startIndex,int count);
+		// String s5= new String(byte[] b);
+		//String实现了接口Serializable，说明String可以串行化（在网络上传输）
+		//              Comparable [String对象可以比较大小]
+		// String is final, can't be jicheng
+		//String 有属性 private final char calue[]；用于存放字符串内容
+		//Attention:value is final，.can't be edited
+		// (value redirect to new address,but single word content can be changed)
+
+
+		String name="jack";
+		name="tom";
+		final char value[] = {'a','b','c'};
+		value[0]='H';
+		System.out.println();
+		//value =v2;不可以修改value 的地址
+//		不能给数组一个新的变量
+
+		//string底层最重要的是真正存放字符放在了属性中，final属性，final类，实现两个接口，
+	}
+}
+
+```
+
+### String 练习
+
+1
+
+```java
+package com.jl.string_;
+
+public class StringExercise01 {
+	public static void main(String[] args) {
+		String a="abc";
+		String b="abc";
+		System.out.println(a.equals(b)); //T
+		System.out.println(a==b); //T
+	}
+}
+
+```
+
+3
+
+```java
+package com.jl.string_;
+
+public class StringExercise03 {
+	public static void main(String[] args) {
+
+		String a="hsp";//a 指向常量池
+		String b=new String("hsp"); //指向堆中对象
+		System.out.println(a.equals(b));   //t 值是相等的，
+		System.out.println(a==b);//F 地址不同
+		//intern()  返回常量池的地址
+		System.out.println(a==b.intern());//t
+		System.out.println(b==b.intern());//F
+	}
+}
+
+```
+
+
+
+4
+
+```java
+package com.jl.string_;
+
+public class StringExercise04 {
+	public static void main(String[] args) {
+		String s1="hspedu"; //指向常量池
+		String s2="java";   //指向Java
+		String s4="java";   //指向同一个Java
+		String s3=new String("java");   //new出来的 指向堆 堆中对象value指向java地址
+		System.out.println(s2==s3); //F
+		System.out.println(s2==s4); //T //指向的同一个地址，没有新建对象，引用了
+		System.out.println(s2.equals(s3));//T
+		System.out.println(s1==s2);//F
+
+	}
+}
+
+```
+
+
+
+5
+
+```java
+package com.jl.string_;
+
+public class StringExercise05 {
+	public static void main(String[] args) {
+		Person p1 = new Person();
+		p1.name = "hspedu";
+		Person p2 = new Person();
+		p2.name = "hspedu";
+		System.out.println(p1.name.equals(p2.name));//t 值相等 equals表示值相等
+		System.out.println(p1.name == p2.name);//f  对象的属性存在对象中
+		System.out.println(p1.name == "hspedu");//t 指向同一个常量，hspedu不是new出来的，所以p1直接指向了这个产量
+
+		String s1 = new String("bcde");
+		String s2 = new String("bcde");
+		System.out.println(s1 == s2);//F
+
+
+	}
+}
+
+class Person {
+	String name;
+}
+```
+
+6
+
+```java
+package com.jl.string_;
+
+public class StringExercise06 {
+	public static void main(String[] args) {
+		//以下语句创建了几个对象，画出内存布局图
+		String s1="hello";
+		s1="haha";
+		//创建了一个对象，常量池中有一个hello，也有一个haha，第一次赋值指向hello 第二次赋值指向haha
+	}
+}
+
+```
+
+8
+
+```java
+package com.jl.string_;
+
+public class StringExercise08 {
+	public static void main(String[] args) {
+		String a = "hello";
+		String b = "abc";
+		String c = a + b;
+		//他是如何执行的？
+
+		//C指向堆中的value再指向池中的helloabc，a和b指向池
+		//创建了3个对象
+		String d = "helloabc";
+		System.out.println(c == d);//F
+		String e = "hello" + "abc";
+		System.out.println(d == e);//T
+
+	}
+}
+
+```
+
+
+
+
+
+9
+
+```java
+package com.jl.string_;
+
+public class StringExercise09 {
+	public static void main(String[] args) {
+		String s1="hspedu";
+		String s2="java";
+		String s5="hspedujava";
+		String s6=(s1+s2).intern();
+		System.out.println(s5==s6);//T
+		System.out.println(s5.equals(s6));//T
+	}
+}
+
+```
+
+10
+
+
+
+```java
+package com.jl.string_;
+
+public class StringExercise10 {
+	String str = new String("jl");
+	final char[] ch = {'j', 'a', 'v', 'a',};
+
+	public void change(String str, char[] args) {
+		str = "java";
+		ch[0] = 'h';
+
+	}
+
+	public static void main(String[] args) {
+
+		StringExercise10 ex = new StringExercise10();
+		ex.change(ex.str, ex.ch);
+		System.out.print(ex.str + "and");
+		System.out.println(ex.ch);
+
+	}
+	//程序运行的结果
+	//1.新建了一个str对象，对象在堆中，指向池中jl
+	//2.final一个char数组，为 j a v a;
+	//3.创建一个方法change，此方法为 将str=java，ch=h a v a
+	//4.新建一个对象，对象ex用了change方法，运行3，此时str=java ch=hava
+	//5.打印javaand，打印hava，换行。
+	//错，因为方法中的str是局部变量，没有添加this。
+	//结果是：jlandhava; 
+	// 不加 this. 时，str = "java" 只是把方法参数（局部变量）指向了新字符串，不影响外部的 ex.str。
+
+}
+
+```
+
+### String类的常见方法
+
+String类是保存字符串常量的，每次更新都需要重新开辟空间，效率较低，因此Java设计者还提供了StringBuilder和Stringbuffer来增强String的功能，并提高效率。
+
+#### String的常见方法应用实例1
+
+1. equals 区分大小写 判断内容是否相等
+2. equalsIgnoreCase 忽略大小写的判断内容是否相等
+3. length 获取字符的个数，字符串的长度
+4. indexOf 获取字符串在字符串中第一次出现的索引，索引从0开始，如果找不到返回-1
+5. lastIndexOf，最后一次出现的索引
+6. substring 截取指定范围的子串
+7. trim 去前后空格
+8. charAt 获取某索引处的字符，注意不能使用Str[index]这种方式
+9. toUpperCase
+10. toLowerCase
+11. concat
+12. replace 替换字符串中的字符
+13. split 分割字符串，对于某些分割字符，我们需要转义 比如|\\等
+14. compareTo 比较两个字符串的大小
+15. toCharArray 转换成字符数组
+16. format  格式字符串
+    1. %s字符串 %c字符 %d整型 %.2f浮点型
+    2. 案例 将一个人的信息格式化输出
+
+### StringBuffer
+
+
+
+```java
+package com.jl.string_.stringbuffer_;
+
+public class StringBuffer01 {
+	public static void main(String[] args) {
+		//buffer 缓冲区
+		// StringBuffer的直接父类是AbstractStringBuilder
+		// StringBuffer实现了Serializable接口 对象可以串行化
+		// 在父类中 AbstractStringBuilder 有属性 char[] value 不是final 该value数组存放字符串内容，引出存放在堆中的
+		// StringBuffer是一个final类 不能被继承
+		// 因为SB的字符内容是存在char[] value中的，所以在变化时不用每次都更换地址（创建新的对象）
+		// 所以效率高于String
+		StringBuffer stringBuffer = new StringBuffer();
+
+	}
+}
+
+```
+
+### StringBuffer的构造器
+
+`StringBuffer()`
+
+构造一个其中不带字符的字符串缓冲区，其初始容量为**16**个字符
+
+`StringBuffer(CharSequence seq)`
+
+包含与指定的`CharSequence`相同的字符
+
+`StringBuffer(int capacity)`
+
+构造一个不带字符，但具有指定初始容量的字符串缓冲区。即堆char[]的大小进行指定
+
+`StringBuffer(String str)`
+
+构造一个字符串缓冲区，并将其内容初始化为指定的字符串内容
+
+
+
+### StringBuffer和String的相互转换
+
+
+
+```java
+package com.jl.string_.stringbuffer_;
+
+public class StringandStringBuffer {
+	public static void main(String[] args) {
+		//method1 此方法返回的才是String builder对象，对str本身没有影响
+		String str = "hello tom";
+		StringBuffer stringBuffer = new StringBuffer(str);
+
+		//method2 append方法
+		StringBuffer stringBuffer2 = new StringBuffer("韩顺平教育");
+		stringBuffer2 = stringBuffer.append(str);
+
+		//method3 toString()
+		String s = stringBuffer2.toString();
+
+		//使用构造器
+		String s1 = new String(stringBuffer2);
+		
+
+	}
+}
+
+```
+
+
+
+
+
+StringBuffer使用方法
+
+```java
+package com.jl.string_.stringbuffer_;
+
+public class StringBufferMethod {
+	public static void main(String[] args) {
+		StringBuffer s = new StringBuffer("hello");
+		s.append(',');//hello,
+		s.append("张三丰");//hello,张三丰
+		s.append("赵敏").append(100).append(true).append(10.5);//hello,张三丰赵敏100true10.5
+		System.out.println(s);//hello,张三丰赵敏100true10.5
+
+		//delete
+		s.delete(11, 14);//11~14的字符是1 0 0
+		System.out.println(s);//hello,张三丰赵敏true10.5
+
+		//edit
+		s.replace(9, 11, "韩顺平");
+		System.out.println(s);//hello,张三丰韩顺平true10.5  ，自动后移
+
+		//find
+		int indexOf = s.indexOf("张三丰");
+		System.out.println(indexOf);//6
+
+		//insert
+		s.insert(9, "赵敏");
+		System.out.println(s);//hello,张三丰赵敏韩顺平true10.5,原来为9的内容自动后移
+
+
+		System.out.println(s.length());
+	}
+}
+
+```
+
+练习
+
+
+
+
+
+```java
+package com.jl.string_.stringbuffer_;
+
+public class StringBufferExercise02 {
+	public static void main(String[] args) {
+		/*
+		输入商品名称和商品价格，要求打印效果示例，使用前面学习的方法完成
+		商品名 商品价格
+		手机 123,456.59
+		要求 价格的小数点前面每三位用逗号隔开再输出
+
+		 */
+
+		/*
+		定义一个Scanner 接受用户输入的价格(String)
+		使用到StringBuffer的insert 需要将String转成StringBuffer
+		 */
+
+		//写程序，要考虑MVP 然后再优化
+		String price = "968698698123456.68";
+		StringBuffer sb = new StringBuffer(price);
+
+		//find 这个小数点的索引 然后在该位置的前三位insert一个, 即可
+
+		for (int j = sb.lastIndexOf(".") - 3; j > 0; j -= 3) {
+			sb.insert(j, ",");
+		}
+		System.out.println(sb);
+	}
+}
+
+```
+
+### StringBuilder
+
+一个可变的字符序列。此类提供一个与`StringBuffer`兼容的api，但不保证同步，该类被设计用作`StringBuffer`的一个简易替换，用在字符串缓冲区被单个线程使用的时候。如果可能，建议优先采用该类，因为在大多数实现中，它比`StringBuffer`要快
+
+
+
+在`StringBuilder`上的主要操作是`append()`和`insert()`方法，可重载这些方法，以接受任意类型的数据。
+
+
+
+### String StringBuffer StringBuilder 的比较
+
+1. Stringbuilder和StringBuffer非常类似，均代表可变的字符序列，而且方法也一样。
+
+2. string给你 不可变字符序列，效率低，但是复用率高
+
+3. StringBuffer 可变字符序列 效率较高 线程安全
+
+4. StringBuilder 可变字符序列，效率最高，线程不安全
+
+5. String的使用说明：
+
+   String s="a"; //创建了一个字符串
+
+   s+="b"; //实际上原来的"a"字符串对象已经被丢弃了，现在又产生了一个字符s+"b"（也就是"ab"）。如果多次执行这些改变串内容的操作，会导致大量副本字符串对象存留在内存中，降低效率。如果这样的操作放到循环中，会极大影响程序的性能=>结论：如果我们对String做大量修改，不要使用String
+
+> 使用疯狂大量的循环，以压力测试StringBuffer，StringBuilder和String，结果表明，String的执行时间，是StringBuffer的300倍，是StringBuilder的400倍。
+
+结论：存在大量的修改操作，单线程=StringBuilder，多线程=StringBuffer，很少修改，被多个对象引用，使用String，比如配置信息等。
+
+
+
+
+
+
+
+## Math
+
+
+
+常用的8个Math类方法：
+
+
+
+```java
+package com.jl.math_;
+
+public class MathMethod {
+	public static void main(String[] args) {
+//		Math 常用的方法
+
+//		1. abs看绝对值
+
+		int abs = Math.abs(9);
+		System.out.println(abs);//9
+
+		int abs1 = Math.abs(-99);
+		System.out.println(abs1);//99
+
+//		2. pow 求幂
+		double pow = Math.pow(-3.5, 4);
+		System.out.println(pow);//-3.5的四次幂
+
+//		3. ceil 向上取整,返 >=该参数的最小整数
+		double ceil = Math.ceil(-3.0001);
+		System.out.println(ceil);//-3.0
+
+//		4. floor 向下取整，返回 <=改参数的最大整数
+		double floor = Math.ceil(-4.999);
+		System.out.println(floor);//-4.0
+
+//		5. round 四舍五入, Math.floor(该参数+0.5)
+		double round = Math.round(-5.0001);
+		System.out.println(round);//-5.0
+
+//		6. sqrt 求开方
+		double sqrt = Math.sqrt(9.0);
+		System.out.println(sqrt);//3.0
+
+//		7. random 随机数 返回的是 0 <= x < 1 之间的随机数,加上两个参数可以修改0 1
+		for (int i = 0; i < 10; i++) {
+			System.out.println((int) (2 + Math.random() * (7 - 2 + 1)));
+//										范围是a~b，公式就为 a ,a+b-1;
+		}
+		System.out.println();
+		
+//		8. max 返回最大值
+		int max = Math.max(1, 9);
+		System.out.println(max);
+
+//		8. min 返回最小值
+		int min = Math.min(1, 9);
+		System.out.println(min);
+
+
+	}
+}
+
+```
+
+
+
+## Arrays
+
+里面包含了一系列静态方法，用于管理或操作数组（比如排序或搜索）
+
+1 toString 返回数组的字符串形式
+
+2 sort 排序 自然排序和定制排序 
+
+3 binarySearch 通过二分搜索进行查找，要求必须排好序
+
+
+
+```java
+package com.jl.arrays_;
+
+import java.util.Arrays;
+import java.util.Comparator;
+
+public class ArraysMethod {
+	public static void main(String[] args) {
+
+//		1 toString 返回数组的字符串形式
+		Integer arr[] = {91, 1, 2, 3, 4, 5, 6, 7, 9};
+		System.out.println(Arrays.toString(arr));
+
+		//		2 sort 排序 自然排序和定制排序
+//		通过sort排序后，会直接影响到实参arr1
+
+//		1.1默认排序方法
+		Integer arr1[] = {1, -1, 3, -2, 8, 61, 7};
+		Arrays.sort(arr1);//排序
+		System.out.println(Arrays.toString(arr1));//输出数组
+//		1.2定制排序方法
+//		sort是重载的，也可以通过传入一个接口 Comparator 实现定制排序
+//		调用 定制排序 时,传入两个参数 1. 排序的数组arr 2. 实现了Comparator接口的匿名内部类,要求实现Compare()方法
+		Arrays.sort(arr, new Comparator() {
+			@Override
+			public int compare(Object o1, Object o2) {
+				Integer i1 = (Integer) o1;
+				Integer i2 = (Integer) o2;
+
+
+				return i2 - i1; //从大到小
+			}
+		});
+		System.out.println(Arrays.toString(arr));
+
+		Arrays.sort(arr, new Comparator() {
+			@Override
+			public int compare(Object o1, Object o2) {
+				Integer i1 = (Integer) o1;
+				Integer i2 = (Integer) o2;
+
+
+				return i1 - i2;//从小到大
+			}
+		});
+		System.out.println(Arrays.toString(arr));
+	}
+}
+
+```
+
+### 定制排序
+
+```java
+package com.jl.arrays_;
+
+import java.util.Arrays;
+import java.util.Comparator;
+
+public class ArraysBublle {
+	public static void main(String[] args) {
+		int[] arr = {1, 7, 16, 2346, 234, 123132};
+
+//		bubble01(arr);
+		bubble02(arr, new Comparator() {
+			@Override
+			public int compare(Object o1, Object o2) {
+
+				int i1 = (Integer) o1;
+				int i2 = (Integer) o2;
+				return i1 - i2;
+//				return i2 - i1;
+			}
+		});
+		System.out.println();
+		System.out.println(Arrays.toString(arr));
+
+	}
+
+	//bubble 冒泡排序
+	public static void bubble01(int[] arr) {
+		int temp = 0;
+		for (int i = 0; i < arr.length - 1; i++) {  //遍历
+			for (int j = 0; j < arr.length - 1 - i; j++) {
+
+				//判断 交换
+				//从小到大
+				if (arr[j] > arr[i]) {
+					temp = arr[j];
+					arr[j] = arr[j + 1];
+					arr[j + 1] = temp;
+
+				}
+			}
+		}
+	}
+
+	//结合冒泡+定制
+	public static void bubble02(int[] arr, Comparator c) {
+		int temp = 0;
+		for (int i = 0; i < arr.length - 1; i++) {  //遍历
+			for (int j = 0; j < arr.length - 1 - i; j++) {
+
+				//数组排序由 c.compare(arr[j], arr[j + 1]决定
+				if (c.compare(arr[j], arr[j + 1]) > 0) {
+					temp = arr[j];
+					arr[j] = arr[j + 1];
+					arr[j + 1] = temp;
+
+				}
+			}
+		}
+	}
+}
+
+
+```
+
+### 其他方法:binarySearch()二叉查找 copyOf()复制数组 fill()数组元素的填充 equals()比较数组的元素是否相等,asList()将一组数据改为数组
+
+
+
+```java
+package com.jl.arrays_;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class ArraysBinarySearch {
+	public static void main(String[] args) {
+		Integer[] arr = {1, 2, 555, 9999};
+//		1. binarySearch 二叉查找
+		int index = Arrays.binarySearch(arr, 1);
+		System.out.println(index);// 0  是其索引位置
+		int index1 = Arrays.binarySearch(arr, -1);
+		System.out.println(index1);//-1 没有找到
+		Integer[] arr1 = {1, 222, 13, 8888, 9999};
+		int index2 = Arrays.binarySearch(arr, -13);
+		System.out.println(index2);//其会标记如果存在,会在索引的第几个位置,然后取相反数,也就是-1
+		int index3 = Arrays.binarySearch(arr, 9990);
+		System.out.println(index3);//其会标记如果存在,会在索引的第几个位置,然后取相反数,也就是-4
+
+
+//		2. copyOf 数组元素的赋值
+
+		//从arr这个数组中,拷贝arr.length个数组到newArr中
+		Integer[] newArr = Arrays.copyOf(arr, arr.length);
+		System.out.println(Arrays.toString(newArr));
+		//如果是arr.length-1 就少一个元素
+		Integer[] newArr1 = Arrays.copyOf(arr, arr.length - 1);
+		System.out.println(Arrays.toString(newArr1));
+
+		//如果是arr.length+1 就多一个元素空间,值为null
+		Integer[] newArr2 = Arrays.copyOf(arr, arr.length + 1);
+		System.out.println(Arrays.toString(newArr2));
+		//如果拷贝长度小于0,则抛出异常.
+//		Integer[] newArr3 = Arrays.copyOf(arr, -1);//抛出数组尺寸异常
+//		System.out.println(Arrays.toString(newArr3));
+
+
+//		fill 数组元素的填充
+//		替换原来的元素
+		Integer[] num = new Integer[]{9, 3, 2};
+		Arrays.fill(num, 99);
+		System.out.println("填充后的数组num=" + Arrays.toString(num));
+
+
+//		equals 比较两个数组的元素是否完全一致
+		Integer[] num1 = new Integer[]{99, 99, 99};
+		System.out.println(Arrays.equals(num, num1));//true
+		Integer[] num2 = new Integer[]{99, 99, 991};
+		System.out.println(Arrays.equals(num, num2));//false
+
+
+//		asList 将一组值,转换成List
+//		asList()会将数据转换成一个List集合
+		List asList = Arrays.asList(2, 3, 4, 5, 6, 7, 78, 3, 563, 456, 2345, 4235);
+		System.out.println("asList=" + asList);
+		System.out.println("asList的运行类型" + asList.getClass());
+		//class java.util.Arrays$ArrayList
+	}
+}
+
+```
+
+
+
+练习
+
+```java
+package com.jl.arrays_;
+
+import java.util.Arrays;
+import java.util.Comparator;
+
+public class ArrayExercise {
+	public static void main(String[] args) {
+
+	/*
+	自定义Book类,里面包含name和price 按price排序从大到小,要求使用两种方法排序,有一个Book[] books=四本书对象.
+	使用前面学习过的传递,实现Comparator接口匿名内部类,也称为定制排序,
+	可以按照price1 从大到小排序,2 从小到大 3 按照书名长度从大到小排序
+	 */
+
+		Book[] books = new Book[4];
+		books[0] = new Book("红楼梦", 100);
+		books[1] = new Book("金瓶梅新", 30);
+		books[2] = new Book("青年文摘20年", 60);
+		books[3] = new Book("Java从入门到入土", 80);
+
+		//price从大到小
+//		Arrays.sort(books, new Comparator<Book>() {
+//			@Override
+//			public int compare(Book o1, Book o2) {  //compare的返回值是一个int
+//				Book book1 = (Book) o1;
+//				Book book2 = (Book) o2;
+//
+//				//进行类型转换,从double类型 做判断,返回用 1 0 -1 区分
+//				//如果发现结果和我们输出的不一致,就修改返回的1 0 -1的位置
+//				double pricevalue = book2.getPrice() - book1.getPrice();
+//				if (pricevalue > 0) {
+//					return -1;
+//
+//				} else if (pricevalue < 0) {
+//					return 1;
+//				} else {
+//					return 0;
+//				}
+//
+//			}
+//		});
+
+		//从小到大
+//		Arrays.sort(books, new Comparator<Book>() {
+//			@Override
+//			public int compare(Book o1, Book o2) {  //compare的返回值是一个int
+//				Book book1 = (Book) o1;
+//				Book book2 = (Book) o2;
+//
+//				//进行类型转换,从double类型 做判断,返回用 1 0 -1 区分
+//				//如果发现结果和我们输出的不一致,就修改返回的1 0 -1的位置
+//				double pricevalue = book2.getPrice() - book1.getPrice();
+//				if (pricevalue > 0) {
+//					return -1;
+//
+//				} else if (pricevalue < 0) {
+//					return 1;
+//				} else {
+//					return 0;
+//				}
+//
+//			}
+//		});
+
+		//按书名排序
+		Arrays.sort(books, new Comparator() {
+			@Override
+			public int compare(Object o1, Object o2) {  //compare的返回值是一个int
+				Book book1 = (Book) o1;
+				Book book2 = (Book) o2;
+
+				return book2.getName().length() - book1.getName().length();
+
+
+			}
+		});
+
+
+		System.out.println(Arrays.toString(books));
+	}
+}
+
+class Book {
+	private String name;
+	private double price;
+
+	public Book(String name, double price) {
+		this.name = name;
+		this.price = price;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	@Override
+	public String toString() {
+		return this.name;
+	}
+}
+
+
+
+
+```
+
+
+
+## System类
+
+1. exit 退出当前程序
+2. arraycopy复制素族元素，比较适合底层调用，一般使用copyOf完成复制数组
+3. currentTimeMillens 返回当前时间距离1970-1-1的毫秒数
+4. gc 运行垃圾回收机制System.gc()
+
+```java
+package com.jl.system_;
+
+
+import java.util.Arrays;
+
+public class System_ {
+	public static void main(String[] args) {
+//		System.out.println("ok1");
+//		System.exit(0);
+//		//status参数：
+////		0 正常退出
+//		System.out.println("ok2");
+
+
+		//arrayCopy
+		int[] src = {1, 2, 3};
+		int[] dest = new int[3];//dest={0,0,0};
+
+
+		//参数：原数组，开始拷贝的数组索引 待拷贝数组 开始拷贝的数组索引 数组元素被赋值的数量
+		System.arraycopy(src, 0, dest, 0, 3);
+
+		System.out.println("dest=" + Arrays.toString(dest));
+
+
+		//
+
+
+
+	}
+}
+
+```
+
+
+
+### 大数处理方案
+
+
+
+```java
+package com.jl.bignum_;
+
+import java.math.BigInteger;
+
+public class BigInteger_ {
+	public static void main(String[] args) {
+		long l = 1231239713;
+		System.out.println("l=" + l);
+		BigInteger bigInteger = new BigInteger("1203981203889");
+		BigInteger bigInteger1 = new BigInteger("1212303981203889");
+		System.out.println(bigInteger);
+		//在对biginteger进行运算的时候需要
+		BigInteger add = bigInteger1.add(bigInteger1);
+		System.out.println(add);
+		BigInteger sub = bigInteger1.subtract(bigInteger1);
+		System.out.println(sub);
+		BigInteger mul = bigInteger1.multiply(bigInteger1);
+		System.out.println(mul);
+		BigInteger div = bigInteger1.divide(bigInteger1);
+		System.out.println(div);
+	}
+}
+
+```
+
+小数
+
+```java
+package com.jl.bignum_;
+
+import java.math.BigDecimal;
+
+public class BigDecimal_ {
+	public static void main(String[] args) {
+		BigDecimal bigDecimal = new BigDecimal("0.1234134241234231143214324231");
+		BigDecimal bigDecimal1 = new BigDecimal("1.1243214324231");
+		System.out.println(bigDecimal);
+		//对BigDecimal进行运算 也要使用专用的方法
+		System.out.println(bigDecimal.add(bigDecimal1));
+		System.out.println(bigDecimal.subtract(bigDecimal1));
+		System.out.println(bigDecimal.multiply(bigDecimal1));
+
+		// divide*可能* 会抛出异常：进行除法时可能除不尽ArithmeticException
+		// 设置精度避免这种情况：
+		// eg: BigDecimal.ROUND_CEILING 如无限循环小数 就会保留分子的精度
+		System.out.println(bigDecimal.divide(bigDecimal1, BigDecimal.ROUND_CEILING));
+	}
+}
+
+```
+
+
+
+
+
+## Date
+
+
+
+第一代日期类：精确到毫秒，代表特定的瞬间
+
+SimpleDateFormat 格式化解析日期和具体类。允许格式化`日期-文本`，`文本-日期`和规范化
+
+```java
+package com.jl.date_;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class Date_ {
+
+	public static void main(String[] args) throws ParseException {
+
+		//获取当前系统时间
+		//这里的Date是在java.util包下的
+		//按照国外的方式默认输出日期，需要进行格式转换，因此通常需要对格式进行转换
+		// 得到Date仍然在输出时，还是按照国外的形式，如果希望指定格式输出，需要转换
+		// 在把String_>Date，使用的 sdf格式需要和给的String格式相同，否则，会抛出*转换*异常
+		Date date = new Date();
+		System.out.println(date);
+		Date date1 = new Date(8745358);//通过指定距离1970000000毫秒数得知时间
+		System.out.println(date1);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 hh:mm:ss E");
+		String format = sdf.format(date);
+		System.out.println("当前日期=" + format);
+
+		String s = "2026年01月13日 05:54:30 星期二";
+		Date parse = sdf.parse(s);
+		System.out.println(parse);
+	}
+}
+
+class Dog {
+	private String name;
+	private int age;
+    
+	public Dog(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+	public void cry() {
+	}
+	class Air {
+	}
+	//说明一下diagram IDEA properties 的含义
+	public void setAddress(String address) {
+
+	}
+}
+```
+
+
+
+###Calendar
+
+```java
+package com.jl.date_;
+
+import java.time.Month;
+import java.util.Calendar;
+
+public class Calendar_ {
+	public static void main(String[] args) {
+		//Calendar是一个抽象类，构造器是private
+		//可以通过getInstance() 来获取实例
+		//提供大量的字段供给程序员
+		//Calendar没有专门的格式化方法所以需要自己来组合显示
+		//如果我们要24小时
+		Calendar c = Calendar.getInstance();
+		System.out.println("c=" + c);
+		System.out.println("年：" + c.get(Calendar.YEAR));
+		System.out.println("月：" + c.get(Calendar.MONTH) + 1);
+		System.out.println("日：" + c.get(Calendar.DAY_OF_MONTH));
+		System.out.println("时：" + c.get(Calendar.HOUR));
+		System.out.println("分：" + c.get(Calendar.MINUTE));
+		System.out.println("秒：" + c.get(Calendar.SECOND));
+
+		//月有bug 但是已经忘了咋写了 算了，再见
+		//又修好了
+
+		System.out.println("当前时间是：" + c.get(Calendar.YEAR) + "年-"
+				+ (c.get(Calendar.MONTH) + 1) + "月-"
+				+ c.get(Calendar.DAY_OF_MONTH) + "日-"
+				+ c.get(Calendar.HOUR/*如果要用24小时，改成HOUR_OF_DAY*/) + "时-"
+				+ c.get(Calendar.MINUTE) + "分-"
+				+ c.get(Calendar.SECOND) + "秒"
+		);
+
+	}
+}
+
+```
+
+### LocalDate日期，LocalTime时间LocalDateTime日期时间
+
+date 年月日 
+
+time 时分秒
+
+datetime年月日时分秒都有
+
+
+
+
+
+```java
+package com.jl.date_;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class LocalDateTime_ {
+	public static void main(String[] args) {
+//		第三代日期
+
+//		使用DateTimeFormatter 对象来进行格式化
+//		创建DateTimeFormatter 对象
+		LocalDateTime ldt = LocalDateTime.now();
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy年-MM月-dd日 HH小时-mm分钟-ss秒");
+		String format = dtf.format(ldt);
+		System.out.println("格式化的日期:" + format);
+		System.out.println(ldt);
+		System.out.println("年=" + ldt.getYear());
+		System.out.println(ldt.getMonthValue() + "月");
+		System.out.println("月=" + ldt.getMonth());
+		System.out.println("日=" + ldt.getDayOfMonth());
+		System.out.println("时=" + ldt.getHour());
+		System.out.println("分=" + ldt.getMinute());
+//		ldt.getYear();
+//		ldt.getMonthValue();
+//		ldt.getMonth();
+//		ldt.getDayOfMonth();
+//		ldt.getHour();
+//		ldt.getMinute();
+//		ldt.getSecond();
+		
+		//提供 plus 和minus方法可以对当前时间进行加或减
+		//看看890天后是什么时候,把年月日时分秒打印出来
+        //后续还有很多方法,不进行说明
+		LocalDateTime localDateTime = ldt.plusDays(890);
+		System.out.println(dtf.format(localDateTime));
+		LocalDateTime localDateTime1 = ldt.minusMinutes(3456);
+		System.out.println(dtf.format(localDateTime1));
+
+
+	}
+}
+
+```
+
+
+
+
+
+### Instant时间戳
+
+
+
+```java
+package com.jl.date_;
+
+import java.util.Date;
+import java.time.Instant;
+
+public class Instant_ {
+	public static void main(String[] args) {
+		//1.通过静态方法now获取表示当前时间戳的对象
+		Instant now = Instant.now();
+		System.out.println(now);
+//		2. 通过from可以把Instant转成Date
+		Date date = Date.from(now);
+//		3. 通过date的toInstant()可以把date转成Instant对象
+		Instant instant = date.toInstant();
+		System.out.println(instant);
+		
+	}
+}
+
+```
+
+
+
+
+
+常用类作业
+
+## Homework
+
+### Hm1
+
+```java
+package com.jl.hm_;
+
+public class Hm01 {
+	public static void main(String[] args) {
+//		1.将字符串中指定部分进行反转,如a bcde f反转为a edcb f
+//		2.编写方法 public static String reverse(String str,int start,int end 搞定
+
+//		把String转成char,因为char[]的元素是可以交换的.
+		String str = "12345";
+		System.out.println("交换前:" + str.toString());
+		String finalstr;
+		try {
+			finalstr = reverse(str, -1, 4);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return;
+		}
+		System.out.println("交换后:" + finalstr.toString());
+	}
+
+	public static String reverse(String str, int start, int end) {
+
+		//对输入的参数做一个验证:
+		//重要的编程思想
+		//1. 写出正确的情况,然后取反
+		//  :start>=0,end<=length
+		if (!(str != null && start >= 0 && end <= str.length() - 1 && end > start)) {
+			throw new RuntimeException("参数不正确!");
+
+		}
+
+		//交换函数核心部分
+		char[] chars = str.toCharArray();
+		char temp = ' '; //交换辅助变量
+		for (int i = start, j = end; i < j; i++, j--) {
+
+			temp = chars[i];
+			chars[i] = chars[j];
+			chars[j] = temp;
+
+		}
+		return new String(chars);
+
+	}
+}
+
+
+```
+
+try catch 捕获异常
+
+```java
+		try {
+			finalstr = reverse(str, -1, 4);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return;
+		}
+```
+
+方法内捕获异常
+
+```java
+		if (!(str != null && start >= 0 && end <= str.length() - 1 && end > start)) {
+			throw new RuntimeException("参数不正确!");
+
+		}
+```
+
+指定索引范围的反转交换
+
+```java
+		//交换函数核心部分
+		char[] chars = str.toCharArray();
+		char temp = ' '; //交换辅助变量
+		for (int i = start, j = end; i < j; i++, j--) {
+
+			temp = chars[i];
+			chars[i] = chars[j];
+			chars[j] = temp;
+
+```
+
+
+
+
+
+### HomeWork02 密码注册验证
+
+```java
+package com.jl.hm_;
+
+
+public class Hm02 {
+	public static void main(String[] args) throws Exception {
+//		输入用户名,密码,邮箱,如果信息录入正确,则提示注册成功,否则生成异常对象.
+
+		User user = new User("jack", "123456", "123qq@.com");
+
+
+		System.out.println("注册成功");
+//		要求:
+
+
+	}
+
+	static class User {
+
+		String username;
+		String psw;
+		String email;
+
+
+		public User(String username, String psw, String e) throws Exception {
+
+			this.username = username;
+			this.psw = psw;
+			this.email = e;
+			//		用户名长度为2或3或4
+			if (!(username.length() >= 2 && username.length() <= 4)) {
+				throw new Exception("用户名长度异常");
+			}
+			//密码必须是6为并且全数字
+			if (!(psw != null && psw.length() == 6)) {
+				throw new Exception("密码长度异常");
+			} else {
+				for (int i = 0; i < psw.length(); i++) {
+					char c = psw.charAt(i);
+					if (c < '0' || c > '9') {  // 使用严格判断
+						throw new Exception("密码格式异常");
+					}
+				}
+			}
+			//		邮箱中包含@ 和 .  @在.的前面
+
+			if (!(e.indexOf('@') != -1 && e.indexOf('.') != -1)) {
+				throw new Exception("没有@或.异常");
+			}
+
+			int e1 = e.lastIndexOf('@');
+			int e2 = e.indexOf('.');
+			if (!(e1 < e2)) {
+				throw new Exception("@不在.前面异常");
+			}
+
+		}
+
+
+		public String getUsername() {
+			return username;
+		}
+
+		public void setUsername(String username) {
+			this.username = username;
+		}
+
+		public String getPsw() {
+			return psw;
+		}
+
+		public void setPsw(String psw) {
+			this.psw = psw;
+		}
+
+		public String getEmail() {
+			return email;
+		}
+
+		public void setEmail(String email) {
+			this.email = email;
+		}
+
+	}
+}
+
+```
+
+
+
+更正：
+
+应该放在方法里而不是构造器里
+
+isDigital可以直接判断String是否是全数字
+
+```java
+check()
+
+isDigital(psw)
+```
+
+
+
+
+
+### HomeWork03 格式化
+
+
+
+```java
+package com.jl.hm_;
+import javax.swing.*;
+
+public class Hm03 {
+	public static void main(String[] args) {
+		//编写java程序，输入形式为 Liu Li Jia 的人名，以 Jia,Liu .L 的形式打印。
+		// 其中.L是中间单词的首字母
+		//验证"Captain Donk Simple"
+		String name = "Captain Donk Simple";
+		//split按空格" " 将Liu Li Jia分成数组中的三个元素,
+		String[] split = name.split(" ");
+		//这是中间的单词
+		System.out.println(split[1]);
+		//这是中间单词的首字母
+		System.out.println(split[1].charAt(0));
+		System.out.println(split[0] + "," + split[2] + " ." + split[1].charAt(0));
+	}
+}
+```
+
+
+
+### HomeWork04 判断字符串大小写，数字
+
+
+
+```java
+package com.jl.hm_;
+
+import javax.swing.*;
+
+public class Hm04 {
+	public static void main(String[] args) {
+
+		//输入字符串,判断里面有多少个大写字母,多少个小写字母,多少个数字
+		String str = "L2JsdL";      // 3个大写 2个小写 1个数
+		String[] split = str.split("");
+
+		int upperCount = 0;//大写数字
+		int lowerCount = 0;//小写数字
+		int digitCount = 0;//数字
+
+
+		for (int i = 0; i < str.length(); i++) {
+			char c = str.charAt(i);
+			if (Character.isUpperCase(c)) {
+				upperCount++;
+			} else if (Character.isLowerCase(c)) {
+				lowerCount++;
+			} else if (Character.isDigit(c)) {
+				digitCount++;
+			}
+		}
+		System.out.println("大写" + upperCount + "个");
+		System.out.println("小写" + lowerCount + "个");
+		System.out.println("数字" + digitCount + "个");
+	}
+
+}
+
+```
+
+
+
+### HM05
+
+
+
+```java
+package com.jl.hm_;
+
+public class Hm05 {
+	public static void main(String[] args) {
+		String s1 = "hspedu";
+		Animal a = new Animal(s1);
+		Animal b = new Animal(s1);
+
+		System.out.println(a == b); //*F* 不是同一个对象 错以为是比较地址，实际上是比较对象，两个对象是分别new的
+		System.out.println(a.equals(b));//F 不是同一个对象
+		System.out.println(a.name == b.name);//T 都引用了常量池中的hspedu
+		String s4 = new String("hspedu");
+		String s5 = "hspedu";
+		System.out.println(s1 == s4);//F
+		System.out.println(s5 == s4);//F
+		
+		String t1 = "hello" + s1;
+		String t2 = "hellohspedu";
+		System.out.println(t1.intern() == t2);//T
+	}
+}
+
+class Animal {
+	String name;
+
+	public Animal(String name) {
+		this.name = name;
+
+	}
+
+
+}
+```
+
+
+
+# 集合
+
+常规的数组可操作性较差，数组长度固定。
+
+引入集合，可以动态的保存任意多个对象，使用比较方便。集合提供了一系列方便的操作对象的方法：
+
+add,remove,set,get，增，删，改，查
+
+![image-20260513121008438](D:\Typora\TyporaPics\image-20260513121008438.png)
+
+```java
+package com.jl.collection_;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+
+@SuppressWarnings({"all"})
+
+public class Collection_ {
+	public static void main(String[] args) {
+//		集合主要是两组 - 单列集合 双列集合
+//		单列集合是放   单个对象
+//		双列放        键值对
+//		Collection
+//		Collection接口由两个重要的子接口-List Set 他们的实现子类都是单列集合
+//		Map 接口的实现子类 是双列集合， 存放的K-V 键Key值Value对
+
+		//单列集合
+		ArrayList arrayList = new ArrayList();
+		arrayList.add("jack");
+		arrayList.add("Tom");
+
+		//双列集合
+		HashMap hashMap = new HashMap();
+		hashMap.put("number1", "Jackie");
+		hashMap.put("number2", "Shanghai");
+
+
+	}
+}
+
+```
+
+
+
+
+
+## Collection接口的常用方法
+
+
+
+1. collection实现子类可以存放多个元素，每个元素都可以是Object
+2. 可以存放重复的元素，有些不可以
+3. 有些是有序的（List），有些不是有序（Set）
+4. Collection接口没有直接的实现子类，是通过他的子接口Set 和List来实现的
+
+
+
+```java
+package com.jl.collection_;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@SuppressWarnings("all")
+
+public class CollectionMethod {
+	public static void main(String[] args) {
+
+		List arrayList = new ArrayList();
+//		add 添加单个元素:Object 参数
+		arrayList.add("Object");
+		arrayList.add("Object1");
+		arrayList.add("Object2");
+		arrayList.add("Object3");
+		arrayList.add("Object4");
+		arrayList.add("Object5");
+		System.out.println(arrayList);
+
+//		remove 删除指定元素
+		arrayList.remove("Object");//删除Object元素
+		System.out.println(arrayList);
+		arrayList.remove(2);//删除索引2的元素
+		System.out.println(arrayList);
+
+//		contains 查找某个元素是否存在
+//		bool
+		System.out.println(arrayList.contains("Object1"));
+
+//		size获取元素个数
+//		int
+		System.out.println(arrayList.size());
+
+//      isEmpty 判断集合是否为空
+//		bool
+		System.out.println(arrayList.isEmpty());
+
+//		addAll 添加多个元素
+		List list = new ArrayList();
+		list.add("hlm");
+		list.add("sgyy");
+		list.add("shz");
+		list.add("xyj");
+		arrayList.addAll(list);
+		System.out.println(arrayList);
+
+//		containsAll查找多个元素是否存在,需要输入一个对象
+//		bool
+		System.out.println(arrayList.containsAll(list));
+
+//		removeAll删除多个对象
+		arrayList.add("1234");
+		arrayList.removeAll(list);
+		
+		System.out.println(arrayList);
+
+//		clear 清空
+		arrayList.clear();
+		System.out.println(arrayList);
+
+	}
+}
+
+```
+
+
+
+
+
+### Collection 接口遍历
+
+使用Iterator(迭代器)
+
+Iterator是Collection父接口，有个iterator()，返回Iterator迭代器对象
+
+```java
+//Iterator迭代器的执行原理：
+
+Iterator iterator = coll.iterator();
+
+//hasNext(); 判断是否还有下一个元素
+
+while(iterator.hasNext()){	//next()作用：
+    //1. 下移,2,将下移以后的集合位置上的元素返回
+    		System.out.println(iterator.next());
+    
+}
+```
+
+
+
+
+
+```java
+package com.jl.collection_;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
+@SuppressWarnings("all")
+
+public class CollectionIterator {
+	public static void main(String[] args) {
+		Collection col = new ArrayList();
+
+		col.add(new Book("三国演义", "罗贯中", 10.1));
+		col.add(new Book("小李飞刀", "狗笼", 45.3));
+		col.add(new Book("红楼梦", "曹雪芹", 67.4));
+
+		System.out.println("col=" + col);
+//		遍历col集合
+//		1.先得到col对应的迭代器
+		Iterator iterator = col.iterator();
+
+		//快捷键 快速生成while itit
+		while (iterator.hasNext()) {
+			Object obj = iterator.next();//编译类型Object，运行类型Book
+			System.out.println(obj);
+		}
+//		第二次遍历
+		iterator = col.iterator();
+		while (iterator.hasNext()) {
+			Object next = iterator.next();
+			System.out.println(next );
+
+		}
+//		当退出while循环后，这时iterator迭代器，指向最后的元素，此时，next已经在最后一个元素的下面，
+		try {
+			iterator.next();
+		} catch (Exception e) {
+			System.out.println("log:无元素异常");
+		}
+
+
+	}
+}
+
+class Book {
+	private String name;
+	private String author;
+	private double price;
+
+	public Book(String name, String author, double price) {
+		this.name = name;
+		this.author = author;
+		this.price = price;
+	}
+
+	@Override
+	public String toString() {
+		return "Book{" +
+				"name='" + name + '\'' +
+				", author='" + author + '\'' +
+				", price=" + price +
+				'}';
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+}
+```
+
+
+
+
+
+### 增强for循环
+
+
+
+增强for循环只是简化版的iterator，只能用来遍历集合或数组
+
+```java
+package com.jl.collection_;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+@SuppressWarnings("all")
+public class CollectionFor {
+	public static void main(String[] args) {
+
+		Collection col = new ArrayList();
+		col.add(new Book("三国演义", "罗贯中", 10.1));
+		col.add(new Book("小李飞刀", "狗笼", 45.3));
+		col.add(new Book("红楼梦", "曹雪芹", 67.4));
+
+//		使用增强for循环
+		for (Object book : col) {
+			System.out.println("book: " + book);
+		}
+//		快捷键 I
+		for (Object o : col) {
+			System.out.println(o);
+		}
+
+
+//		也可以直接在数组中使用
+        //注意输出变量
+		int[] nums = {1, 2, 3};
+		for (int i : nums) {
+			System.out.println("nums:" + i);
+		}
+	}
+}
+
+```
+
+
+
+练习
+
+```java
+package com.jl.collection_;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public class CollectionExercise {
+
+	public static void main(String[] args) {
+
+		List arr = new ArrayList();
+		arr.add(new Dog("大黄", 3));
+		arr.add(new Dog("大红", 1));
+		arr.add(new Dog("大绿", 5));
+
+		Iterator iterator = arr.iterator();
+
+		while (iterator.hasNext()) {
+			Object next = iterator.next();
+			System.out.println(next);
+
+		}
+
+		for (Object o : arr) {
+			System.out.println(o);
+		}
+
+	}
+}
+
+class Dog {
+	private String name;
+	private int age;
+
+	public Dog(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	@Override
+	public String toString() {
+		return "Dog{" +
+				"name='" + name + '\'' +
+				", age=" + age +
+				'}';
+	}
+}
+
+```
+
+
+
+## List接口
+
+List接口是Collection接口的子接口
+
+1. List集合类中元素有序，添加顺序 去除顺序一直，且可重复
+2. List集合中的每个元素都有其对应的顺序索引，即支持索引
+3. List容器中的元素都对应一个整数型的序号记载其在容器中的位置，可以根据序号存取容器中的元素
+4. JDKAPI中List接口的常用实现类有ArrayList LinkedList Vector
+
+
+
+
+
+```java
+package com.jl.collection_.list_;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@SuppressWarnings("all")
+
+public class ListMethod {
+	public static void main(String[] args) {
+
+		List list = new ArrayList();
+
+		list.add("jackie");
+		list.add("tom");
+		list.add("jason");
+		list.add("sb");
+
+		//void
+		list.add(1, "我是插进来的索引1");
+
+		System.out.println(list);
+		List list1 = new ArrayList();
+		list1.add("中文1");
+		list1.add("中文2");
+		list1.add("sb");
+
+		list.addAll(2, list1);
+
+		System.out.println(list);
+
+		System.out.println(list.indexOf("tom"));//5
+		System.out.println(list.lastIndexOf("sb"));//7
+
+
+		System.out.println("移除了索引为0的元素:" + list.remove(0));//jackie
+		System.out.println(list);
+
+//		替换,索引一定要是存在的，否则越界异常
+		list.set(0, "SET");
+		System.out.println(list);
+
+		List returnlist = list.subList(1, 2);
+		System.out.println(returnlist);
+
+
+	}
+}
+
+```
+
+
+
+
+
+### 练习
+
+
+
+```java
+package com.jl.collection_.list_;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+@SuppressWarnings("all")
+public class ListExercise {
+	public static void main(String[] args) {
+
+//	要求List的实现类ArrayList完成
+		List list = new ArrayList();
+		//	添加10个以上的元素比如String"hello"
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+		list.add("5");
+		list.add("6");
+		list.add("7");
+		list.add("8");
+		list.add("9");
+		list.add("10");
+		list.add("11");
+		list.add("12");
+		System.out.println(list);
+//	在第二号位插入一个元素 hspjy
+		list.add(1, "hspjy");
+		System.out.println("在第二号位插入一个元素 hspjy");
+		System.out.println(list);
+//	获得第五个元素,
+		System.out.println("第五个元素为" + list.get(4));
+		System.out.println(list);
+
+//	删除第六个元素,
+		list.remove(5);
+		System.out.println("删除了第六个元素:\n" + list);
+//	修改第七个元素,
+
+		list.set(6, "edited:7");
+//	使用迭代器遍历集合
+		System.out.println("使用迭代器遍历了集合");
+
+		Iterator iterator = list.iterator();
+		while (iterator.hasNext()) {
+			Object next = iterator.next();
+			System.out.print(" " + next);
+		}
+	}
+}
+
+```
+
+
+
+
+
+
+
+### 遍历List的三种方法
+
+
+
+
+
+1. 迭代器iterator
+2. 增强for
+3. 普通for
+
+```java
+package com.jl.collection_.list_;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+@SuppressWarnings("all")
+public class ListExercise {
+	public static void main(String[] args) {
+
+//	要求List的实现类ArrayList完成
+		List list = new ArrayList();
+		//	添加10个以上的元素比如String"hello"
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+		list.add("5");
+		list.add("6");
+		list.add("7");
+		list.add("8");
+		list.add("9");
+		list.add("10");
+		list.add("11");
+		list.add("12");
+		System.out.println(list);
+//	在第二号位插入一个元素 hspjy
+		list.add(1, "hspjy");
+		System.out.println("在第二号位插入一个元素 hspjy");
+		System.out.println(list);
+//	获得第五个元素,
+		System.out.println("第五个元素为" + list.get(4));
+		System.out.println(list);
+
+//	删除第六个元素,
+		list.remove(5);
+		System.out.println("删除了第六个元素:\n" + list);
+//	修改第七个元素,
+
+		list.set(6, "edited:7");
+//	使用迭代器遍历集合
+		System.out.println("使用迭代器遍历了集合");
+
+		Iterator iterator = list.iterator();
+		while (iterator.hasNext()) {
+			Object next = iterator.next();
+			System.out.print(" " + next);
+		}
+	}
+}
+
+```
+
+
+
+
+
+### 练习
+
+
+
+![image-20260513152624462](D:\Typora\TyporaPics\image-20260513152624462.png)
+
+
+
+集合的冒泡排序
+
+![image-20260513164204064](D:\Typora\TyporaPics\image-20260513164204064.png)
+
+```java
+package com.jl.collection_.list_;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ListExercise02 {
+
+	public static void main(String[] args) {
+
+		List list = new ArrayList();
+
+		list.add(new Book("book3", "author3", 300));
+		list.add(new Book("book1", "author1", 100));
+		list.add(new Book("book4", "author4", 400));
+		list.add(new Book("book2", "author2", 200));
+
+
+// 冒泡排序：按价格从低到高
+		for (int i = 0; i < list.size() - 1; i++) {
+			for (int j = 0; j < list.size() - 1 - i; j++) {
+				// 获取j和j+1位置的书
+				Book book1 = (Book) list.get(j);
+				Book book2 = (Book) list.get(j + 1);
+
+				// 如果前面的书价格大于后面的，交换
+				if (book1.getPrice() > book2.getPrice()) {
+					// 交换list中j和j+1位置的元素
+					list.set(j, book2);
+					list.set(j + 1, book1);
+				}
+			}
+		}
+//		打印规整输出
+		System.out.println("===== 排序后 =====");
+		for (int i = 0; i < list.size(); i++) {
+			System.out.println(list.get(i));
+		}
+
+
+	}
+
+//		我写的错误屎山：
+//		如何查找到 每一个元素i 中的 属性
+//		list.get(i) 得到每个元素
+//		将这个元素赋给一个Book temp
+//		booktemp.getPrice() 是每本书的价格属性,现在要按这个进行冒泡排序
+//		Book[] bookp = new Book[10];
+//		Book bookt = null;
+//		for (int i = 0; i < list.size() - 1; i++) {
+//			for (int j = 0; j < list.size() - 1 - i; j++) {
+//				bookp[j] = (Book) list.get(j);//得到每个元素
+//				if (bookp[j].getPrice() > bookp[j + 1].getPrice()) {
+//					bookt = (Book) list.get(j);
+//					list.set(j, list.get(j + 1));
+//					list.set(j + 1, bookt);
+//					list.set()
+//
+//				}
+//
+//			}
+//		}
+}
+
+class Book {
+	private String name;
+	private String author;
+	private double price;
+
+	public Book() {
+	}
+
+	public Book(String name, String author, double price) {
+		this.name = name;
+		this.author = author;
+		this.price = price;
+	}
+
+	@Override
+	public String toString() {
+		return
+				"名称：" + name + '\t' +
+						"作者：" + author + '\t' +
+						"价格：" + price;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+}
+```
+
+
+
+## ArrayList细节
+
+传入所有元素 包括null
+
+ArrayList是由数组实现数据存储的
+
+ArrayList基本等同于vector，除了ArrayList是线程不安全（效率高） 在多线程情况下，不建议使用ArrayList
+
+
+
+```java
+package com.jl.collection_;
+
+import java.util.ArrayList;
+
+@SuppressWarnings("all")
+public class ArrayListDetail {
+
+	public static void main(String[] args) {
+
+		//没有做限制符
+		//    public boolean add(E e) {
+		//        ensureCapacityInternal(size + 1);  // Increments modCount!!
+		//        elementData[size++] = e;
+		//        return true;
+		//    }
+		ArrayList arrayList = new ArrayList();
+		arrayList.add(null);
+		arrayList.add("jack");
+		arrayList.add(null);
+		System.out.println(arrayList);
+
+	}
+}
+
+```
+
+
+
+
+
+## 底层机制源码分析
+
+
+
+1. arraylist中维护了一个Obj类型的数组elementData ：transient Obj[] elementData
+
+   transient：瞬间，短暂的，表示该属性不会被序列化
+
+2. 当创建ArrayList对象时，如果使用的是无参构造器，则初始elementData的容量为0，第一次添加，则扩容elementData为10，如需要再次扩容，则扩容elementData为1.5倍
+
+3. 如果使用的是指定大小的构造器，则初始elementData容量为指定大小，如果需要再次扩容，则直接扩容elementData为1.5倍
+
+
+
+>  由于jdk的变化，许多源码已经进行更改，在此也不再说明了
+
+
+
+LinkedList 底层结构
+
+1. LinkedList底层实现了双向链表和双端队列特点
+2. 可以添加任意元素，元素可以重复，包括null
+3. 线程不安全，没有实现同步
+
+
+
+## Set接口
+
+和List接口一样，Set接口也是Collection的子接口，因此，常用方法和Collection接口一样
+
+
+
+### Set接口的遍历方式
+
+同Collection一样，因为是子接口
+
+1. 可以使用迭代器
+2. 增强for
+3. 不能使用索引的方式来获取
+
+ 
+
+基本方法：添加 删除 遍历
+
+```java
+package com.jl.set_;
+
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+@SuppressWarnings("all")
+
+public class SetMethod {
+	public static void main(String[] args) {
+
+		Set set = new HashSet();
+//		实现了set接口的实现类的对象，不能存放重复的元素，（可以加一个null）
+//		set接口对象存放顺序无序 但取出顺序固定
+//		取出的顺序虽然不是添加的顺序，但是是固定的
+		set.add("john");
+		set.add("john");
+		set.add("john1");
+		set.add("john2");
+		set.add("john3");
+		set.add("john4");
+		set.add(null);
+		set.add(null);
+
+		System.out.println(set);
+
+		System.out.println("迭代器遍历");
+
+		Iterator iterator = set.iterator();
+		while (iterator.hasNext()) {
+			Object next = iterator.next();
+			System.out.println(next);
+
+		}
+
+		System.out.println("增强for");
+
+		set.remove(null);
+		for (Object o : set) {
+			System.out.println(o);
+		}
+
+//		不能使用传统for,因为没有提供get方法
+	}
+}
+
+```
+
+
+
+### HashSet
+
+
+
+```md
+//      hashset实现了set接口
+//		实际上是hashmap：
+//		map = new HashMap<>();
+//		可以存放null值但只能有一个null
+//		hashset不保证元素是有序的，取决于hash后，再确定索引的结果
+//		不能有重复元素和对象
+```
+
+
+
+```java
+package com.jl.set_;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class HashSet_ {
+	public static void main(String[] args) {
+//      hashset实现了set接口
+//		实际上是hashmap：
+//		map = new HashMap<>();
+//		可以存放null值但只能有一个null
+//		hashset不保证元素是有序的，取决于hash后，再确定索引的结果
+//		不能有重复元素和对象
+
+		Set hashSet = new HashSet();
+
+		hashSet.add(null);
+		hashSet.add(null);
+		System.out.println("hashset=" + hashSet);//只有一个null
+		
+	}
+}
+
+```
+
+
+
+
+
+
+
+### HashSet底层机制
+
+hashmap的底层是 数组+链表+红黑树
+
+:模拟简单的数组+链表结构
+
+
+
+```java
+package com.jl.set_;
+
+public class HashSetStructure {
+
+	public static void main(String[] args) {
+
+//		hashset的底层就是hashmap
+
+//		1. 创建一个数组
+//		数组的类型是Node[]
+//		有些人直接把Node[]数组称为表
+
+		Node[] nodes = new Node[17];
+		System.out.println(nodes);
+
+//		创建节点
+		Node node = new Node("john", null);
+
+		//在索引为2的地方放进一个node
+		nodes[2] = node;
+		System.out.println("nodes=" + nodes);
+
+		Node node1 = new Node("jacky", null);
+		// 在2的node下面在放一个node1
+		node.next = node1;//将jacky节点挂载到john后面
+
+		Node node2 = new Node("rose", null);
+		node1.next = node2;
+
+		Node node3 = new Node("lucy", null);
+		nodes[3] = node3;
+
+		System.out.println("nodes=" + nodes);
+
+
+	}
+}
+
+class Node {//节点,存储数据,可以指向下一个节点,从而行程链表
+	Object item; //存放数据
+	Node next; //指向下一个节点
+
+	public Node(Object item, Node next) {
+		this.item = item;
+		this.next = next;
+	}
+}
+```
+
+
+
+
+
+![image-20260518174805709](D:\Typora\TyporaPics\image-20260518174805709.png)
+
+
+
+如果一个链表的元素超过8 table大小>=最小树化体积，进行树化（红黑树）
+
+
+
+### 练习
+
+
+
+```java
+package com.jl.set_;
+
+import java.util.HashSet;
+import java.util.Objects;
+
+@SuppressWarnings("all")
+public class HashSetExercise {
+	public static void main(String[] args) {
+		HashSet hs = new HashSet();
+
+		hs.add(new Employee("john", 10));
+		hs.add(new Employee("jack", 13));
+		hs.add(new Employee("rose", 14));
+		hs.add(new Employee("john", 10));
+
+		System.out.println(hs);
+
+
+	}
+}
+
+class Employee {
+	private String name;
+	private int age;
+
+	public Employee(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	@Override
+	public String toString() {
+		return "Employee{" +
+				"name='" + name + '\'' +
+				", age=" + age +
+				'}';
+	}
+
+//	以下的重写equals和hashCode的含义为：
+//	如果相等则不再添加,如果不想等,则以链表的形式添加
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Employee)) return false;
+		Employee employee = (Employee) o;
+		return getAge() == employee.getAge() && Objects.equals(getName(), employee.getName());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getName(), getAge());
+	}
+}
+```
+
+
+
+
+
+思考题：
+
+本题重点在于，要让Mydate类中的hashcode和equals也重写
+
+
+
+```java
+package com.jl.set_;
+
+
+import java.util.HashSet;
+import java.util.Objects;
+
+@SuppressWarnings("all")
+public class HashSetExercise02 {
+	public static void main(String[] args) {
+
+		HashSet hashSet = new HashSet();
+		hashSet.add(new Employee1("tom", 1800, 2003, 12, 21));
+		hashSet.add(new Employee1("tom", 1800, 2003, 12, 21));
+		hashSet.add(new Employee1("jack", 1800, 2004, 8, 2));
+
+		System.out.println(hashSet);
+
+
+	}
+
+
+}
+
+class Employee1 {
+	private String name;
+	private double sal;
+
+	private Mydate birthday;
+
+
+	@Override
+	public String toString() {
+		return "Employee1{" +
+				"name='" + this.name + '\'' +
+				", sal=" + this.sal +
+				",birthday=" + this.birthday +
+				'}';
+	}
+
+	public Employee1(String name, double sal, int year, int month, int day) {
+		this.name = name;
+		this.sal = sal;
+		this.birthday = new Mydate(year, month, day);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Employee1)) return false;
+		Employee1 employee1 = (Employee1) o;
+		return Double.compare(sal, employee1.sal) == 0 && Objects.equals(name, employee1.name) && Objects.equals(birthday, employee1.birthday);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, sal, birthday);
+	}
+
+	class Mydate {
+		private int year;
+		private int month;
+		private int day;
+
+		public Mydate(int year, int month, int day) {
+			this.year = year;
+			this.month = month;
+			this.day = day;
+		}
+
+		@Override
+		public String toString() {
+			return year + "-" + month + "-" + day;
+
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (!(o instanceof Mydate)) return false;
+			Mydate mydate = (Mydate) o;
+			return year == mydate.year && month == mydate.month && day == mydate.day;
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(year, month, day);
+		}
+	}
+
+}
+```
+
+
+
+
+
+### LinkedHashSet
+
+是HashSet的一个子类
+
+底层是一个LinkedHashMap，底层维护了一个数组+双向链表
+
+根据元素的hashCode值来决定元素的存储未知，同时使用链表维护元素的次序，这是的元素看起来是以插入顺序保存的
+
+LinedHashSet不允许添加重复元素
+
+
+
+说明：
+
+1. 在LinkedHashSet中维护了一个hash表和双向链表（LinkedHashSet有head和tail）
+2. 在每个节点有pre和next属性用于标记前一个元素和后一个元素，形成双向链表
+3. 再添加一个元素的时候，先求hash值，再求索引，确定该元素在hashtable的位置，然后将添加的元素加入到双向链表（如果已经存在，不添加 原理和hashset一样）
+   1. tail.next= new Element
+   2. new Element.pre=tail;
+   3. tail=newElement;
+4. 这样的话，我们遍历LinkedHashSet也能确保插入顺序和遍历顺序一致
+
+
+
+```java
+package com.jl.set_;
+
+import java.util.LinkedHashSet;
+import java.util.Objects;
+
+public class LinkedHashSetExercise {
+	public static void main(String[] args) {
+		LinkedHashSet lhs = new LinkedHashSet();
+		lhs.add(new Car("三汽大众", 34567));
+		lhs.add(new Car("一汽大众", 99999));
+		lhs.add(new Car("二汽大众", 9789));
+		lhs.add(new Car("一汽大众", 99999));
+
+
+		System.out.println(lhs);
+
+	}
+}
+
+class Car {
+	private String name;
+	private double price;
+
+	public Car(String name, double price) {
+		this.name = name;
+		this.price = price;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Car)) return false;
+		Car car = (Car) o;
+		return Double.compare(price, car.price) == 0 && Objects.equals(name, car.name);
+	}
+
+	//只保留hashcode
+//	hashcode相同，equals不同 也能加进去
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, price);
+	}
+
+	@Override
+	public String toString() {
+		return "Car{" +
+				"name='" + name + '\'' +
+				", price=" + price +
+				'}';
+	}
+}
+```
+
+
+
+## Map接口
+
+Map是跟Collection同级的接口，
+
+用一个封装对象封装了 key-value 
+
+所有的类型都可以作为Key
+
+key只能有一个重复 value可以有很多个重复
+
+用put添加元素，用get（key）获取key键中的value
+
+
+
+```java
+package com.jl.map_;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Map_ {
+	public static void main(String[] args) {
+
+		HashMap hashMap = new HashMap();
+
+
+//		map总的kv可以是任何引用类型的数据，会封装到HashMap$Node 对象中
+
+//		常用String作为key，包括new Obj
+		//   Key - Value
+		hashMap.put("no1", "hsp");
+		hashMap.put("no2", "zwj");
+
+//	    会将hsp替换掉
+		hashMap.put("no1", "zsf");
+		hashMap.put("no3", "zsf");//NEW NODE
+
+		hashMap.put(null, null);
+		hashMap.put(null, "abc"); //等价替换
+
+		hashMap.put("no4", null);//NEW NODE
+		hashMap.put("no5", null);//NEW NODE
+//		k只能有一个，v能有很多个
+
+//		get方法 传入一个key 返回对应的value,
+//		key不能重复所以返回的value永远只有一个
+		System.out.println(hashMap.get("no2"));
+
+		System.out.println("hashMap" + hashMap);
+
+	}
+}
+
+```
+
+
+
+### Map接口的特点
+
+
+
+存放数据的key-value示意图：一对kv是放在一个node中的，是因为Node实现了Entry接口，有些是商业说 一对k-v就是一个Entry（如图） 
+
+Entry：
+
+将values放进Collection里，key放在KeySet里
+
+
+
+底层其实是指向了HashMap$Node，只是entry指向了这个对象
+
+​	
+
+### Map接口的常用方法
+
+
+
+put
+
+remove
+
+get 
+
+isEmpty
+
+clear
+
+containsKey
+
+containsValue
+
+
+
+
+
+```java
+package com.jl.map_;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@SuppressWarnings("all")
+public class MapMethod {
+	public static void main(String[] args) {
+
+//		演示map接口的常用方法
+		Map map = new HashMap();
+//		put 添加
+		map.put("sb7", new Book("", 100));
+		map.put("sb7", "sb8");
+		map.put("sb7", null);//替换
+		map.put("sb9", "sb8");
+		map.put(null, "sb10");
+//		remove 删除
+		map.remove(null, "sb10");//可以不填写value，只删除key下的value
+
+//		get 根据key获取value
+
+		//sb10
+		System.out.println(map.get("key=null,value=" + null));
+
+//		size 获取元素个数
+		System.out.println("k-v" + map.size());
+
+//		isEmpty 判断个数是否为零
+		System.out.println(map.isEmpty());//false
+
+//		clear 清除集合
+		map.clear();
+		System.out.println(map);
+
+//		containsKey 查询key
+        //containsValue 查询value
+		System.out.println(map.containsKey("sb7"));
+		System.out.println(map.containsValue("sb7"));
+		map.put("sb7", "sb7");
+		System.out.println(map.containsKey("sb7"));
+		System.out.println(map.containsValue("sb7"));
+
+		System.out.println("map: " + map);
+
+
+	}
+}
+
+class Book {
+	private String name;
+	private int price;
+
+	public Book(String name, int price) {
+		this.name = name;
+		this.price = price;
+	}
+}
+```
+
+
+
+
+
+### 遍历Map的几种方法
+
+
+
+重点：EntrySet
+
+
+
+```java
+package com.jl.map_;
+
+import java.util.*;
+
+public class MapFor {
+	public static void main(String[] args) {
+
+		//		演示map接口的常用方法
+		Map map = new HashMap();
+//		put 添加
+		map.put("sb7", new Book("", 100));
+		map.put("sb7", "sb8");
+		map.put("sb7", null);//替换
+		map.put("sb9", "sb8");
+		map.put(null, "sb10");
+
+//		第一组：先取出 所有的key 用过key 取出对应的value
+		System.out.println("先取出所有的key,用key取出对应的value:增强for");
+		System.out.println("第一组");
+		Set keyset = map.keySet();
+		for (Object key : keyset) {
+			System.out.println(key + "-" + map.get(key));
+		}
+
+
+//		二 迭代器
+		System.out.println("先取出所有的key,用key取出对应的value:迭代器");
+
+		Iterator iterator = keyset.iterator();
+		while (iterator.hasNext()) {
+			Object next = iterator.next();
+			System.out.println(next + "-" + map.get(next));
+		}
+
+//		第二组 把所有的value取出        迭代器 增强for 普通for
+		Collection values = map.values();
+		System.out.println("把所有的value取出:增强for");
+		for (Object value : values) {
+			System.out.println(value);
+		}
+
+
+		System.out.println("把所有的value取出:迭代器");
+		Iterator iterator2 = values.iterator();
+		while (iterator2.hasNext()) {
+			Object next = iterator2.next();
+			System.out.println(next);
+		}
+
+
+//		第三组 EntrySet 来获取k-v
+		Set set = map.entrySet();
+//		增强for
+		System.out.println("========EntrySet:增强for========");
+		for (Object key : set) {
+//			将entry转成mapEntry 向上转型
+			Map.Entry entry = (Map.Entry) key;
+			System.out.println(map.get(key) + "=" + entry.getValue());
+		}
+
+
+		System.out.println("========EntrySet:迭代器Iterator========");
+		Iterator iterator3 = set.iterator();
+		while (iterator3.hasNext()) {
+			Object next = iterator3.next();
+			Map.Entry entry = (Map.Entry) next;
+			System.out.println(entry.getKey() + "-" + entry.getValue());
+		}
+
+
+	}
+}
+
+```
+
+
+
+### 练习
+
+
+
+使用HashMap添加三个员工对象
+
+要求：
+
+key 员工id
+
+value 员工对象
+
+
+
+并遍历现实工资>18000的员工（遍历方式最少两种）
+
+员工类：姓名 工资 员工id
+
+
+
+k-v包装进Node里，把Node装进EntrySet中
+
+
+
+
+
+```java
+package com.jl.map_;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+
+public class MapExercise {
+	public static void main(String[] args) {
+
+		Map map = new HashMap();
+
+		map.put(1, new Employee(1, 1800, "tom"));
+		map.put(2, new Employee(2, 180000000, "jack"));
+		map.put(3, new Employee(3, 1800, "rose"));
+
+//		遍历
+//      第一种遍历方式
+		System.out.println("第一种遍历方式：");
+		Set keyset = map.keySet();
+		for (Object key : keyset) {
+//			先获取value
+			Employee o = (Employee) map.get(key);
+			if (o.getSal() > 18000) {
+				System.out.println(o);
+			}
+
+		}
+//		entrySet的迭代器
+		Set entrySet = map.entrySet();
+		Iterator itr = entrySet.iterator();
+		while (itr.hasNext()) {
+			Map.Entry entry = (Map.Entry) itr.next();
+			Employee o = (Employee) entry.getValue();
+			if (o.getSal() > 18000) {
+				System.out.println(o);
+			}
+		}
+
+		// EntrySet 的增强for
+		Set entrySet1 = map.entrySet();
+		for (Object obj : entrySet1) {
+			Map.Entry entry = (Map.Entry) obj;  // 先转换为 Entry
+			Employee o = (Employee) entry.getValue();  // 直接从 Entry 获取值
+			if (o.getSal() > 18000) {
+				System.out.println(o);
+			}
+		}
+
+
+	}
+}
+
+class Employee {
+	private int id;
+	private String name;
+	private double sal;
+
+	public Employee(int id, double sal, String name) {
+		this.id = id;
+		this.sal = sal;
+		this.name = name;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public double getSal() {
+		return sal;
+	}
+
+	public void setSal(double sal) {
+		this.sal = sal;
+	}
+
+	@Override
+	public String toString() {
+		return "Employee{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", sal=" + sal +
+				'}';
+	}
+}
+```
+
+
+
+### Map接口小结
+
+1. HashMap接口的常用实现类：HashMap，Hashtable，properties
+2. HashMap是Map接口使用频率最高的实现类。
+3. HashMap是以key-value对（HashMap$Node对象）的形式来存储数据。
+4. key不能重复，但value可以重复，k-v 允许使用null,null
+5. 如果添加相同的key，这会覆盖原来的key-value，等同于修改（key不会替换，val会替换）
+   1. 
+6. 与HashSet一样，不保证映射的顺序，因为底层是以Hash表的方式来存储的。(jdk8的HashMap底层 数组+链表+红黑树)
+7. HashMap没有实现同步，因为线程是不安全的。
+
+
+
+### HashMap底层机制及源码分析
+
+1. HashMap底层维护了Node类型的数组table，默认为null
+2. 当创建对象时，将加载因子（load factor）初始化为0.75
+3. 当添加k-v时，通过key的哈希值得到在table的索引，然后判断该索引出是否有元素。如果没有元素直接添加，如果该索引处有元素，继续判断该元素的key和准备加入的key是否相等，如果相等则直接替换value；如果不相等需要判断是树结构还是链表结构，做出相应处理。如果添加时发现容量不够，则需要扩容。
+4. 第一次添加，则需要扩容的table容量为16，临界值（threshold）为12（16*0.75）
+5. 以后再扩容，则需要扩容table容量为原来的2倍，临界值为原来的2倍，即24，以此类推。
+6. 在java*中，如果一条链表的元素个数超过（TREEIFY_THRESHOLD）默认是8，并且table的大小>=MIN_THRESHOLD_CAPACITY(默认64)，就会进行树化
+
+
+
+>  太复杂了看不懂
+>
+>  说实话，从最近的源码解读，我很多都看不懂，关于算法我都看得懵懵的。
+
+
+
+```java
+package com.jl.map_;
+
+import java.util.HashMap;
+
+public class HashMapSource1 {
+	public static void main(String[] args) {
+		HashMap map = new HashMap();
+		map.put("java", 10);//T
+		map.put("php", 20);//T
+		map.put("java", 20);//替换java 10
+		System.out.println("此时key=java，value=" + map.get("java"));
+
+		System.out.println(map);
+
+
+//		解读源码：
+		/*
+		1.  执行构造器 new HashMap();
+			初始化加载因子 loadfactor = 0.75
+			HashMap$Node[] table = null
+
+		2.  执行put 会调用hash()计算key的hash值  (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+			public V put(K key, V value) {  //key=java value=10
+	            return putVal(hash(key), key, value, false, true);
+	        }
+
+        3.  执行put value
+
+			
+			Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
+
+
+
+
+		 */
+	}
+}
+
+```
+
+
+
+```java
+package com.jl.map_;
+
+import java.util.HashMap;
+import java.util.Objects;
+
+public class HashMapSource02 {
+	public static void main(String[] args) {
+
+		HashMap hashMap = new HashMap();
+
+		for (int i = 0; i <= 12; i++) {
+
+			hashMap.put(new A(i), "hello");
+
+		}
+
+		System.out.println(hashMap);
+//		布置任务：设计代码，验证table的扩容机制。
+//		（0 -> 16（12）-> 32（24）-> 64（48）-> 96(96*0.75)）(0.75 加载因子
+
+	}
+}
+
+class A {
+	private int num;
+
+	public A(int num) {
+		this.num = num;
+	}
+
+	@Override
+	public int hashCode() {
+		return 100;
+	}
+
+	@Override
+	public String toString() {
+		return "A{" +
+				"num=" + num +
+				'}';
+	}
+}
+```
+
+
+
+
+
+## Table接口
+
+基本介绍
+
+1. 存放的元素是键值对即 k-v
+2. 键和值都不能为null，否则会抛出空指针异常NullPointerException
+3. 使用方法基本和hashMap一样
+4. 线程安全（syn），hashMap是线程不安全的
+5. 简单看一下底层结构
+
+
+
+### Hashtable的应用案例
+
+
+
+
+
+```java
+package com.jl.hashtable_;
+
+import java.util.Hashtable;
+
+@SuppressWarnings("all")
+public class HashTable_ {
+
+	public static void main(String[] args) {
+		Hashtable table = new Hashtable();
+
+		table.put("john", 100); //ok
+//		table.put(null, 200);
+
+		//Exception in thread "main" java.lang.NullPointerException
+		//	at java.util.Hashtable.put(Hashtable.java:465)
+		//	at com.jl.hashtable_.HashTable_.main(HashTable_.java:11)
+//		table.put("john", null);
+
+		//Exception in thread "main" java.lang.NullPointerException
+		//	at java.util.Hashtable.put(Hashtable.java:460)
+		//	at com.jl.hashtable_.HashTable_.main(HashTable_.java:15)
+		table.put("lucy", 100); //ok
+		table.put("link", 100); //ok
+		table.put("link1", 88);
+		table.put("link2", 88);
+		table.put("link3", 88);
+		table.put("link4", 88);
+		table.put("link5", 88);
+		table.put("link6", 88);
+		table.put("link7", 88);
+		table.put("link8", 88);
+
+
+		System.out.println(table);
+//		简单说明底层：
+//		1. 底层有数组 Hashtable$Entry[] 初始化大小为 11
+//		2. 临界值 threshold 8 = 11*0.75
+//		3. 扩容：按照自己的扩容机制进行即可
+//		4. 执行 方法 addEntry(haash,key,value,index);
+
+
+//		Hashtable类的继承与接口的实现
+//		public class Hashtable<K,V>
+//    extends Dictionary<K,V>
+//    implements Map<K,V>, Cloneable, java.io.Serializable
+
+
+	}
+}
+
+```
+
+
+
+
+
+## Map和table简单对比
+
+| 集合      | 初始版本 | 线程（同步） | 效率 | 允许null键null值 |
+| --------- | -------- | ------------ | ---- | ---------------- |
+| hashMap   | 1.2      | 不安全       | 高   | 可以             |
+| hashTable | 1.0      | 安全         | 低   | 不可以           |
+
+
+
+
+
+## Properties
+
+
+
+1. properties 类继承自hashtable类并且实现了Map接口，也是使用 键值对 的形式来保存数据 不过Properties有特殊的地方，就是它的键和值都是字符串类型。
+2. 他的使用特点和hashtable类似
+3. properties 还可以用于 从xxx.properties文件中，加载数据到properties对象并进行读取和修改
+4. 说明：工作后 xxx.properties通常用于配置文件，在IO流中举例
+
+
+
+```java
+package com.jl.map_;
+
+import java.util.Properties;
+
+public class Properties_ {
+
+	public static void main(String[] args) {
+
+		Properties p = new Properties();
+
+		p.put("john", 100);
+		p.put("lucy", 100);
+		p.put("lic", 100);
+		p.put("lic", 88);
+		p.put("jason", 100);
+
+		System.out.println(p);
+		System.out.println(p.getProperty("john"));//100
+
+	}
+}
+
+```
+
+
+
+## 总结
+
+开发中如何选择集合实现类：
+
+1. 判断存储的类型（一组对象或一组键值对）
+
+2. 一组对象：Collection接口
+
+   1. 允许重复：List
+
+      1. 增删多：LinkedList【底层维护了一个双向链表】
+      2. 改查多：ArrayList【底层维护了一个Object类型的可变数组】
+
+   2. 不允许重复：Set
+
+      1. 无序：HashSet【底层是HashMap，维护了一个哈希表：数组+链表+红黑树）】
+      2. 排序TreeSet
+      3. 插入和取出顺序一致：LinkedHashSet，维护了数组+双向链表
+
+   3. 一组键值对：Map
+
+      1. 键无序：HashMap【底层是哈希表 数组+链表+红黑树】
+      2. 键排序：TreeMap
+      3. 键插入和取出顺序一致：LinkedHashMap
+      4. 读取文件：Properties
+
+      
+
+```java
+package com.jl.set_;
+
+import java.util.Comparator;
+import java.util.TreeSet;
+
+public class TreeSet_ {
+	public static void main(String[] args) {
+//		1. 当我们使用无参构造器创建TreeSet时，仍然是无序的，
+//		2. 当希望添加的元素按照字符串大小来排序：
+//		3. 使用TreeSet提供的一个构造器，可以传入一个比较器（匿名内部类），
+//          指定排序规则：
+
+		//按字母表顺序
+		TreeSet treeSet = new TreeSet(new Comparator() {
+			@Override
+			public int compare(Object o1, Object o2) {
+
+				//调用方法 两个字符串字母表大小进行比较
+//				return ((String) o1).compareTo((String) o2);
+				//字符串长度从小到大
+				//其规则，如果长度相等，就不再比较，也不会添加
+				return ((String) o1).length() - ((String) o2).length();
+				//字符串长度从大到小
+//				return ((String) o2).length() - ((String) o1).length();
+			}
+		});
+
+		treeSet.add("john");
+		treeSet.add("sun");
+		treeSet.add("lucy");
+		treeSet.add("lic");
+		treeSet.add("lic");
+		treeSet.add("moon");
+		System.out.println(treeSet);
+	}
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+## Collections 工具类
+
+1. Collections 是一个操作set，list，map等集合的工具类
+2. Collections 中提供了一系列的静态方法对集合元素进行排序，查询，修改等操作
+
+
+
+### 排序
+
+1. reverse（List）：反转List中元素的顺序
+2. shuffle（List）：对List集合进行随机排序
+3. sort（List）：根据元素的自然顺序对指定的List集合元素按升序排序
+4. sort（List，Comparator）：根据Comparator产生的顺序对集合元素进行排序
+5. swap（List，int i，int j）：将指定list集合中的i元素和j元素进行调换（索引）
+
+
+
+演示：
+
+
+
+```java
+package com.jl.collection_;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public class Collections_ {
+	public static void main(String[] args) {
+
+		List list = new ArrayList();
+
+		list.add("jason");
+		list.add("kobe");
+		list.add("lwj");
+		list.add("xiaoqi");
+
+
+		Collections.reverse(list);
+		System.out.println("reverse-list=" + list);
+
+		Collections.shuffle(list);
+		System.out.println("shuffle-list=" + list);
+
+		Collections.sort(list);
+		System.out.println("sort-list=" + list);
+		Collections.sort(list, new Comparator() {
+			@Override
+			public int compare(Object o1, Object o2) {
+				if (o1 instanceof String) {
+				}
+				return ((String) o2).length() - ((String) o1).length();
+			}
+		});
+
+
+		//compare() 方法的返回值决定了排序顺序：
+		//返回值	含义	顺序:从前往后遍历，o1<o2 o1在前，o1>o2 o2在前
+		//负数 (<0)	o1 < o2	o1 排在 o2 前面
+		//0	o1 = o2	顺序不变
+		//正数 (>0)	o1 > o2	o1 排在 o2 后面
+
+		System.out.println("sortComparator-list=" + list);
+
+
+		Collections.swap(list, 1, 2);//索引范围不能超过数组长度，否则报错越界异常IndexOutOfBoundException
+		System.out.println("swap-list=" + list);
+
+	}
+}
+
+
+```
+
+
+
+运行结果：
+
+```terminal
+reverse-list=[xiaoqi, lwj, kobe, jason]
+shuffle-list=[xiaoqi, kobe, jason, lwj]
+sort-list=[jason, kobe, lwj, xiaoqi]
+sortComparator-list=[xiaoqi, jason, kobe, lwj]
+swap-list=[xiaoqi, kobe, jason, lwj]
+```
+
+
+
+### 查找 替换
+
+
+
+
+
+```java
+package com.jl.collection_;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public class Collections02_ {
+	public static void main(String[] args) {
+		List list = new ArrayList();
+		list.add("jason");
+		list.add("endfield");
+		list.add("lucy");
+		list.add("endfield");
+		list.add("tom");
+		list.add("V");
+		list.add("endfield");
+
+		Object maxlist = Collections.max(list);
+		System.out.println("max(list)=" + maxlist);
+
+
+		Object maxlistC = Collections.max(list, new Comparator() {
+			//字符串长度最长
+			@Override
+			public int compare(Object o1, Object o2) {
+				if (o1 instanceof String) {
+				}
+				return ((String) o1).length() - ((String) o2).length();
+			}
+		});
+		System.out.println("maxC(list)=" + maxlistC);
+
+//		list中元素o出现的次数
+		Object frequencyList = Collections.frequency(list, "endfield");
+		System.out.println("frequencyList(list)=" + frequencyList);
+
+
+//		copy
+		List list1 = new ArrayList();
+//		copy计算数组大小，如果数组空余为0 则抛出异常
+//		为了完成一个完整的copy,需要为list的index进行占位，防止越界
+		for (int i = 0; i < list.size(); i++) {
+			list1.add("");
+		}
+		Collections.copy(list1, list);
+		System.out.println("copylist.list=" + list);
+		System.out.println("copylist.list1=" + list1);
+
+
+//		replace 替换
+		Collections.replaceAll(list, "tom", "TOM");
+		System.out.println("replaceAll(list, tom)=" + list);
+	}
+}
+
+```
+
+
+
+
+
+```terminal
+max(list)=tom
+maxC(list)=endfield
+frequencyList(list)=3
+copylist.list=[jason, endfield, lucy, endfield, tom, V, endfield]
+copylist.list1=[jason, endfield, lucy, endfield, tom, V, endfield]
+replaceAll(list, tom)=[jason, endfield, lucy, endfield, TOM, V, endfield]
+```
+
+
+
+
+
+
+
+## 练习
+
+![image-20260524162743132](D:\Typora\TyporaPics\image-20260524162743132.png)
+
+
+
+> 为数不多没有查答案复制粘贴就写出来的,hsp用了方法,我直接用了,因为也没考虑复用
+
+
+
+```java
+package com.jl.homework_;
+
+import java.util.*;
+
+public class h1 {
+
+	public static void main(String[] args) {
+
+		News news1 = new News("新冠确诊病例超干万，数百万印度教信徒赴恒河“圣浴”引民众担忧");
+		News news2 = new News("男子突然想起2个月前钓的鱼还在网兜里，捞起一看赶紧放生");
+
+		List list = new ArrayList();
+		list.add(news1);
+		list.add(news2);
+		System.out.println("新闻列表" + list);
+
+//		反转ArrayList
+		Collections.reverse(list);
+//		迭代器遍历
+		Iterator iterator = list.iterator();
+		while (iterator.hasNext()) {
+			Object next = iterator.next();
+			News newst = (News) next;
+//			将标题改为15个字之后变成...
+//			思考：判断条件，如果newst.getTitle().length()>=15，
+			if (newst.getTitle().length() >= 15) {
+//				得到对象中的标题属性，将标题属性获得一个子串为0-15区间,
+				String TempList = newst.getTitle().substring(0, 15);
+//				输出字符串+... 换行
+				System.out.println(TempList + "...");
+
+//			否则输出标题（标题长度<15）
+			} else {
+				System.out.println(newst.getTitle());
+			}
+		}
+	}
+}
+
+class News {
+	private String title;
+	private String content;
+
+	public News(String title) {
+		this.title = title;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	@Override
+	public String toString() {
+		return this.title;
+	}
+}
+```
+
+
+
+
+
+
+
+![image-20260524171022630](D:\Typora\TyporaPics\image-20260524171022630.png)
+
+```java
+package com.jl.homework_;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public class h2 {
+	public static void main(String[] args) {
+
+
+		Car car1 = new Car("rose", 99999);
+		Car car2 = new Car("lucy", 1111111);
+
+		List list = new ArrayList();
+//		add
+		list.add(car1);
+		list.add(car2);
+		System.out.println("添加car1,car2=" + list);
+//		remove
+		list.remove(car1);
+		System.out.println("删除了car1" + list);
+//		contains
+		boolean contains = list.contains(car1);
+		System.out.println("是否含有car1=" + contains);
+//		size
+		System.out.println("元素数量=" + list.size());
+//		isEmpty
+		boolean isEmpty = list.isEmpty();
+		System.out.println("是否为空=" + list.isEmpty());
+//		clear
+		list.clear();
+		System.out.println("clear后的数组=" + list);
+//		addAll
+		List src = new ArrayList();
+		src.add(car1);
+		src.add(car2);
+		list.addAll(src);
+		System.out.println("添加多个元素(Car1,Car2)后的list=" + list);
+//		removeAll
+		list.removeAll(src);
+		System.out.println("删除多个元素(Car1,Car2)后的list=" + list);
+
+		//		add测试car1car2
+		list.add(car1);
+		list.add(car2);
+		System.out.println("添加car1,car2=" + list);
+
+//		增强for遍历list
+		System.out.println("增强for遍历list");
+		for (Object o : list) {
+			Car car = (Car) o;
+			System.out.println(car);
+		}
+
+		System.out.println("迭代器Iterator遍历list");
+		Iterator itr = list.iterator();
+		while (itr.hasNext()) {
+			Car car = (Car) itr.next();
+			System.out.println(car);
+		}
+
+
+	}
+}
+
+class Car {
+	private String name;
+	private double price;
+
+	public Car(String name, double price) {
+		this.name = name;
+		this.price = price;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	@Override
+	public String toString() {
+		return "Car{" +
+				"name='" + name + '\'' +
+				", price=" + price +
+				'}';
+	}
+}
+```
+
+
+
+
+
+
+
+![image-20260524172150545](D:\Typora\TyporaPics\image-20260524172150545.png)
+
+
+
+
+
+```java
+package com.jl.homework_;
+
+import java.util.*;
+
+public class h3 {
+	public static void main(String[] args) {
+		Map m = new HashMap();
+		m.put("jack", 650);
+		m.put("tom", 1200);
+		m.put("smith", 2900);
+
+//      修改jack的工资为2600;
+		m.put("jack", 2600);
+
+//		为所有员工加薪100元;
+		System.out.println("为所有员工加薪100元（entrySet）");
+		Set map = m.entrySet();
+		for (Object o : map) {
+			Map.Entry e = (Map.Entry) o;
+			Integer i = (Integer) e.getValue() + 10;
+			e.setValue(i);
+
+			System.out.println(m);
+
+		}
+//		keySet
+		System.out.println("为所有员工加薪100元（keySet）");
+		Set set = m.keySet();
+		for (Object key : set) {
+			m.put(key, (Integer) m.get(key) + 100);
+			System.out.println(m);
+		}
+
+//		遍历集合中所有的员工
+		System.out.println("遍历所有员工(增强for)");
+		for (Object o : map) {
+			Map.Entry e = (Map.Entry) o;
+			System.out.println(e.getKey());
+		}
+
+//		遍历集合中所有的工资
+		System.out.println("遍历所有工资(迭代器)");
+
+		Iterator it = map.iterator();
+		while (it.hasNext()) {
+			Map.Entry next = (Map.Entry) it.next();
+			System.out.println(next.getKey() + "=" + next.getValue());
+			
+		}
+	}
+}
+
+```
+
+
+
+
+
+简答题: HashSet和TreeSet分别如何实现去重
+
+```text
+HashSet先判断HashCode，再判断equals，如果hashcode不同他们两个元素就肯定不同，就不会再判断equals。
+TreeSet看调用方法的返回值compare、compareTo，如果是0则认为这两个元素是重复的，如果不为0则认为两个元素不同
+```
+
+
+
+代码分析题: 什么原因出现了异常
+
+```java
+package com.jl.homework_;
+
+import java.util.TreeSet;
+
+@SuppressWarnings("all")
+public class h5 {
+	public static void main(String[] args) {
+		TreeSet treeSet = new TreeSet();
+		treeSet.add(new Person());
+	}
+}
+
+class Person {
+
+}
+```
+
+
+
+```java
+//TreeSet构造器中没有传入Comparator接口的匿名内部类
+//在底层会把Person转成Comparable类型
+//会爆出ClassCastException异常
+//解决这个问题:实现Comparable接口,重写compareTo方法
+
+class Person implements Comparable {
+	@Override
+	public int compareTo(Object o) {
+		return 0;
+	}
+}
+```
+
+
+
+
+
+6.下面的代码输出什么?Homework06.java 5min/老韩提示:这道题很有意思，稍不注意就掉进陷阱.已知:Person类按照id和name重写了hashCode和equals方法，问下面代码输出什么?
+
+```java
+	HashSet set = new HashSet();
+	Person p1 = new Person(1001,"AA");
+	Person p2 = new Person(1002,"BB");
+	set.add(p1);
+	set.add(p2);
+	p1.name = "CC";
+	set.remove(p1);
+	System.out.println(set);
+	set.add(new Person(1001,"CC"));
+	System.out.println(set);
+	set.add(new Person(1001,"AA"));
+	System.out.println(set);
+```
+
+
+
+```terminal
+[Person1{num=1002, name='BB'}, Person1{num=1001, name='CC'}]
+// p2 和 修改后的 p1 都在集合中
+[Person1{num=1002, name='BB'}, Person1{num=1001, name='CC'}, Person1{num=1001, name='CC'}]
+// 注意：两个 (1001, "CC") 都存在！
+// 一个是原来的 p1（在老位置），一个是新对象（在新位置）
+[Person1{num=1002, name='BB'}, Person1{num=1001, name='CC'}, Person1{num=1001, name='CC'}, Person1{num=1001, name='AA'}]
+// 集合中有4个元素
+```
+
+
+
+**HashSet 存储位置由 add 时的 hashCode 决定**，后续修改对象属性不会改变存储位置
+
+**remove 时用当前的 hashCode 找位置**，可能找不到实际存储的对象
+
+**没有重写 hashCode/equals**：默认用地址，不同对象就算内容相同也不算重复
+
+**不要修改已加入 HashSet 的对象的属性**，否则会导致内存泄漏（删不掉、重复添加）
+
+
+
+
+
+
+
+比较Vector和ArrayList
+
+
+
+|           |          |        |               |                                          |
+| --------- | -------- | ------ | ------------- | ---------------------------------------- |
+| ArrayList | 可变数组 | jdk1.2 | 不安全        | 有参构造器10,后续1.5倍<br />无参1.5倍    |
+| Vector    | 可变数组 | 1.0    | 安全,效率不高 | 无参默认10,满后2倍扩容,指定大小后每次2倍 |
+
+
+
+
+
+# 泛型
+
+
+
+
+
+1. 编写程序,在ArrayList中,添加三个Dog对象
+2. Dog对象含有name,age,并输出name,age,要求使用getname
+
+传统方法:
+
+
+
+```java
+package com.jl.generic;
+
+import java.util.ArrayList;
+
+public class Generic01 {
+	public static void main(String[] args) {
+		ArrayList list = new ArrayList();
+		list.add(new Dog("黄", 10));
+		list.add(new Dog("黑", 8));
+		list.add(new Dog("白", 4));
+		list.add(new Cat("白", 4));
+
+//		假如加入一只猫，会导致转型出异常
+
+//      Exception in thread "main" java.lang.ClassCastException:
+//      com.jl.generic.Cat cannot be cast to com.jl.generic.Dog
+		for (Object o : list) {
+			Dog dog = (Dog) o;
+			System.out.println(dog.getName() + "+" + dog.getAge());
+		}
+
+	}
+}
+
+class Dog {
+	private String name;
+	private int age;
+
+	public Dog(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+}
+class Cat {
+	private String name;
+	private int age;
+
+	public Cat(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+}
+```
+
+
+
+传统方法不能对添加到集合ArrayList中的数据类型进行约束
+
+遍历时需要类型转换,如果集合中的数据量大,对效率有影响
+
+
+
+**泛型**
+
+`ArrayList<Dog> list = new ArrayList<Dog>();`
+
+在加入了泛型的概念之后,原来的遍历就不需要将存入的数据类型先转型成 `Object` ,再在循环内转型成该类型,可以直接使用其类型的方法
+
+```java
+		for (Dog o : list) {
+			System.out.println(o.getName() + "-" + o.getAge());
+		}
+```
+
+
+
+```java
+package com.jl.generic.improve;
+
+import java.util.ArrayList;
+
+public class Generic02 {
+	public static void main(String[] args) {
+		ArrayList<Dog> list = new ArrayList<Dog>();
+//		添加了泛型，则指定添加到集合中的类型是Dog类型
+		list.add(new Dog("黄", 10));
+		list.add(new Dog("黑", 8));
+		list.add(new Dog("白", 4));
+
+//		如果编译器发现添加的类型不满足要求，就会报错
+//		list.add(new Cat("123", 123));
+//		在遍历的时候，可以直接取出Dog类型
+		System.out.println("=====使用泛型的方法遍历=====");
+		for (Dog o : list) {
+			System.out.println(o.getName() + "-" + o.getAge());
+		}
+
+	}
+}
+
+class Dog {
+	private String name;
+	private int age;
+
+	public Dog(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+}
+
+class Cat {
+	private String name;
+	private int age;
+
+	public Cat(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+}
+```
+
+
+
+泛型介绍:
+
+`int a = 10;`
+
+泛型又称参数化类型,解决数据类型的安全问题,
+
+他可以保证如果在程序在编译时没有发出警告,运行时就不会产生.
+
+`public class ArrayList<E>{}`
+
+其中`E`就是泛型
+
+
+
+## 泛型的声明
+
+`interface 接口<T>`
+
+`class<K,V,M>`
+
+
+
+说明：
+
+1. 其中，TKV都不代表值，而是代表类型
+2. 任意字母都可以。常用T表示，是Type的缩写
+
+
+
+## 泛型的实例化
+
+
+
+要在类名后面指定类型参数的值（类型）。如：
+
+`List<String> strList = new ArrayList<String>();`
+
+![image-20260525212047101](D:\Typora\TyporaPics\image-20260525212047101.png)
+
+
+
+```java
+package com.jl.generic;
+
+import java.util.*;
+
+
+public class GenericExercise {
+	public static void main(String[] args) {
+
+		System.out.println("========HashSet & Iterator========");
+
+		HashSet<Student> list = new HashSet<Student>();
+
+		list.add(new Student("student1", 18));
+		list.add(new Student("student2", 15));
+		list.add(new Student("student3", 74));
+
+
+		Iterator<Student> itr = list.iterator();
+		while (itr.hasNext()) {
+			Student next = itr.next();
+			System.out.println(next);
+		}
+
+		System.out.println("========HashMap & Map.Entry & Iterator========");
+
+
+		HashMap<String, Student> map = new HashMap<>();
+
+		map.put("student1", new Student("student1", 18));
+		map.put("student2", new Student("student2", 15));
+		map.put("student3", new Student("student3", 74));
+
+//		迭代器 EntrySet,取出类型为Map.Entry类型的，其有两个参数为String和Student K，V
+		Set<Map.Entry<String, Student>> entries = map.entrySet();
+		Iterator<Map.Entry<String, Student>> iterator = entries.iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<String, Student> next = iterator.next();
+			System.out.println(next);
+		}
+
+
+	}
+}
+
+class Student<T> {
+	private String name;
+	private int age;
+
+	public Student(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return "Student{" +
+				"name='" + name + '\'' +
+				", age=" + age +
+				'}';
+	}
+}
+```
+
+
+
+
+
+>  记得Map没有iterable接口，不能直接调用迭代器，需要用Map.Entry调用。
+
+
+
+## 泛型细节
+
+
+
+```java
+		ArrayList<Integer> integers = new ArrayList<>();//OK
+//		ArrayList<int> ints = new ArrayList<int>();
+//      不行，泛型需要使用引用类型不能是基本数据类型
+		
+```
+
+
+
+```java
+package com.jl.generic;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class GenericDetails {
+	public static void main(String[] args) {
+
+		ArrayList<Integer> integers = new ArrayList<>();//OK
+//		ArrayList<int> ints = new ArrayList<int>();
+//      不行，泛型需要使用引用类型不能是基本数据类型
+
+
+		//指定A作为泛型,Pig类中的E泛型也被指定为A，Pig类中的e属性也被泛型指定为A
+		Pig<A> aPig = new Pig<A>(new A());
+		aPig.f();
+//		除非 B继承A B自然继承了A的所有泛型，其在创建A泛型时也可以添加B对象
+		Pig<A> aPig2 = new Pig<A>(new B());
+		aPig2.f();
+
+//		泛型的使用形式
+		ArrayList<Integer> integers1 = new ArrayList<>();
+		List<Integer> integers2 = new ArrayList<Integer>();
+//		实际开发中，通常使用简写，其运行类型会推断
+		List<Integer> integers3 = new ArrayList<>();
+
+		//		<>默认泛型是Object
+		ArrayList arrayList = new ArrayList();
+//		等价于
+//		ArrayList<Object> arrayList = new ArrayList<>();
+
+
+		Tiger objectTiger = new Tiger();
+	}
+}
+
+class Tiger<E> {
+	E e;
+
+	public Tiger() {
+	}
+
+	public Tiger(E e) {
+		this.e = e;
+	}
+}
+
+class A {
+}
+
+class B extends A {
+}
+
+class Pig<E> {
+	E e;
+
+	public Pig(E e) {
+		this.e = e;
+	}
+
+	public void f() {
+		System.out.println(e);
+	}
+}
+
+```
+
+
+
+
+
+## 练习
+
+![8f7fc4b7-fccb-4488-a851-085470c63c53](D:\Typora\TyporaPics\8f7fc4b7-fccb-4488-a851-085470c63c53.png)
+
+
+
+```java
+package com.jl.generic;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Objects;
+
+public class GenericExercise2 {
+	/*
+	 * 定义Employe 类
+	 * 1) 该类包含:private成员变量name,sal,birthday,其中 birthday 为 MyDate 类的对象
+	 * 2)为每一个属性定义getter,setter方法;
+	 * 3)重 toString 方法输出 name, sal, birthday
+	 * 4) MyDate类包含:private成员变量month,day,year;并为每一个属性定义 getter,.setter方法;
+	 * 5)创建该类的3个对象，并把这些对象放入ArrayList集合中(ArrayList 需使用泛型来定义)，
+	 * 对集合中的元素进行排序，并遍历输出:排序方式:调用ArrayList的 sort 方法，
+	 * 传入Comparator对象[使用泛型]，先按照name排序，如果name相同，则按生日日期的先后排序。
+	 * 【即:定制排序】有一定难度，比较经典泛型使用案例*/
+
+
+	public static void main(String[] args) {
+//		创建员工对象
+		Employee employee = new Employee("cool", 2000, new MyDate(2016, 3, 8));
+		Employee employee1 = new Employee("tom", 2800, new MyDate(2004, 4, 18));
+		Employee employee2 = new Employee("jason", 2000, new MyDate(2003, 12, 21));
+		Employee employee3 = new Employee("jason", 2000, new MyDate(2003, 1, 21));
+		Employee employee4 = new Employee("tom", 2000, new MyDate(2004, 12, 19));
+//		创建数组
+		ArrayList<Employee> employees = new ArrayList<>();
+//		添加对象到数组
+		employees.add(employee);
+		employees.add(employee1);
+		employees.add(employee2);
+		employees.add(employee3);
+		employees.add(employee4);
+//		排序
+		employees.sort(new Comparator<Employee>() {
+			@Override
+			public int compare(Employee o1, Employee o2) {
+				// 先按名字排序
+				int nameCompare = o1.getName().compareTo(o2.getName());
+
+				// 如果名字不同，直接返回名字比较结果
+				if (nameCompare != 0) {
+					return nameCompare;
+				}
+
+				// 比较生日
+				return o1.getBirthday().compareTo(o2.getBirthday());
+			}
+		});
+
+		System.out.println(employees);
+
+	}
+}
+
+class Employee {
+	private String name;
+	private double sal;
+	private MyDate birthday;
+
+	public Employee(String name, double sal, MyDate birthday) {
+		this.name = name;
+		this.sal = sal;
+		this.birthday = birthday;
+	}
+
+	public MyDate getBirthday() {
+		return birthday;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Employee)) return false;
+		Employee employee = (Employee) o;
+		return Double.compare(sal, employee.sal) == 0 && Objects.equals(getName(), employee.getName()) && Objects.equals(birthday, employee.birthday);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getName(), sal, birthday);
+	}
+
+	@Override
+	public String toString() {
+		return "{" + "姓名='" + name + '\'' + ", 生日=" + birthday + '}';
+	}
+}
+
+//	MyDate类
+class MyDate implements Comparable<MyDate> {
+	private int year;
+	private int month;
+	private int day;
+
+	public MyDate(int year, int month, int day) {
+		this.year = year;
+		this.month = month;
+		this.day = day;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof MyDate)) return false;
+		MyDate myDate = (MyDate) o;
+		return year == myDate.year && month == myDate.month && day == myDate.day;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(year, month, day);
+	}
+
+
+	@Override
+	public String toString() {
+		return year + "年" + month + "月" + day + "日";
+	}
+
+	@Override
+	public int compareTo(MyDate o) {
+		// 先比较年
+		int yearCompare = this.year - o.year;
+		if (yearCompare != 0) {
+			return yearCompare;
+		}
+
+		// 年相同，比较月
+		int monthCompare = this.month - o.month;
+		if (monthCompare != 0) {
+			return monthCompare;
+		}
+
+		// 年月都相同，比较日
+		return this.day - o.day;
+	}
+}
+
+```
+
+
+
+> 封装后,可维护性和复用性就大大提高.
+
+
+
+## 自定义泛型
+
+基本语法:
+
+`class 类名<T,R,M,X,Y,Z...>` 表示可以有多个泛型
+
+细节:
+
+1. 普通成员可以使用泛型(属性,方法)
+2. 使用泛型的数组,不能初始化
+3. 静态方法中不能使用类的泛型
+4. 泛型类的类型,是在创建对象时确定的
+5. 如果在创建对象时,没有指定类型,默认为`Object`
+
+
+
+
+
+
+
+
+
+
+
+### 自定义泛型类
+
+```java
+package com.jl.generic.customgeneric;
+
+public class CustomGeneric_ {
+	public static void main(String[] args) {
+
+		Tiger<Double,String,Integer> g = new Tiger<>("john");
+		g.setT(2000.12);
+
+
+	}
+}
+
+// 把Tiger当做泛型类,泛型一般标识符为 单个大写 Single Upper Letter
+class Tiger<T, R, V> {
+
+	String name;
+	R r;
+	T t;
+	V v;
+
+	//  不知道开辟多大空间,没有规定类型,所以不能初始化
+	//	T [] ts = new T[8];
+	// 	"Type parameter 'T' cannot be instantiated directly"
+
+
+
+
+	// 类的加载在前面,在类加载的时候 没有定义泛型,static 不知道R是什么类型. 顺序问题
+	//	public static void m1(R r) {}
+	// 'com.jl.generic.customgeneric.Tiger.this' cannot be referenced from a static context
+
+
+	public Tiger(String name) {
+		this.name = name;
+	}
+
+	public Tiger(R r, T t, V v) {
+		this.r = r;
+		this.t = t;
+		this.v = v;
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public R getR() {
+		return r;
+	}
+
+	public void setR(R r) {
+		this.r = r;
+	}
+
+	public T getT() {
+		return t;
+	}
+
+	public void setT(T t) {
+		this.t = t;
+	}
+
+	public V getV() {
+		return v;
+	}
+
+	public void setV(V v) {
+		this.v = v;
+	}
+}
+```
+
+
+
+> 此处题目出的一般我就没写
+
+
+
+### 自定义泛型接口
+
+`interface 接口名<T,R..>{}`
+
+
+
+细节:
+
+1. 接口中,静态成员也不能使用泛型(泛型类的规定一致)
+2. 泛型接口的类型,在继承接口或者实现接口时确定
+3. 没有指定类型,默认为Object
+
+
+
+```java
+
+```
+
+```
+package com.jl.generic.customgeneric;
+
+import java.io.Serializable;
+
+public class CustomInterface {
+    public static void main(String[] args) {
+
+    }
+}
+class BB implements IUsb<Integer,Float> {
+
+    @Override
+    public Float get(Integer integer) {
+       return 0f;
+    }
+
+    @Override
+    public void hi(Float aFloat) {
+
+    }
+
+    @Override
+    public void run(Float r1, Float r2, Integer u1, Integer u2) {
+
+    }
+}
+interface IUsb<U, R> {
+
+
+    R get(U u);
+
+    void hi(R r);
+
+    void run(R r1, R r2, U u1, U u2);
+
+    default R method(U u) {
+       return null;
+    }
+}
+```
+
+
+
+### 自定义泛型方法
+
+
+
+`修饰符 <T,R>返回类型 方法名(参数列表){}`
+
+`public <T,R>String f1(T t,R r){}`
+
+1. 泛型方法可以定义在普通类中,可以定义在泛型类中
+2. 当泛型方法被调用时,类型会确定
+3. public void eat(E e){},修饰符后没有<T,R> eat方法不是泛型方法,而是使用了泛型
+
+
+
+```java
+package com.jl.generic.customgeneric;
+
+
+import java.util.ArrayList;
+
+public class CustomMethodGeneric {
+	public static void main(String[] args) {
+
+		Car car = new Car();
+//		调用方法时传入参数，编译器自行确定对应的类型
+		car.m2("宝马", 100);
+		System.out.println("=======");
+		car.m2(300, 100.1);
+
+		System.out.println("============================");
+
+
+		Fish<String, ArrayList> arrayListStringFish = new Fish<>();
+		arrayListStringFish.fly(new ArrayList<>(), "10000");
+	}
+}
+
+class Car { //普通类
+	public void m1() {
+	}
+
+	//泛型方法
+	public <T, R> void m2(T t, R r) {
+		System.out.println(t.getClass());
+		System.out.println(r.getClass());
+	}
+}
+
+class Fish<T, R> {//泛型类
+
+	//普通方法
+	public void run() {
+	}
+
+	//	泛型方法
+	public <U, M> void eat(U u, M m) {
+	}
+
+	public <K> void fly(K k, T t) {
+		System.out.println(k.getClass());
+		System.out.println(t.getClass());
+	}
+}
+```
+
+
+
+
+
+### 练习
+
+
+
+```java
+package com.jl.generic.customgeneric;
+
+public class CustomE1 {
+	public static void main(String[] args) {
+
+		Apple<String, Integer, Double> apple = new Apple<>();
+		apple.fly(10);  //Integer
+		apple.fly(new Dog());//Dog
+	}
+}
+
+class Apple<T, R, M> {
+	public <E> void fly(E e) {
+		System.out.println(e.getClass().getSimpleName());
+	}
+
+	public <U> void eat(U u) {
+	}
+
+	public void run(M m) {
+	}
+}
+
+class Dog {
+}
+```
+
+
+
+
+
+## 泛型继承和通配符
+
+
+
+1. 泛型不具有继承性
+2. `<?>` 支持任意泛型类型
+3. <? extends A> 支持A类以及A的子类,规定了泛型的上线
+4. <? super A>支持A类以及A类的父类,不限于直接父类,规定了泛型的下限
+
+
+
+
+
+## Junit 单元测试类
+
+
+
+> 不是很懂意义,老师也只是提了一嘴
+
+
+
+
+
+```java
+package com.jl.generic.hm;
+
+import org.junit.Test;
+
+import java.util.*;
+
+
+public class h1 {
+
+	public static void main(String[] args) {
+
+
+	}
+
+	@Test
+	public void testList() {
+		DAO<User> DAO = new DAO<>();
+		DAO.save("001", new User(1, 10, "jack"));
+		DAO.save("002", new User(2, 53, "jack"));
+		DAO.save("003", new User(3, 73, "jack"));
+		DAO.save("004", new User(4, 523, "jack"));
+		DAO.save("005", new User(5, 48, "jack"));
+
+		List<User> list = DAO.list();
+
+		System.out.println(list);
+
+
+	}
+}
+
+class DAO<T> {
+	Map<String, T> map = new HashMap();
+
+
+	public void save(String id, T entity) {
+		map.put(id, entity);
+	}
+
+
+	public T get(String id) {
+		return map.get(id);
+	}
+
+
+	public void update(String id, T entity) {
+		map.put(id, entity);
+	}
+
+
+	public List<T> list() {
+		ArrayList<T> list = new ArrayList<>();
+		Set<String> keys = map.keySet();
+		for (String key : keys) {
+			list.add(map.get(key));
+		}
+		return list;
+	}
+
+
+	public void delete(String id) {
+		Iterator<Map.Entry<String, T>> it = map.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, T> entry = it.next();
+			if (entry.getValue().equals(id)) {
+				it.remove();
+			}
+		}
+	}
+
+
+}
+
+class User {
+	private int id;
+	private int age;
+	private String name;
+
+	public User(int id, int age, String name) {
+		this.id = id;
+		this.age = age;
+		this.name = name;
+	}
+
+
+	@Override
+	public String toString() {
+		return "User{" +
+				"id=" + id +
+				", age=" + age +
+				", name='" + name + '\'' +
+				'}';
+	}
+}
+
+
+```
+
+
+
