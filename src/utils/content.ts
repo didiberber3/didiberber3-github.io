@@ -1,98 +1,154 @@
-import { noteDates } from 'virtual:content-dates'
+// Virtual module provided by Vite plugin — types declared in vite-env.d.ts
+import { noteMeta, shareMeta } from 'virtual:content-index'
 import { renderMarkdown, parseFrontmatter, extractTOC, type TocItem } from './markdown'
 
-export interface Note {
+/* ===== Types ===== */
+
+export interface NoteMeta {
   slug: string
   title: string
   date: string
+  category: string
+}
+
+export interface Note extends NoteMeta {
   content: string
   html: string
   toc: TocItem[]
 }
 
-export interface Share {
+export interface ShareMeta {
   slug: string
   title: string
   date: string
-  url: string
   tag: string
+  url: string
+}
+
+export interface Share extends ShareMeta {
   content: string
   html: string
   toc: TocItem[]
 }
 
-// Vite import.meta.glob — eager imports at build time
+/* ===== Lazy globs ===== */
+
 const noteModules = import.meta.glob('/content/notes/**/*.md', {
   query: '?raw',
   import: 'default',
-  eager: true,
-}) as Record<string, string>
+}) as Record<string, () => Promise<string>>
 
 const shareModules = import.meta.glob('/content/shares/**/*.md', {
   query: '?raw',
   import: 'default',
-  eager: true,
-}) as Record<string, string>
+}) as Record<string, () => Promise<string>>
+
+/* ===== Helpers ===== */
 
 function slugFromPath(filepath: string): string {
-  return filepath
-    .replace(/\\/g, '/')
-    .split('/')
-    .pop()!
-    .replace(/\.md$/, '')
+  return filepath.replace(/\\/g, '/').split('/').pop()!.replace(/\.md$/, '')
+}
+
+function categoryFromPath(filepath: string): string {
+  const normalized = filepath.replace(/\\/g, '/')
+  const parts = normalized.split('/')
+  // Find 'notes' segment; the next segment is the category
+  const notesIdx = parts.indexOf('notes')
+  if (notesIdx >= 0 && notesIdx + 1 < parts.length) {
+    return parts[notesIdx + 1]
+  }
+  return ''
 }
 
 function titleFromSlug(slug: string): string {
-  // contains non-ASCII (Chinese) → use as-is
   if (/[^\x00-\x7F]/.test(slug)) return slug
-  // ASCII only: "uu-jiasuqi" → "Uu Jiasuqi"
   return slug
     .split('-')
     .map((s) => (s.length > 0 ? s[0].toUpperCase() + s.slice(1) : s))
     .join(' ')
 }
 
-export function getAllNotes(): Note[] {
-  const notes = Object.entries(noteModules).map(([path, raw]) => {
+/* ===== Sync: metadata only (no .md content loaded) ===== */
+
+export function getNoteList(): NoteMeta[] {
+  const list = Object.keys(noteModules).map((path) => {
     const slug = slugFromPath(path)
-    const title = titleFromSlug(slug)
-    const date = noteDates[slug] || ''
-    const html = renderMarkdown(raw)
-    const toc = extractTOC(html)
-    return { slug, title, date, content: raw, html, toc }
-  })
-
-  notes.sort((a, b) => b.date.localeCompare(a.date))
-  return notes
-}
-
-export function getNote(slug: string): Note | undefined {
-  return getAllNotes().find((n) => n.slug === slug)
-}
-
-export function getAllShares(): Share[] {
-  const shares = Object.entries(shareModules).map(([path, raw]) => {
-    const slug = slugFromPath(path)
-    const { frontmatter, content } = parseFrontmatter(raw)
-    const title = titleFromSlug(slug)
-    const html = renderMarkdown(content)
-    const toc = extractTOC(html)
+    const meta = noteMeta[slug]
     return {
       slug,
-      title,
-      date: frontmatter.date || '',
-      url: frontmatter.url || '',
-      tag: frontmatter.tag || '',
-      content,
-      html,
-      toc,
+      title: meta?.title || titleFromSlug(slug),
+      date: meta?.date || '',
+      category: categoryFromPath(path),
     }
   })
-
-  shares.sort((a, b) => b.date.localeCompare(a.date))
-  return shares
+  list.sort((a, b) => b.date.localeCompare(a.date))
+  return list
 }
 
-export function getShare(slug: string): Share | undefined {
-  return getAllShares().find((s) => s.slug === slug)
+export function getCategories(): string[] {
+  const cats = new Set<string>()
+  for (const path of Object.keys(noteModules)) {
+    const cat = categoryFromPath(path)
+    if (cat) cats.add(cat)
+  }
+  return Array.from(cats).sort()
+}
+
+export function getNotesByCategory(category: string): NoteMeta[] {
+  return getNoteList().filter((n) => n.category === category)
+}
+
+export function getShareList(): ShareMeta[] {
+  const list = Object.keys(shareModules).map((path) => {
+    const slug = slugFromPath(path)
+    const meta = shareMeta[slug] || { date: '', tag: '', url: '' }
+    return { slug, title: titleFromSlug(slug), ...meta }
+  })
+  list.sort((a, b) => b.date.localeCompare(a.date))
+  return list
+}
+
+/* ===== Async: full content loading  ===== */
+
+export async function loadNote(slug: string): Promise<Note | undefined> {
+  const entry = Object.entries(noteModules).find(
+    ([path]) => slugFromPath(path) === slug
+  )
+  if (!entry) return undefined
+
+  const raw = await entry[1]()
+  const html = renderMarkdown(raw)
+  const toc = extractTOC(html)
+  const meta = noteMeta[slug]
+  return {
+    slug,
+    title: meta?.title || titleFromSlug(slug),
+    date: meta?.date || '',
+    category: categoryFromPath(entry[0]),
+    content: raw,
+    html,
+    toc,
+  }
+}
+
+export async function loadShare(slug: string): Promise<Share | undefined> {
+  const entry = Object.entries(shareModules).find(
+    ([path]) => slugFromPath(path) === slug
+  )
+  if (!entry) return undefined
+
+  const raw = await entry[1]()
+  const { frontmatter, content } = parseFrontmatter(raw)
+  const html = renderMarkdown(content)
+  const toc = extractTOC(html)
+  return {
+    slug,
+    title: titleFromSlug(slug),
+    date: frontmatter.date || shareMeta[slug]?.date || '',
+    tag: frontmatter.tag || shareMeta[slug]?.tag || '',
+    url: frontmatter.url || shareMeta[slug]?.url || '',
+    content,
+    html,
+    toc,
+  }
 }

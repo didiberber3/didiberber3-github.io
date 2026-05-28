@@ -24,6 +24,27 @@ export interface TocItem {
   text: string
 }
 
+export interface TocGroup {
+  h2: TocItem
+  children: TocItem[]
+}
+
+export function groupTocItems(items: TocItem[]): TocGroup[] {
+  const groups: TocGroup[] = []
+  let current: TocGroup | null = null
+
+  for (const item of items) {
+    if (item.level === 2) {
+      current = { h2: item, children: [] }
+      groups.push(current)
+    } else if (item.level === 3 && current) {
+      current.children.push(item)
+    }
+  }
+
+  return groups
+}
+
 export function renderMarkdown(content: string): string {
   return marked.parse(content) as string
 }

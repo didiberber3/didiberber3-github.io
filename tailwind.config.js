@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     './index.html',
     './src/**/*.{vue,ts}',
@@ -18,6 +19,15 @@ export default {
           700: '#15803d',
           800: '#166534',
           900: '#14532d',
+        },
+      },
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: '780px',
+            lineHeight: 1.8,
+            letterSpacing: '0.01em',
+          },
         },
       },
     },

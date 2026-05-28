@@ -2,85 +2,268 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ========== Theme variables ========== */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f3f4f6;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --border-primary: #e5e7eb;
+  --border-secondary: #d1d5db;
+  --accent: #16a34a;
+  --accent-hover: #15803d;
+  --accent-bg: #f0fdf4;
+  --code-bg: #f9fafb;
+  --code-border: #e5e7eb;
+  --toc-bg: #f9fafb;
+  --toc-border: #e5e7eb;
+}
+
+.dark {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border-primary: #334155;
+  --border-secondary: #475569;
+  --accent: #4ade80;
+  --accent-hover: #22c55e;
+  --accent-bg: #052e16;
+  --code-bg: #1e293b;
+  --code-border: #334155;
+  --toc-bg: #1e293b;
+  --toc-border: #334155;
+}
+
+/* ========== Base layer ========== */
+@layer base {
+  /* 全站统一直角风格。
+     去掉 !important 以便未来需要时（如嵌入第三方内容）可被组件级规则覆盖。 */
+  *,
+  *::before,
+  *::after {
+    border-radius: 0;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.8;
+    letter-spacing: 0.01em;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: white;
+  }
+}
+
+/* ========== Component layer ========== */
 @layer components {
-  /* article list cards — shared across Home/Notes/Shares */
+  /*
+   * ▸ 文章卡片悬浮效果 — 最左侧绿线 + 文字向右位移
+   *   每个 .article-card > a 在 hover 时:
+   *   1. border-left: transparent 2px → accent 2px（绿色左边线）
+   *   2. padding-left: 0.5rem → 1rem（内容向右位移 0.5rem）
+   *   3. background-color: bg-secondary（浅灰底）
+   *
+   *   ⚠️ 全站绿线推进模式标准:
+   *   - transition: all 0.2s ease
+   *   - padding-left shift: 0.5rem
+   *   - 所有可交互项目（article-card / TOC / docs-nav）必须保持一致
+   *   见 .sisyphus/代码分析报告.md → 动画规范
+   */
   .article-list {
-    @apply divide-y divide-gray-100;
+    @apply divide-y;
+    border-color: var(--border-primary);
   }
 
   .article-card {
-    @apply transition-colors duration-200;
+    transition: background-color 0.2s;
   }
 
   .article-card > a {
-    @apply block py-4 pl-0 border-l-2 border-transparent transition-all duration-200;
+    display: block;
+    padding: 1rem 0 1rem 0.5rem;
+    border-left: 2px solid transparent;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, padding-left 0.2s;
   }
 
   .article-card:hover > a {
-    @apply pl-4 border-l-green-600 bg-gray-50/60;
+    padding-left: 1rem;
+    border-left-color: var(--accent);
+    background-color: var(--bg-secondary);
   }
 
   .article-card:hover h2,
   .article-card:hover h3 {
-    @apply text-green-600;
+    color: var(--accent);
   }
 
-  /* tag chip for shares */
+  .article-card h2,
+  .article-card h3 {
+    color: var(--text-primary);
+  }
+
+  /* Tag chip */
   .tag {
-    @apply text-xs text-gray-400 border border-gray-300 px-1.5 py-0.5;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-secondary);
+    padding: 0.125rem 0.375rem;
   }
 
-  /* section heading */
+  /* Section heading */
   .section-heading {
-    @apply text-lg font-semibold text-green-600;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--accent);
   }
 
-  /* "all N items" button */
+  /*
+   * ▸ "全部 N 篇" 按钮 — 悬浮从左至右渐进填充
+   *   ::before 伪元素做填充层，width: 100%
+   *   transform: scaleX(0) → scaleX(1), transform-origin: left
+   *   hover 时绿色背景从左到右推进，文字同步变白
+   *   duration: 0.25s, ease-out
+   */
   .btn-more {
-    @apply border-2 border-green-600 text-green-600 px-3 py-0.5 text-xs font-medium hover:bg-green-600 hover:text-white transition-colors;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    padding: 0.125rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s;
+    z-index: 0;
+  }
+
+  .btn-more::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s ease;
+    z-index: -1;
+  }
+
+  .btn-more:hover {
+    color: white;
+  }
+
+  .btn-more:hover::before {
+    transform: scaleX(1);
   }
 }
 
-@layer base {
-  *,
-  *::before,
-  *::after {
-    border-radius: 0 !important;
-  }
-
-  body {
-    @apply bg-white text-gray-900 antialiased;
-  }
+/* ========== Typography overrides for prose ========== */
+.prose {
+  --tw-prose-body: var(--text-primary);
+  --tw-prose-headings: var(--text-primary);
+  --tw-prose-links: var(--accent);
+  --tw-prose-bold: var(--text-primary);
+  --tw-prose-code: var(--text-primary);
+  --tw-prose-pre-bg: var(--code-bg);
+  --tw-prose-quotes: var(--text-secondary);
+  --tw-prose-quote-borders: var(--accent);
+  --tw-prose-hr: var(--border-primary);
+  max-width: 780px;
+  line-height: 1.8;
+  letter-spacing: 0.01em;
 }
 
-/* fadeUp animation */
+.prose pre {
+  background-color: var(--code-bg) !important;
+  border: 1px solid var(--code-border);
+}
+
+.prose code {
+  font-size: 0.8125rem;
+}
+
+.prose pre code {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.prose img {
+  border-radius: 0 !important;
+}
+
+/*
+ * ▸ highlight.js 暗色适配 — github.css 在暗色模式下可读性差
+ *   覆盖 hljs 容器及主要语义 token 的颜色
+ *   亮色用 github.css 默认，暗色用 slueth 调色板
+ */
+.dark .hljs {
+  background: var(--code-bg);
+  color: #e2e8f0;
+}
+.dark .hljs-keyword,
+.dark .hljs-literal,
+.dark .hljs-symbol,
+.dark .hljs-name { color: #c792ea; }
+
+.dark .hljs-string,
+.dark .hljs-addition { color: #c3e88d; }
+
+.dark .hljs-comment,
+.dark .hljs-quote { color: #64748b; font-style: italic; }
+
+.dark .hljs-number,
+.dark .hljs-deletion { color: #f78c6c; }
+
+.dark .hljs-title,
+.dark .hljs-section,
+.dark .hljs-attr { color: #82aaff; }
+
+.dark .hljs-type,
+.dark .hljs-built_in,
+.dark .hljs-selector-tag { color: #ffcb6b; }
+
+.dark .hljs-meta { color: #f07178; }
+
+.dark .hljs-variable,
+.dark .hljs-template-variable { color: #f07178; }
+
+/* ========== Animations ========== */
+
+/*
+ * ▸ 整体页面进入动画 — 加载后向上位移
+ *   每个 router-view 页面容器使用 animate-fade-up 类
+ *   从 translateY(12px) + opacity(0) 过渡到正常位置
+ *   duration: 0.35s, ease-out, 动画结束后保持最终状态
+ */
 @keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-up {
   animation: fadeUp 0.35s ease-out both;
 }
 
-/* TOC scroll tracking */
-.toc-item.active > a {
-  @apply text-green-600 font-medium;
+/* ========== Scrollbar ========== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
-
-/* highlight.js theme overrides */
-.prose pre {
-  @apply bg-gray-50 border border-gray-200;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
-.prose code {
-  @apply text-sm;
+::-webkit-scrollbar-thumb {
+  background: var(--border-secondary);
 }
-.prose pre code {
-  @apply bg-transparent border-0 p-0;
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }

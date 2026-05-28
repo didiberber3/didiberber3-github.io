@@ -27,6 +27,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../pages/ShareView.vue'),
   },
   {
+    path: '/docs/:category?/:slug?',
+    name: 'docs',
+    component: () => import('../pages/DocsPage.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: '/',
   },

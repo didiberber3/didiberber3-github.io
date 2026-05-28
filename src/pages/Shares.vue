@@ -1,25 +1,22 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { getAllShares } from '../utils/content'
-import type { Share } from '../utils/content'
+import { getShareList } from '../utils/content'
+import type { ShareMeta } from '../utils/content'
 import TabNav from '../components/TabNav.vue'
 import SearchBar from '../components/SearchBar.vue'
 
-const shares = ref<Share[]>([])
+const shares = ref<ShareMeta[]>([])
 const query = ref('')
 
 onMounted(() => {
-  shares.value = getAllShares()
+  shares.value = getShareList()
 })
 
 const filtered = computed(() => {
   if (!query.value.trim()) return shares.value
   const q = query.value.toLowerCase()
   return shares.value.filter(
-    (s) =>
-      s.title.toLowerCase().includes(q) ||
-      s.tag.toLowerCase().includes(q) ||
-      s.content.toLowerCase().includes(q)
+    (s) => s.title.toLowerCase().includes(q) || s.tag.toLowerCase().includes(q)
   )
 })
 </script>
@@ -29,30 +26,23 @@ const filtered = computed(() => {
     <TabNav />
 
     <div class="max-w-4xl mx-auto px-4">
-      <h1 class="text-2xl font-bold mb-6">分享</h1>
+      <h1 class="text-2xl font-bold mb-6" style="color: var(--text-primary);">分享</h1>
 
       <SearchBar
         :placeholder="`搜索 ${shares.length} 篇分享...`"
         @update:query="query = $event"
       />
 
-      <div v-if="filtered.length === 0" class="text-gray-400 text-sm py-8 text-center">
+      <div v-if="filtered.length === 0" class="text-sm py-8 text-center" style="color: var(--text-muted);">
         没有匹配的内容
       </div>
 
       <div v-else class="article-list">
-        <article
-          v-for="share in filtered"
-          :key="share.slug"
-          class="article-card"
-        >
-          <router-link
-            :to="`/share/${share.slug}`"
-            class="block"
-          >
-            <h2 class="text-base font-medium text-gray-900">{{ share.title }}</h2>
+        <article v-for="share in filtered" :key="share.slug" class="article-card">
+          <router-link :to="`/share/${share.slug}`" class="block">
+            <h2 class="text-base font-medium" style="color: var(--text-primary);">{{ share.title }}</h2>
             <div class="flex items-center gap-2 mt-1">
-              <span v-if="share.date" class="text-xs text-gray-400">{{ share.date }}</span>
+              <span v-if="share.date" class="text-xs" style="color: var(--text-secondary);">{{ share.date }}</span>
               <span v-if="share.tag" class="tag">{{ share.tag }}</span>
             </div>
           </router-link>
