@@ -32,8 +32,14 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../pages/DocsPage.vue'),
   },
   {
+    path: '/about',
+    name: 'about',
+    component: () => import('../pages/About.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
-    redirect: '/',
+    name: 'not-found',
+    component: () => import('../pages/NotFound.vue'),
   },
 ]
 

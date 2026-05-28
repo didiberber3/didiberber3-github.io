@@ -14,14 +14,20 @@ watch(input, (val) => emit('update:query', val))
       v-model="input"
       type="text"
       :placeholder="placeholder || '搜索...'"
-      class="w-full px-4 py-2 text-sm outline-none transition-colors"
-      :style="{
-        border: '1px solid var(--border-primary)',
-        backgroundColor: 'var(--bg-primary)',
-        color: 'var(--text-primary)',
-      }"
-      @focus="($event.target as HTMLElement).style.borderColor = 'var(--accent)'"
-      @blur="($event.target as HTMLElement).style.borderColor = 'var(--border-primary)'"
+      class="search-input w-full px-4 py-2 text-sm"
     />
   </div>
 </template>
+
+<style scoped>
+.search-input {
+  border: 1px solid var(--border-primary);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.search-input:focus {
+  border-color: var(--accent);
+}
+</style>

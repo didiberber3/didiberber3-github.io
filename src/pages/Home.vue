@@ -29,8 +29,8 @@ onMounted(() => {
           <HeroSvg />
         </div>
         <div>
-          <h1 class="text-3xl font-bold mb-2" style="color: var(--text-primary);">记录与分享</h1>
-          <p class="text-sm" style="color: var(--text-secondary);">
+          <h1 class="text-3xl font-bold mb-2 txt-primary">记录与分享</h1>
+          <p class="text-sm txt-secondary">
             GitHubPages-学习与记录 · 共 {{ noteTotal + shareTotal }} 篇笔记与分享
           </p>
         </div>
@@ -40,13 +40,13 @@ onMounted(() => {
       <section class="mb-12">
         <div class="flex items-center justify-between mb-5">
           <h2 class="section-heading">最新笔记</h2>
-          <router-link to="/notes" class="btn-more">全部 {{ noteTotal }} 篇</router-link>
+          <router-link to="/notes" class="btn-more interact-fill">全部 {{ noteTotal }} 篇</router-link>
         </div>
         <div class="article-list">
           <article v-for="note in notes" :key="note.slug" class="article-card">
-            <router-link :to="`/note/${note.slug}`" class="block">
-              <h3 class="text-base font-medium" style="color: var(--text-primary);">{{ note.title }}</h3>
-              <p v-if="note.date" class="text-xs mt-1" style="color: var(--text-secondary);">{{ note.date }}</p>
+            <router-link :to="`/note/${note.slug}`" class="interact-slide">
+              <h3 class="article-title text-base font-medium">{{ note.title }}</h3>
+              <p v-if="note.date" class="text-xs mt-1 txt-secondary">{{ note.date }}</p>
             </router-link>
           </article>
         </div>
@@ -56,14 +56,14 @@ onMounted(() => {
       <section class="mb-12">
         <div class="flex items-center justify-between mb-5">
           <h2 class="section-heading">最新分享</h2>
-          <router-link to="/shares" class="btn-more">全部 {{ shareTotal }} 篇</router-link>
+          <router-link to="/shares" class="btn-more interact-fill">全部 {{ shareTotal }} 篇</router-link>
         </div>
         <div class="article-list">
           <article v-for="share in shares" :key="share.slug" class="article-card">
-            <router-link :to="`/share/${share.slug}`" class="block">
-              <h3 class="text-base font-medium" style="color: var(--text-primary);">{{ share.title }}</h3>
+            <router-link :to="`/share/${share.slug}`" class="interact-slide">
+              <h3 class="article-title text-base font-medium">{{ share.title }}</h3>
               <div class="flex items-center gap-2 mt-1">
-                <span v-if="share.date" class="text-xs" style="color: var(--text-secondary);">{{ share.date }}</span>
+                <span v-if="share.date" class="text-xs txt-secondary">{{ share.date }}</span>
                 <span v-if="share.tag" class="tag">{{ share.tag }}</span>
               </div>
             </router-link>

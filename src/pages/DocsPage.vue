@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick, watch } from 'vue'
+import { ref, computed, onMounted, nextTick, watch, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getNoteList, getCategories, loadNote } from '../utils/content'
 import type { NoteMeta, Note } from '../utils/content'
 import TabNav from '../components/TabNav.vue'
 import TOCSidebar from '../components/TOCSidebar.vue'
 import LoadingDots from '../components/LoadingDots.vue'
+import ScrollProgress from '../components/ScrollProgress.vue'
+import BackToTop from '../components/BackToTop.vue'
 import { highlightBlocks } from '../utils/highlight'
+import { addCopyButtons, setupLightbox } from '../utils/reader'
 
 const route = useRoute()
 const router = useRouter()
@@ -15,6 +18,8 @@ const allNotes = ref<NoteMeta[]>([])
 const categories = ref<string[]>([])
 const currentNote = ref<Note | undefined>()
 const loading = ref(true)
+const contentRef = ref<HTMLElement | null>(null)
+let cleanupLightbox: (() => void) | null = null
 
 const category = computed(() => route.params.category as string | undefined)
 const slug = computed(() => route.params.slug as string | undefined)
@@ -31,7 +36,14 @@ async function selectNote(noteSlug: string) {
   const note = await loadNote(noteSlug)
   currentNote.value = note
   loading.value = false
-  nextTick(() => highlightBlocks())
+  nextTick(() => {
+    highlightBlocks()
+    if (contentRef.value) {
+      addCopyButtons(contentRef.value)
+      cleanupLightbox?.()
+      cleanupLightbox = setupLightbox(contentRef.value)
+    }
+  })
 
   // Sync slug to URL
   if (noteSlug !== slug.value) {
@@ -65,6 +77,8 @@ onMounted(() => {
   }
 })
 
+onUnmounted(() => cleanupLightbox?.())
+
 // React to route changes
 watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
   // Skip initial fire — handled by onMounted
@@ -87,6 +101,7 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
 </script>
 
 <template>
+  <ScrollProgress />
   <div class="animate-fade-up">
     <TabNav />
 
@@ -98,7 +113,7 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
         <button
           v-for="cat in categories"
           :key="cat"
-          class="docs-category-card"
+          class="docs-category-card interact-line-top"
           @click="selectCategory(cat)"
         >
           <span class="docs-category-name">{{ cat }}</span>
@@ -109,7 +124,7 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
 
     <!-- Category empty -->
     <div v-else-if="category && categoryNotes.length === 0" class="docs-home">
-      <p style="color: var(--text-muted);">该分类暂无内容</p>
+      <p class="txt-muted">该分类暂无内容</p>
       <button class="docs-back-btn" @click="goHome">← 返回分类</button>
     </div>
 
@@ -118,12 +133,12 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
       <!-- Global Nav — left -->
       <aside class="docs-sidebar-left">
         <nav class="docs-nav">
-          <h3 class="docs-nav-label">{{ category }}</h3>
+          <h3 class="label-uppercase" style="margin: 0 0 0.75rem 0; padding: 0 0.5rem;">{{ category }}</h3>
           <ul class="docs-nav-list">
             <li v-for="note in categoryNotes" :key="note.slug">
               <a
                 href="#"
-                :class="['docs-nav-item', currentNote?.slug === note.slug ? 'active' : '']"
+                :class="['docs-nav-item', 'interact-slide-bg', currentNote?.slug === note.slug ? 'list-item-active' : '']"
                 @click.prevent="selectNote(note.slug)"
               >
                 <span class="docs-nav-title">{{ note.title }}</span>
@@ -142,16 +157,17 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
 
         <article v-else-if="currentNote">
           <header class="mb-10">
-            <h1 class="text-2xl font-bold mb-2" style="color: var(--text-primary);">{{ currentNote.title }}</h1>
-            <p v-if="currentNote.date" class="text-xs" style="color: var(--text-secondary);">{{ currentNote.date }}</p>
+            <h1 class="text-2xl font-bold mb-2 txt-primary">{{ currentNote.title }}</h1>
+            <p v-if="currentNote.date" class="text-xs txt-secondary">{{ currentNote.date }}</p>
           </header>
           <div
+            ref="contentRef"
             class="article-content prose prose-sm max-w-none prose-headings:font-semibold"
             v-html="currentNote.html"
           ></div>
         </article>
 
-        <div v-else class="py-16 text-center" style="color: var(--text-muted);">
+        <div v-else class="py-16 text-center txt-muted">
           笔记不存在
         </div>
       </main>
@@ -162,6 +178,7 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
       </div>
     </div>
   </div>
+  <BackToTop />
 </template>
 
 <style scoped>
@@ -198,8 +215,6 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
  *   ::before 作为顶部 2px 绿色条，scaleX(transform-origin: left)
  */
 .docs-category-card {
-  position: relative;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -208,29 +223,7 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
   border: 1px solid var(--border-primary);
   background: none;
   cursor: pointer;
-  transition: background-color 0.2s;
   font-family: inherit;
-}
-
-.docs-category-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: var(--accent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.2s ease;
-}
-
-.docs-category-card:hover {
-  background-color: var(--bg-tertiary);
-}
-
-.docs-category-card:hover::before {
-  transform: scaleX(1);
 }
 
 .docs-category-name {
@@ -303,16 +296,6 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
   background: transparent;
 }
 
-.docs-nav-label {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-  margin: 0 0 0.75rem 0;
-  padding: 0 0.5rem;
-}
-
 .docs-nav-list {
   list-style: none;
   margin: 0;
@@ -327,30 +310,16 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
   padding: 0.45rem 0.5rem;
   text-decoration: none;
   cursor: pointer;
-  border-left: 2px solid transparent;
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s, padding-left 0.2s;
-}
-
-.docs-nav-item:hover {
-  background-color: var(--bg-secondary);
-  border-left-color: var(--accent);
-  padding-left: 1rem;
-}
-
-.docs-nav-item.active {
-  background-color: var(--accent-bg);
-  border-left-color: var(--accent);
+  color: var(--text-primary);
 }
 
 .docs-nav-title {
   font-size: 0.8125rem;
-  color: var(--text-primary);
+  color: inherit;
   line-height: 1.4;
-  transition: color 0.15s;
 }
 
-.docs-nav-item.active .docs-nav-title {
-  color: var(--accent);
+.docs-nav-item.list-item-active .docs-nav-title {
   font-weight: 500;
 }
 

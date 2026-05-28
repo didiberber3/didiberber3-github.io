@@ -31,6 +31,7 @@ const tabs = [
   { label: '笔记', path: '/notes' },
   { label: '文档', path: '/docs' },
   { label: '分享', path: '/shares' },
+  { label: '关于', path: '/about' },
 ]
 
 function isActive(path: string): boolean {
@@ -45,11 +46,7 @@ function go(path: string) {
 
 <template>
   <nav
-    class="sticky top-0 z-50 border-b transition-colors"
-    :style="{
-      backgroundColor: 'var(--bg-primary)',
-      borderColor: 'var(--border-primary)',
-    }"
+    class="nav-bar sticky top-0 z-50 border-b transition-colors"
   >
     <div class="flex items-center justify-between max-w-6xl mx-auto px-4">
       <div class="flex items-center gap-1">
@@ -65,15 +62,15 @@ function go(path: string) {
       </div>
 
       <div class="flex items-center gap-3">
-        <a
-          v-if="visitUrl"
-          :href="visitUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="visit-btn"
-        >
-          访问
-        </a>
+         <a
+           v-if="visitUrl"
+           :href="visitUrl"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="visit-btn interact-fill"
+         >
+           访问
+         </a>
 
         <button
           @click="toggleTheme"
@@ -104,31 +101,20 @@ function go(path: string) {
 </template>
 
 <style scoped>
+.nav-bar {
+  background-color: var(--bg-primary);
+  border-color: var(--border-primary);
+}
+
 .tab-btn {
   position: relative;
-  overflow: hidden;
   padding: 0.75rem 1.25rem;
   font-size: 0.875rem;
   color: var(--text-secondary);
   background: none;
   border: none;
   cursor: pointer;
-  transition: color 0.2s, background-color 0.2s, border-color 0.2s;
-}
-
-.tab-btn:hover {
-  color: var(--text-primary);
-  background-color: var(--bg-tertiary);
-}
-
-.tab-btn:hover::after {
-  transform: scaleX(0.3);
-}
-
-.tab-btn.active {
-  color: var(--accent);
-  font-weight: 500;
-  background-color: var(--accent-bg);
+  transition: color 0.2s, background-color 0.2s;
 }
 
 .tab-btn::after {
@@ -144,47 +130,34 @@ function go(path: string) {
   transition: transform 0.2s ease;
 }
 
+.tab-btn:hover {
+  color: var(--text-secondary);
+  background-color: var(--bg-tertiary);
+}
+
+.tab-btn:hover::after {
+  transform: scaleX(1);
+}
+
+.tab-btn.active {
+  color: var(--accent);
+  font-weight: 500;
+  background-color: var(--bg-tertiary);
+}
+
 .tab-btn.active::after {
   transform: scaleX(1);
 }
 
-/*
- * ▸ "访问"按钮 — 与 btn-more 相同的从左至右填充动画
- *   分享页显示，点击跳转至原文链接
- *   ::before 伪元素 + scaleX(transform-origin: left) 实现
- */
+/* ── Visit button: uses .interact-fill from style.css ── */
 .visit-btn {
-  position: relative;
-  overflow: hidden;
-  border: 2px solid var(--accent);
-  color: var(--accent);
   padding: 0.125rem 0.75rem;
   font-size: 0.75rem;
   font-weight: 500;
   text-decoration: none;
-  transition: color 0.2s, border-color 0.2s;
-  z-index: 0;
 }
 
-.visit-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-color: var(--accent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.25s ease-out;
-  z-index: -1;
-}
-
-.visit-btn:hover {
-  color: white;
-}
-
-.visit-btn:hover::before {
-  transform: scaleX(1);
-}
-
+/* ── Theme toggle ── */
 .theme-toggle {
   background: none;
   border: 1px solid var(--border-primary);
@@ -199,14 +172,14 @@ function go(path: string) {
   background-color: var(--bg-secondary);
 }
 
-/*
- * ▸ 主题切换按钮 — 点击 360° 旋转动画
- *   每次点击 toggleTheme() 时 isAnimating = true
- *   .rotating class 触发 @keyframes rotateOnce (0.3s)
- *   setTimeout 300ms 后移除 class，确保每次点击都能触发
- */
+/* Click rotation */
 .theme-toggle.rotating {
   animation: rotateOnce 0.3s ease;
+}
+
+/* Hover rotation */
+.theme-toggle:hover .theme-icon {
+  animation: rotateOnce 0.6s ease;
 }
 
 .theme-icon {
