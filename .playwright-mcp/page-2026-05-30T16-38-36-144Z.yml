@@ -1,0 +1,10 @@
+- generic [ref=e3]:
+  - main [ref=e4]
+  - contentinfo [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e7]: © 2026 记录与分享
+      - generic [ref=e8]: ·
+      - link "关于" [ref=e9] [cursor=pointer]:
+        - /url: /about
+      - generic [ref=e10]: ·
+      - generic [ref=e11]: Vue + Vite

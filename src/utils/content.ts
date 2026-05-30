@@ -17,6 +17,12 @@ export interface Note extends NoteMeta {
   toc: TocItem[]
 }
 
+export interface Note extends NoteMeta {
+  content: string
+  html: string
+  toc: TocItem[]
+}
+
 export interface ShareMeta {
   slug: string
   title: string
@@ -75,7 +81,7 @@ export function getNoteList(): NoteMeta[] {
     const slug = slugFromPath(path)
     const meta = noteMeta[slug]
     return {
-      slug,
+      slug: meta?.slug || slug,
       title: meta?.title || titleFromSlug(slug),
       date: meta?.date || '',
       category: categoryFromPath(path),

@@ -1,0 +1,125 @@
+- generic [ref=e3]:
+  - main [ref=e4]:
+    - navigation [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - button "首页" [ref=e8] [cursor=pointer]
+          - button "笔记" [ref=e9] [cursor=pointer]
+          - button "文档" [ref=e10] [cursor=pointer]
+          - button "分享" [ref=e11] [cursor=pointer]
+          - button "关于" [ref=e12] [cursor=pointer]
+        - button "切换暗色" [ref=e14] [cursor=pointer]:
+          - img [ref=e15]
+    - main [ref=e18]:
+      - generic [ref=e20]:
+        - heading "笔记" [level=1] [ref=e21]
+        - textbox "搜索 20 篇笔记..." [ref=e23]
+        - generic [ref=e24]:
+          - article [ref=e25]:
+            - link "2026 5 11 常用类 6 220716 2026-05-30" [ref=e26] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/2026-5-11 常用类 6 220716
+              - heading "2026 5 11 常用类 6 220716" [level=2] [ref=e27]
+              - paragraph [ref=e28]: 2026-05-30
+          - article [ref=e29]:
+            - link "Test 2026-05-30" [ref=e30] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/Test
+              - heading "Test" [level=2] [ref=e31]
+              - paragraph [ref=e32]: 2026-05-30
+          - article [ref=e33]:
+            - link "包 2026-05-30" [ref=e34] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/包
+              - heading "包" [level=2] [ref=e35]
+              - paragraph [ref=e36]: 2026-05-30
+          - article [ref=e37]:
+            - link "变量，数据类型与运算符 2026-05-30" [ref=e38] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/变量，数据类型与运算符
+              - heading "变量，数据类型与运算符" [level=2] [ref=e39]
+              - paragraph [ref=e40]: 2026-05-30
+          - article [ref=e41]:
+            - link "坦克大战 2026-05-30" [ref=e42] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/坦克大战
+              - heading "坦克大战" [level=2] [ref=e43]
+              - paragraph [ref=e44]: 2026-05-30
+          - article [ref=e45]:
+            - link "坦克大战2 2026-05-30" [ref=e46] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/坦克大战2
+              - heading "坦克大战2" [level=2] [ref=e47]
+              - paragraph [ref=e48]: 2026-05-30
+          - article [ref=e49]:
+            - link "多线程基础 2026-05-30" [ref=e50] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/多线程基础
+              - heading "多线程基础" [level=2] [ref=e51]
+              - paragraph [ref=e52]: 2026-05-30
+          - article [ref=e53]:
+            - link "异常 2026-05-30" [ref=e54] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/异常
+              - heading "异常" [level=2] [ref=e55]
+              - paragraph [ref=e56]: 2026-05-30
+          - article [ref=e57]:
+            - link "房屋出租系统 2026-05-30" [ref=e58] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/房屋出租系统
+              - heading "房屋出租系统" [level=2] [ref=e59]
+              - paragraph [ref=e60]: 2026-05-30
+          - article [ref=e61]:
+            - link "控制结构 2026-05-30" [ref=e62] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/控制结构
+              - heading "控制结构" [level=2] [ref=e63]
+              - paragraph [ref=e64]: 2026-05-30
+          - article [ref=e65]:
+            - link "枚举类 2026-05-30" [ref=e66] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/枚举类
+              - heading "枚举类" [level=2] [ref=e67]
+              - paragraph [ref=e68]: 2026-05-30
+          - article [ref=e69]:
+            - link "泛型 2026-05-30" [ref=e70] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/泛型
+              - heading "泛型" [level=2] [ref=e71]
+              - paragraph [ref=e72]: 2026-05-30
+          - article [ref=e73]:
+            - link "类与对象 2026-05-30" [ref=e74] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/类与对象
+              - heading "类与对象" [level=2] [ref=e75]
+              - paragraph [ref=e76]: 2026-05-30
+          - article [ref=e77]:
+            - link "类变量 2026-05-30" [ref=e78] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/类变量
+              - heading "类变量" [level=2] [ref=e79]
+              - paragraph [ref=e80]: 2026-05-30
+          - article [ref=e81]:
+            - link "递归 2026-05-30" [ref=e82] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/递归
+              - heading "递归" [level=2] [ref=e83]
+              - paragraph [ref=e84]: 2026-05-30
+          - article [ref=e85]:
+            - link "重载 2026-05-30" [ref=e86] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/重载
+              - heading "重载" [level=2] [ref=e87]
+              - paragraph [ref=e88]: 2026-05-30
+          - article [ref=e89]:
+            - link "集合 2026-05-30" [ref=e90] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/集合
+              - heading "集合" [level=2] [ref=e91]
+              - paragraph [ref=e92]: 2026-05-30
+          - article [ref=e93]:
+            - link "Css 2026-05-30" [ref=e94] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/css
+              - heading "Css" [level=2] [ref=e95]
+              - paragraph [ref=e96]: 2026-05-30
+          - article [ref=e97]:
+            - link "排版 2026-05-30" [ref=e98] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/排版
+              - heading "排版" [level=2] [ref=e99]
+              - paragraph [ref=e100]: 2026-05-30
+          - article [ref=e101]:
+            - link "Java汇总 2025-08-29" [ref=e102] [cursor=pointer]:
+              - /url: /didiberber3-github.io/note/Java汇总
+              - heading "Java汇总" [level=2] [ref=e103]
+              - paragraph [ref=e104]: 2025-08-29
+  - contentinfo [ref=e105]:
+    - generic [ref=e106]:
+      - generic [ref=e107]: © 2026 记录与分享
+      - generic [ref=e108]: ·
+      - link "关于" [ref=e109] [cursor=pointer]:
+        - /url: /about
+      - generic [ref=e110]: ·
+      - generic [ref=e111]: Vue + Vite

@@ -1,0 +1,73 @@
+- generic [ref=e3]:
+  - main [ref=e4]:
+    - navigation [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - button "首页" [ref=e8] [cursor=pointer]
+          - button "笔记" [ref=e9] [cursor=pointer]
+          - button "文档" [ref=e10] [cursor=pointer]
+          - button "分享" [ref=e11] [cursor=pointer]
+          - button "关于" [ref=e12] [cursor=pointer]
+        - button "切换暗色" [ref=e14] [cursor=pointer]:
+          - img [ref=e15]
+    - main [ref=e18]:
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - img [ref=e23]
+          - generic [ref=e27]:
+            - heading "记录与分享" [level=1] [ref=e28]
+            - paragraph [ref=e29]: GitHubPages-学习与记录 · 共 26 篇笔记与分享
+        - generic [ref=e30]:
+          - generic [ref=e31]:
+            - heading "最新笔记" [level=2] [ref=e32]
+            - link "全部 20 篇" [ref=e33] [cursor=pointer]:
+              - /url: /didiberber3-github.io/notes
+          - generic [ref=e34]:
+            - article [ref=e35]:
+              - link "Test 2026-05-31 Java" [ref=e36] [cursor=pointer]:
+                - /url: /didiberber3-github.io/note/Test
+                - heading "Test" [level=3] [ref=e38]
+                - generic [ref=e39]:
+                  - paragraph [ref=e40]: 2026-05-31
+                  - generic [ref=e42]: Java
+            - article [ref=e43]:
+              - link "坦克大战2 2026-05-30 Java" [ref=e44] [cursor=pointer]:
+                - /url: /didiberber3-github.io/note/坦克大战2
+                - heading "坦克大战2" [level=3] [ref=e46]
+                - generic [ref=e47]:
+                  - paragraph [ref=e48]: 2026-05-30
+                  - generic [ref=e50]: Java
+            - article [ref=e51]:
+              - link "Css 2026-05-30" [ref=e52] [cursor=pointer]:
+                - /url: /didiberber3-github.io/note/css
+                - heading "Css" [level=3] [ref=e54]
+                - paragraph [ref=e56]: 2026-05-30
+        - generic [ref=e57]:
+          - generic [ref=e58]:
+            - heading "最新分享" [level=2] [ref=e59]
+            - link "全部 6 篇" [ref=e60] [cursor=pointer]:
+              - /url: /didiberber3-github.io/shares
+          - generic [ref=e61]:
+            - article [ref=e62]:
+              - link "Devdocs 2026-05-12" [ref=e63] [cursor=pointer]:
+                - /url: /didiberber3-github.io/share/devdocs
+                - heading "Devdocs" [level=3] [ref=e64]
+                - paragraph [ref=e65]: 2026-05-12
+            - article [ref=e66]:
+              - link "Excalidraw 2026-05-12" [ref=e67] [cursor=pointer]:
+                - /url: /didiberber3-github.io/share/excalidraw
+                - heading "Excalidraw" [level=3] [ref=e68]
+                - paragraph [ref=e69]: 2026-05-12
+            - article [ref=e70]:
+              - link "Git 2026-05-12" [ref=e71] [cursor=pointer]:
+                - /url: /didiberber3-github.io/share/git
+                - heading "Git" [level=3] [ref=e72]
+                - paragraph [ref=e73]: 2026-05-12
+  - contentinfo [ref=e74]:
+    - generic [ref=e75]:
+      - generic [ref=e76]: © 2026 记录与分享
+      - generic [ref=e77]: ·
+      - link "关于" [ref=e78] [cursor=pointer]:
+        - /url: /about
+      - generic [ref=e79]: ·
+      - generic [ref=e80]: Vue + Vite

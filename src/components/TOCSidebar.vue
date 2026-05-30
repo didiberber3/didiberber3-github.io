@@ -54,105 +54,95 @@ function scrollTo(id: string) {
 
 <template>
   <aside v-if="items.length > 1" class="toc-wrapper">
-    <div class="toc-inner">
-      <h3 class="label-uppercase" style="margin-bottom: 0.75rem;">目录</h3>
-      <ul class="toc-list">
-        <li v-for="group in groups" :key="group.h2.id">
-          <!-- h2 row -->
-          <div
-            :class="['toc-h2', isActiveH2(group) ? 'active' : '']"
-          >
-            <a href="#" class="interact-slide-bg" @click.prevent="scrollTo(group.h2.id)">
-              {{ group.h2.text }}
-            </a>
-          </div>
+    <ul class="toc-list">
+      <li v-for="group in groups" :key="group.h2.id">
+        <!-- h2 row -->
+        <div :class="['toc-h2', isActiveH2(group) ? 'active' : '']">
+          <a href="#" class="toc-link toc-link-h2" @click.prevent="scrollTo(group.h2.id)">
+            {{ group.h2.text }}
+          </a>
+        </div>
 
-          <!-- h3 children (always visible) -->
-          <ul v-if="group.children.length > 0" class="toc-sublist">
-            <li
-              v-for="child in group.children"
-              :key="child.id"
-              :class="['toc-sub', activeId === child.id ? 'active' : '']"
-            >
-              <a href="#" class="interact-slide-bg" @click.prevent="scrollTo(child.id)">{{ child.text }}</a>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </div>
+        <!-- h3 children -->
+        <ul v-if="group.children.length > 0" class="toc-sublist">
+          <li
+            v-for="child in group.children"
+            :key="child.id"
+            :class="['toc-sub', activeId === child.id ? 'active' : '']"
+          >
+            <a href="#" class="toc-link toc-link-h3" @click.prevent="scrollTo(child.id)">{{ child.text }}</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
   </aside>
 </template>
 
 <style scoped>
 .toc-wrapper {
-  position: sticky;
-  top: 5rem;
-  max-height: calc(100vh - 8rem);
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-secondary) transparent;
+  position: relative;
 }
 
-.toc-wrapper::-webkit-scrollbar {
-  width: 4px;
-}
-.toc-wrapper::-webkit-scrollbar-thumb {
-  background-color: var(--border-secondary);
-}
-.toc-wrapper::-webkit-scrollbar-track {
-  background: transparent;
+/* ── TOC links: shared ── */
+.toc-link {
+  display: block;
+  font-size: 0.8125rem;
+  text-decoration: none;
+  padding: 0.35rem 0.5rem;
+  border-left: 2px solid transparent;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s, border-color 0.2s, padding-left 0.2s;
+  color: var(--text-primary);
 }
 
-.toc-inner {
-  padding: 1.5rem 0 1.5rem 0.5rem;
+.toc-link:hover {
+  border-left-color: var(--accent);
+  color: var(--accent);
+  padding-left: 0.75rem;
 }
 
+/* h2 links */
+.toc-link-h2 {
+  font-weight: 500;
+}
+
+/* h3 links */
+.toc-link-h3 {
+  padding-left: 1.25rem;
+  font-size: 0.78125rem;
+  color: var(--text-secondary);
+}
+.toc-link-h3:hover {
+  padding-left: 1.5rem;
+}
+
+/* ── Active states ── */
+.toc-h2.active > .toc-link-h2 {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background-color: var(--accent-bg);
+  padding-left: 0.75rem;
+}
+
+.toc-sub.active > .toc-link-h3 {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background-color: var(--accent-bg);
+  padding-left: 1.5rem;
+}
+
+/* ── List structure ── */
 .toc-list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-/* ── h2 row ── */
-.toc-h2 {
-  margin: 0;
-}
-
-.toc-h2 a {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  text-decoration: none;
-  padding: 0.35rem 0 0.35rem 0.5rem;
-}
-
-.toc-h2.active > a {
-  color: var(--accent);
-  border-left-color: var(--accent);
-  background-color: var(--accent-bg);
-}
-
-/* ── h3 children ── */
 .toc-sublist {
   list-style: none;
-  padding: 0 0 0 0.75rem;
+  padding: 0;
   margin: 0;
-}
-
-.toc-sub a {
-  display: block;
-  font-size: 0.8125rem;
-  font-weight: 400;
-  color: var(--text-secondary);
-  text-decoration: none;
-  padding: 0.25rem 0 0.25rem 0.5rem;
-  border-left: 2px solid transparent;
-}
-
-.toc-sub.active a {
-  color: var(--accent);
-  border-left-color: var(--accent);
-  background-color: var(--accent-bg);
 }
 </style>

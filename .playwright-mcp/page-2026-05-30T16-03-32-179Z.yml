@@ -1,0 +1,58 @@
+- generic [ref=e3]:
+  - main [ref=e4]:
+    - navigation [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - button "首页" [ref=e8] [cursor=pointer]
+          - button "笔记" [ref=e9] [cursor=pointer]
+          - button "文档" [ref=e10] [cursor=pointer]
+          - button "分享" [ref=e11] [cursor=pointer]
+          - button "关于" [ref=e12] [cursor=pointer]
+        - button "切换亮色" [ref=e14] [cursor=pointer]:
+          - img [ref=e15]
+    - generic [ref=e22]:
+      - complementary [ref=e23]:
+        - navigation [ref=e24]:
+          - generic [ref=e25] [cursor=pointer]: Test
+          - generic [ref=e26] [cursor=pointer]: 坦克大战2
+          - generic [ref=e27] [cursor=pointer]: 多线程基础
+          - generic [ref=e28] [cursor=pointer]: 坦克大战
+          - generic [ref=e29] [cursor=pointer]: 2026 5 11 常用类 6 220716
+          - generic [ref=e30] [cursor=pointer]: 泛型
+          - generic [ref=e31] [cursor=pointer]: 集合
+          - generic [ref=e32] [cursor=pointer]: 类变量
+          - generic [ref=e33] [cursor=pointer]: 枚举类
+          - generic [ref=e34] [cursor=pointer]: 异常
+          - generic [ref=e35] [cursor=pointer]: 房屋出租系统
+          - generic [ref=e36] [cursor=pointer]: 包
+          - generic [ref=e37] [cursor=pointer]: 重载
+          - generic [ref=e38] [cursor=pointer]: 递归
+          - generic [ref=e39] [cursor=pointer]: 类与对象
+          - generic [ref=e40] [cursor=pointer]: 控制结构
+          - generic [ref=e41] [cursor=pointer]: 变量，数据类型与运算符
+          - generic [ref=e42] [cursor=pointer]: Java汇总
+      - main [ref=e43]:
+        - article [ref=e45]:
+          - generic [ref=e46]:
+            - heading "Test" [level=1] [ref=e47]
+            - paragraph [ref=e48]: 2026-05-31
+            - generic [ref=e50]: Java
+          - generic [ref=e51]:
+            - separator [ref=e52]
+            - 'heading "date: 2026-05-31 tags: Java" [level=2] [ref=e53]':
+              - text: "date: 2026-05-31"
+              - text: "tags: Java"
+            - heading "Test" [level=1] [ref=e54]
+            - paragraph [ref=e55]: This is test...
+      - complementary [ref=e56]:
+        - navigation [ref=e57]:
+          - 'link "date: 2026-05-31tags: Java" [ref=e58] [cursor=pointer]':
+            - /url: "#"
+  - contentinfo [ref=e59]:
+    - generic [ref=e60]:
+      - generic [ref=e61]: © 2026 记录与分享
+      - generic [ref=e62]: ·
+      - link "关于" [ref=e63] [cursor=pointer]:
+        - /url: /about
+      - generic [ref=e64]: ·
+      - generic [ref=e65]: Vue + Vite

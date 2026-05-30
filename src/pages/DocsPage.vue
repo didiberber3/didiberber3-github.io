@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick, watch, onUnmounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getNoteList, getCategories, loadNote } from '../utils/content'
 import type { NoteMeta, Note } from '../utils/content'
 import TabNav from '../components/TabNav.vue'
-import TOCSidebar from '../components/TOCSidebar.vue'
 import LoadingDots from '../components/LoadingDots.vue'
 import ScrollProgress from '../components/ScrollProgress.vue'
-import BackToTop from '../components/BackToTop.vue'
-import { highlightBlocks } from '../utils/highlight'
-import { addCopyButtons, setupLightbox } from '../utils/reader'
+import { useContentRenderer } from '../utils/useContentRenderer'
+import DocNav from '../components/DocNav.vue'
+import DocTOC from '../components/DocTOC.vue'
+import { useGlobalLoading } from '../utils/useGlobalLoading'
 
 const route = useRoute()
 const router = useRouter()
@@ -18,8 +18,8 @@ const allNotes = ref<NoteMeta[]>([])
 const categories = ref<string[]>([])
 const currentNote = ref<Note | undefined>()
 const loading = ref(true)
-const contentRef = ref<HTMLElement | null>(null)
-let cleanupLightbox: (() => void) | null = null
+const { contentRef, renderContent } = useContentRenderer()
+const { startPage, stopPage } = useGlobalLoading()
 
 const category = computed(() => route.params.category as string | undefined)
 const slug = computed(() => route.params.slug as string | undefined)
@@ -30,20 +30,15 @@ const categoryNotes = computed(() =>
 
 async function selectNote(noteSlug: string) {
   if (!category.value) return
+  startPage()
   loading.value = true
   currentNote.value = undefined
 
   const note = await loadNote(noteSlug)
   currentNote.value = note
   loading.value = false
-  nextTick(() => {
-    highlightBlocks()
-    if (contentRef.value) {
-      addCopyButtons(contentRef.value)
-      cleanupLightbox?.()
-      cleanupLightbox = setupLightbox(contentRef.value)
-    }
-  })
+  stopPage()
+  renderContent()
 
   // Sync slug to URL
   if (noteSlug !== slug.value) {
@@ -77,8 +72,6 @@ onMounted(() => {
   }
 })
 
-onUnmounted(() => cleanupLightbox?.())
-
 // React to route changes
 watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
   // Skip initial fire — handled by onMounted
@@ -102,83 +95,79 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
 
 <template>
   <ScrollProgress />
-  <div class="animate-fade-up">
-    <TabNav />
+  <TabNav />
+  <!-- Docs reading mode: left nav + content + right toc -->
+  <div v-if="category" class="docs-page-root">
+    <aside class="docs-sidebar">
+      <div class="docs-sidebar-label">{{ category }}</div>
+      <DocNav
+        :notes="categoryNotes"
+        :current-slug="currentNote?.slug"
+        @select-note="selectNote"
+      />
+    </aside>
 
-    <!-- Category grid -->
-    <div v-if="!category && categories.length > 0" class="docs-home">
-      <h1 class="docs-home-title">全部文档</h1>
-      <p class="docs-home-subtitle">选择分类开始阅读</p>
-      <div class="docs-category-grid">
-        <button
-          v-for="cat in categories"
-          :key="cat"
-          class="docs-category-card interact-line-top"
-          @click="selectCategory(cat)"
-        >
-          <span class="docs-category-name">{{ cat }}</span>
-          <span class="docs-category-count">{{ allNotes.filter(n => n.category === cat).length }} 篇</span>
-        </button>
-      </div>
-    </div>
+    <div class="docs-body">
+      <div class="docs-body-inner">
+        <main class="docs-content">
+          <div class="animate-fade-up">
+            <div v-if="loading" class="py-16 text-center txt-muted">
+              <LoadingDots text="加载中" />
+            </div>
 
-    <!-- Category empty -->
-    <div v-else-if="category && categoryNotes.length === 0" class="docs-home">
-      <p class="txt-muted">该分类暂无内容</p>
-      <button class="docs-back-btn" @click="goHome">← 返回分类</button>
-    </div>
+            <article v-else-if="currentNote">
+              <header class="mb-10">
+                <h1 class="text-2xl font-bold mb-2 txt-primary">{{ currentNote.title }}</h1>
+              <p v-if="currentNote.date" class="text-xs txt-secondary">{{ currentNote.date }}</p>
+            </header>
+              <div
+                ref="contentRef"
+                class="article-content prose prose-sm max-w-none prose-headings:font-semibold"
+                v-html="currentNote.html"
+              ></div>
+            </article>
 
-    <!-- Note reading mode -->
-    <div v-else-if="category" class="docs-layout">
-      <!-- Global Nav — left -->
-      <aside class="docs-sidebar-left">
-        <nav class="docs-nav">
-          <h3 class="label-uppercase" style="margin: 0 0 0.75rem 0; padding: 0 0.5rem;">{{ category }}</h3>
-          <ul class="docs-nav-list">
-            <li v-for="note in categoryNotes" :key="note.slug">
-              <a
-                href="#"
-                :class="['docs-nav-item', 'interact-slide-bg', currentNote?.slug === note.slug ? 'list-item-active' : '']"
-                @click.prevent="selectNote(note.slug)"
-              >
-                <span class="docs-nav-title">{{ note.title }}</span>
-                <span v-if="note.date" class="docs-nav-date">{{ note.date }}</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </aside>
+            <div v-else class="py-16 text-center txt-muted">
+              笔记不存在
+            </div>
+          </div>
+        </main>
 
-      <!-- Content — center -->
-      <main class="docs-content">
-        <div v-if="loading" class="py-16 text-center" style="color: var(--text-muted);">
-          <LoadingDots text="加载中" />
-        </div>
-
-        <article v-else-if="currentNote">
-          <header class="mb-10">
-            <h1 class="text-2xl font-bold mb-2 txt-primary">{{ currentNote.title }}</h1>
-            <p v-if="currentNote.date" class="text-xs txt-secondary">{{ currentNote.date }}</p>
-          </header>
-          <div
-            ref="contentRef"
-            class="article-content prose prose-sm max-w-none prose-headings:font-semibold"
-            v-html="currentNote.html"
-          ></div>
-        </article>
-
-        <div v-else class="py-16 text-center txt-muted">
-          笔记不存在
-        </div>
-      </main>
-
-      <!-- Heading TOC — right -->
-      <div class="docs-sidebar-right">
-        <TOCSidebar v-if="currentNote" :items="currentNote.toc" />
+        <aside v-if="currentNote?.toc?.length" class="docs-toc">
+          <div class="docs-toc-label">本页目录</div>
+          <DocTOC :items="currentNote.toc" />
+        </aside>
       </div>
     </div>
   </div>
-  <BackToTop />
+
+  <!-- Docs home: category grid (no sidebar) -->
+  <div v-else class="page-shell">
+    <main class="page-content">
+      <div class="animate-fade-up">
+        <div v-if="categories.length > 0" class="docs-home">
+          <h1 class="docs-home-title">全部文档</h1>
+          <p class="docs-home-subtitle">选择分类开始阅读</p>
+          <div class="docs-category-grid">
+            <button
+              v-for="cat in categories"
+              :key="cat"
+              class="docs-category-card interact-line-top"
+              @click="selectCategory(cat)"
+            >
+              <span class="docs-category-name">{{ cat }}</span>
+              <span class="docs-category-count">{{ allNotes.filter(n => n.category === cat).length }} 篇</span>
+            </button>
+          </div>
+        </div>
+
+        <div v-else class="docs-home">
+          <p class="txt-muted">暂无分类</p>
+          <button class="docs-back-btn" @click="goHome">← 返回</button>
+        </div>
+      </div>
+    </main>
+  </div>
 </template>
 
 <style scoped>
@@ -252,107 +241,101 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
   text-decoration: underline;
 }
 
-/* Three-column layout */
-.docs-layout {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 1rem;
+/* ── Docs reading mode: left nav + content + right toc ── */
+.docs-page-root {
   display: flex;
-  gap: 0;
+  align-items: flex-start;
   min-height: calc(100vh - 4rem);
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 2rem;
 }
 
-/* Left sidebar (global nav) */
-.docs-sidebar-left {
-  display: none;
-  width: 13rem;
+/* ── Left sidebar: doc nav ── */
+.docs-sidebar {
+  position: sticky;
+  top: calc(48px + 1rem);
   flex-shrink: 0;
+  width: 260px;
+  max-height: calc(100vh - 48px - 2rem);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0.5rem 1rem 0;
   border-right: 1px solid var(--border-primary);
 }
 
-@media (min-width: 1024px) {
-  .docs-sidebar-left {
-    display: block;
-  }
-}
-
-.docs-nav {
-  position: sticky;
-  top: 5rem;
-  max-height: calc(100vh - 8rem);
-  overflow-y: auto;
-  padding: 1.5rem 0.5rem 1.5rem 0;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-secondary) transparent;
-}
-
-.docs-nav::-webkit-scrollbar {
-  width: 4px;
-}
-.docs-nav::-webkit-scrollbar-thumb {
-  background-color: var(--border-secondary);
-}
-.docs-nav::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.docs-nav-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.docs-nav-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 0.5rem;
-  padding: 0.45rem 0.5rem;
-  text-decoration: none;
-  cursor: pointer;
-  color: var(--text-primary);
-}
-
-.docs-nav-title {
-  font-size: 0.8125rem;
-  color: inherit;
-  line-height: 1.4;
-}
-
-.docs-nav-item.list-item-active .docs-nav-title {
-  font-weight: 500;
-}
-
-.docs-nav-date {
+.docs-sidebar-label {
   font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: var(--text-muted);
-  flex-shrink: 0;
+  margin-bottom: 0.75rem;
+  padding: 0 0.5rem;
 }
 
-/* Content (center) */
+/* ── Body wrapper: centers content+toc horizontally ── */
+.docs-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.docs-body-inner {
+  display: flex;
+  width: 100%;
+  max-width: 1160px;
+}
+
+/* ── Content area ── */
 .docs-content {
   flex: 1;
   min-width: 0;
-  max-width: 780px;
-  padding: 1.5rem 1.5rem 4rem 1.5rem;
+  max-width: 880px;
+  padding: 1.5rem 2rem 4rem 2rem;
 }
 
-@media (min-width: 1024px) {
-  .docs-content {
-    padding: 1.5rem 2.5rem 4rem 2.5rem;
+/* ── Right sidebar: file toc ── */
+.docs-toc {
+  position: sticky;
+  top: calc(48px + 1rem);
+  flex-shrink: 0;
+  width: 220px;
+  max-height: calc(100vh - 48px - 2rem);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0 1rem 1.5rem;
+  border-left: 1px solid var(--border-primary);
+}
+
+.docs-toc-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  padding: 0 0.75rem;
+}
+
+@media (max-width: 1200px) {
+  .docs-toc {
+    display: none;
   }
 }
 
-/* Right sidebar (heading TOC) */
-.docs-sidebar-right {
-  display: none;
-  width: 13rem;
-  flex-shrink: 0;
-}
-
-@media (min-width: 1280px) {
-  .docs-sidebar-right {
-    display: block;
+@media (max-width: 900px) {
+  .docs-sidebar {
+    display: none;
+  }
+  .docs-body {
+    justify-content: flex-start;
+  }
+  .docs-content {
+    padding: 1rem 1rem 4rem;
   }
 }
 </style>

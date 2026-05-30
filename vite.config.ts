@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 function parseFrontmatter(raw: string): Record<string, string> {
-  const match = raw.match(/^---\n([\s\S]*?)\n---\n/)
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/)
   if (!match) return {}
   const fm: Record<string, string> = {}
   for (const line of match[1].split('\n')) {
@@ -31,7 +31,7 @@ function contentIndexPlugin(): Plugin {
       const notesDir = join(__dirname, 'content/notes')
       const sharesDir = join(__dirname, 'content/shares')
 
-      const noteMeta: Record<string, { date: string; title: string }> = {}
+      const noteMeta: Record<string, { date: string; title: string; slug: string }> = {}
       const shareMeta: Record<string, { date: string; tag: string; url: string }> = {}
 
       // Notes — date & title from frontmatter, fallback to mtime
@@ -55,6 +55,7 @@ function contentIndexPlugin(): Plugin {
               noteMeta[slug] = {
                 date: fm.date || fallbackDate,
                 title: fm.title || fallbackTitle,
+                slug: fm.slug || slug,
               }
             }
           }

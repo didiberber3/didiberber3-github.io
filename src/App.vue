@@ -4,11 +4,28 @@
       <router-view />
     </main>
     <AppFooter />
+    <LoadingOverlay />
   </div>
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import AppFooter from './components/AppFooter.vue'
+import LoadingOverlay from './components/LoadingOverlay.vue'
+import { useGlobalLoading } from './utils/useGlobalLoading'
+
+const router = useRouter()
+const { startRouter, stopRouter } = useGlobalLoading()
+
+router.beforeEach((_to, _from) => {
+  startRouter()
+})
+router.afterEach(() => {
+  stopRouter()
+})
+router.onError(() => {
+  stopRouter()
+})
 </script>
 
 <style scoped>

@@ -146,6 +146,7 @@
     color: var(--accent);
     border-left-color: var(--accent);
     background-color: var(--accent-bg);
+    padding-left: 0.75rem;
   }
 
   /* ── Interact Utility Classes ── */
@@ -170,18 +171,34 @@
   }
 
   /*
+   * Card meta hover pairing
+   * 右侧日期变绿、标签绿边框，与左侧绿线呼应
+   * 用于: .article-card > a > .card-meta
+   */
+  .card-meta-date {
+    opacity: 0;
+    transition: opacity 0.25s, color 0.25s;
+  }
+  .interact-slide:hover .card-meta-date {
+    opacity: 1;
+    color: var(--accent);
+  }
+
+  /*
    * Pattern A-light: Green slide (lite)
    * 仅绿线 + 变色，无右移无背景变化
    * 用于: .docs-nav-item, .toc-h2 a, .toc-btn, .toc-sub a
    */
   .interact-slide-bg {
     border-left: 2px solid transparent;
-    transition: color 0.2s, border-color 0.2s;
+    padding-left: 0.5rem;
+    transition: color 0.2s, border-color 0.2s, padding-left 0.2s;
   }
 
   .interact-slide-bg:hover {
     border-left-color: var(--accent);
     color: var(--accent);
+    padding-left: 0.75rem;
   }
 
   /*
@@ -215,6 +232,38 @@
 
   .interact-fill:hover::before {
     transform: scaleX(1);
+  }
+
+  /* BackToTop nav button — interact-fill variant, fills upward */
+  .btt-nav {
+    position: relative;
+    overflow: hidden;
+    background: none;
+    border: 1px solid var(--border-primary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    font-size: 1rem;
+    line-height: 1;
+    z-index: 0;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .btt-nav::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--accent);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.2s ease;
+    z-index: -1;
+  }
+  .btt-nav:hover {
+    color: white;
+    border-color: var(--accent);
+  }
+  .btt-nav:hover::before {
+    transform: scaleY(1);
   }
 
   /*
@@ -301,6 +350,27 @@
     font-size: 0.75rem;
     font-weight: 500;
     text-decoration: none;
+  }
+
+  /* ── Global page layout (single column) ── */
+  .page-shell {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    min-height: calc(100vh - 4rem);
+  }
+
+  .page-content {
+    min-width: 0;
+    max-width: 65rem;
+    margin: 0 auto;
+    padding: 1.5rem 0 4rem 0;
+  }
+
+  @media (min-width: 768px) {
+    .page-content {
+      padding: 1.5rem 1rem 4rem 1rem;
+    }
   }
 }
 

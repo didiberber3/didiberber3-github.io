@@ -18,18 +18,9 @@ export function addCopyButtons(container: HTMLElement): void {
         await navigator.clipboard.writeText(code)
         btn.textContent = '已复制'
         btn.classList.add('copied')
-      } catch {
-        // Fallback for environments without clipboard API
-        const ta = document.createElement('textarea')
-        ta.value = code
-        ta.style.position = 'fixed'
-        ta.style.opacity = '0'
-        document.body.appendChild(ta)
-        ta.select()
-        document.execCommand('copy')
-        document.body.removeChild(ta)
-        btn.textContent = '已复制'
-        btn.classList.add('copied')
+      } catch (err) {
+        console.warn('Clipboard API not available:', err)
+        btn.textContent = '复制失败'
       }
       setTimeout(() => {
         btn.textContent = '复制'

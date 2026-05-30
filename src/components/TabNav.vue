@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
+import BackToTop from './BackToTop.vue'
 
 defineProps<{ visitUrl?: string }>()
 
@@ -71,6 +72,8 @@ function go(path: string) {
          >
            访问
          </a>
+
+        <BackToTop />
 
         <button
           @click="toggleTheme"
