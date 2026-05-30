@@ -4,9 +4,9 @@
 
 /* ========== Theme variables ========== */
 :root {
-  --bg-primary: #f8f9fa;
-  --bg-secondary: #f1f3f5;
-  --bg-tertiary: #e9ecef;
+  --bg-primary: #f7f7f5;
+  --bg-secondary: #efeeeb;
+  --bg-tertiary: #e5e4e1;
   --text-primary: #111827;
   --text-secondary: #6b7280;
   --text-muted: #9ca3af;
@@ -17,8 +17,6 @@
   --accent-bg: #f0fdf4;
   --code-bg: #f1f3f5;
   --code-border: #e5e7eb;
-  --toc-bg: #f3f5f7;
-  --toc-border: #e5e7eb;
 }
 
 .dark {
@@ -35,8 +33,6 @@
   --accent-bg: #0c1e2e;
   --code-bg: #252b3d;
   --code-border: #334155;
-  --toc-bg: #252b3d;
-  --toc-border: #334155;
 }
 
 /* ========== Base layer ========== */

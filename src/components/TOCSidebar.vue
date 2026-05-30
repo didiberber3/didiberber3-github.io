@@ -103,11 +103,8 @@ function scrollTo(id: string) {
   background: transparent;
 }
 
-/* background box to separate from content area */
 .toc-inner {
-  padding: 16px;
-  background-color: var(--toc-bg);
-  border: 1px solid var(--toc-border);
+  padding: 1.5rem 0 1.5rem 0.5rem;
 }
 
 .toc-list {
