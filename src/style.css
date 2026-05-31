@@ -17,6 +17,8 @@
   --accent-bg: #f0fdf4;
   --code-bg: #f1f3f5;
   --code-border: #e5e7eb;
+  --drawer-overlay: rgba(0, 0, 0, 0.15);
+  --drawer-shadow: -4px 0 12px rgba(0, 0, 0, 0.06);
 }
 
 .dark {
@@ -33,6 +35,8 @@
   --accent-bg: #0c1e2e;
   --code-bg: #252b3d;
   --code-border: #334155;
+  --drawer-overlay: rgba(0, 0, 0, 0.45);
+  --drawer-shadow: -4px 0 12px rgba(0, 0, 0, 0.2);
 }
 
 /* ========== Base layer ========== */

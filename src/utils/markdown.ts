@@ -34,7 +34,11 @@ export function groupTocItems(items: TocItem[]): TocGroup[] {
   let current: TocGroup | null = null
 
   for (const item of items) {
-    if (item.level === 2) {
+    if (item.level === 1) {
+      // h1 — standalone group, resets h2→h3 grouping
+      current = null
+      groups.push({ h2: item, children: [] })
+    } else if (item.level === 2) {
       current = { h2: item, children: [] }
       groups.push(current)
     } else if (item.level === 3 && current) {
@@ -51,7 +55,7 @@ export function renderMarkdown(content: string): string {
 
 export function extractTOC(html: string): TocItem[] {
   const items: TocItem[] = []
-  const regex = /<h([23])\s+id="([^"]+)"[^>]*>([\s\S]*?)<\/h[23]>/g
+  const regex = /<h([123])\s+id="([^"]+)"[^>]*>([\s\S]*?)<\/h[123]>/g
   let match: RegExpExecArray | null
 
   while ((match = regex.exec(html)) !== null) {
@@ -69,11 +73,11 @@ export function extractTOC(html: string): TocItem[] {
 }
 
 export function parseFrontmatter(raw: string): { frontmatter: Record<string, string>; content: string } {
-  const match = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/)
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/)
   if (!match) return { frontmatter: {}, content: raw }
 
   const fm: Record<string, string> = {}
-  for (const line of match[1].split('\n')) {
+  for (const line of match[1].split(/\r?\n/)) {
     const idx = line.indexOf(': ')
     if (idx > 0) {
       fm[line.slice(0, idx).trim()] = line.slice(idx + 2).trim()

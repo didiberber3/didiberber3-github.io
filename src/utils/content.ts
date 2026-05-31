@@ -88,7 +88,8 @@ export async function loadNote(slug: string): Promise<Note | undefined> {
   if (!entry) return undefined
 
   const raw = await entry[1]()
-  const html = renderMarkdown(raw)
+  const { content } = parseFrontmatter(raw)
+  const html = renderMarkdown(content)
   const toc = extractTOC(html)
   const meta = noteMeta[slug]
   return {

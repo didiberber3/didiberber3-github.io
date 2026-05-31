@@ -49,12 +49,15 @@ function toggleSidebar() {
     closeSidebar()
     return
   }
-  // On article pages, show TOC; otherwise show notes list
-  if (route.path.startsWith('/note/') && sidebar.toc.length > 0) {
-    sidebar.visible = true
-  } else {
-    openSidebar({ notes: getNoteList() })
+  // On article pages or docs article pages: sidebar already pre-populated by page
+  if (route.path.startsWith('/note/') || route.path.startsWith('/docs/')) {
+    if (sidebar.toc.length > 0 || sidebar.notes.length > 0) {
+      sidebar.visible = true
+      return
+    }
   }
+  // Fallback: show all notes
+  openSidebar({ notes: getNoteList() })
 }
 </script>
 
@@ -169,6 +172,8 @@ function toggleSidebar() {
 
 /* ── Sidebar toggle ── */
 .sidebar-toggle {
+  position: relative;
+  overflow: hidden;
   background: none;
   border: 1px solid var(--border-primary);
   padding: 0.25rem 0.5rem;
@@ -177,28 +182,59 @@ function toggleSidebar() {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s, border-color 0.2s, background-color 0.2s;
+  z-index: 0;
+  transition: color 0.2s, border-color 0.2s;
+}
+.sidebar-toggle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--accent);
+  transform: scale(0);
+  transform-origin: right center;
+  transition: transform 0.3s ease;
+  z-index: -1;
 }
 .sidebar-toggle:hover {
-  color: var(--accent);
+  color: white;
   border-color: var(--accent);
-  background-color: var(--bg-secondary);
+}
+.sidebar-toggle:hover::before {
+  transform: scale(1.5);
 }
 
 /* ── Theme toggle ── */
 .theme-toggle {
+  position: relative;
+  overflow: hidden;
   background: none;
   border: 1px solid var(--border-primary);
   padding: 0.25rem 0.5rem;
   font-size: 1rem;
   line-height: 1;
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s;
+  z-index: 0;
+  color: var(--text-secondary);
+  transition: color 0.2s, border-color 0.2s;
+}
+.theme-toggle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--accent);
+  transform: scale(0);
+  transition: transform 0.3s ease;
+  z-index: -1;
+}
+.theme-toggle:hover {
+  color: white;
+  border-color: var(--accent);
+}
+.theme-toggle:hover::before {
+  transform: scale(1.5);
 }
 
-.theme-toggle:hover {
-  background-color: var(--bg-secondary);
-}
+/* ── Theme icon rotation (kept) ── */
 
 /* Click rotation */
 .theme-toggle.rotating {

@@ -5,8 +5,7 @@ import { getNoteList, getCategories, loadNote } from '../utils/content'
 import type { NoteMeta, Note } from '../utils/content'
 import LoadingDots from '../components/LoadingDots.vue'
 import { useContentRenderer } from '../utils/useContentRenderer'
-import DocNav from '../components/DocNav.vue'
-import DocTOC from '../components/DocTOC.vue'
+import { sidebar } from '../utils/useSidebar'
 import { useGlobalLoading } from '../utils/useGlobalLoading'
 
 const route = useRoute()
@@ -42,6 +41,16 @@ async function selectNote(noteSlug: string) {
   if (noteSlug !== slug.value) {
     router.replace({ params: { category: category.value, slug: noteSlug } })
   }
+
+  // Pre-populate sidebar with current category notes + TOC
+  syncSidebar(noteSlug)
+}
+
+function syncSidebar(noteSlug?: string) {
+  sidebar.category = category.value || ''
+  sidebar.notes = categoryNotes.value
+  sidebar.toc = currentNote.value?.toc || []
+  sidebar.currentSlug = noteSlug || currentNote.value?.slug || ''
 }
 
 function selectCategory(cat: string) {
@@ -79,6 +88,10 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
     // Back to category grid
     currentNote.value = undefined
     loading.value = false
+    sidebar.category = ''
+    sidebar.notes = []
+    sidebar.toc = []
+    sidebar.currentSlug = ''
     return
   }
 
@@ -92,47 +105,27 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
 </script>
 
 <template>
-  <!-- Docs reading mode: left nav + content + right toc -->
-  <div v-if="category" class="docs-page-root">
-    <aside class="docs-sidebar">
-      <div class="docs-sidebar-label">{{ category }}</div>
-      <DocNav
-        :notes="categoryNotes"
-        :current-slug="currentNote?.slug"
-        @select-note="selectNote"
-      />
-    </aside>
+  <!-- Docs reading mode: single column -->
+  <div v-if="category" class="docs-reading">
+    <div class="animate-reveal">
+      <div v-if="loading" class="py-16 text-center txt-muted">
+        <LoadingDots text="加载中" />
+      </div>
 
-    <div class="docs-body">
-      <div class="docs-body-inner">
-        <main class="docs-content">
-          <div class="animate-reveal">
-            <div v-if="loading" class="py-16 text-center txt-muted">
-              <LoadingDots text="加载中" />
-            </div>
+      <article v-else-if="currentNote" class="docs-article prose prose-sm max-w-none prose-headings:font-semibold">
+        <header class="mb-10">
+          <h1 class="text-2xl font-bold mb-2 txt-primary">{{ currentNote.title }}</h1>
+          <p v-if="currentNote.date" class="text-xs txt-secondary">{{ currentNote.date }}</p>
+        </header>
+        <div
+          ref="contentRef"
+          class="docs-article-content"
+          v-html="currentNote.html"
+        ></div>
+      </article>
 
-            <article v-else-if="currentNote">
-              <header class="mb-10">
-                <h1 class="text-2xl font-bold mb-2 txt-primary">{{ currentNote.title }}</h1>
-              <p v-if="currentNote.date" class="text-xs txt-secondary">{{ currentNote.date }}</p>
-            </header>
-              <div
-                ref="contentRef"
-                class="article-content prose prose-sm max-w-none prose-headings:font-semibold"
-                v-html="currentNote.html"
-              ></div>
-            </article>
-
-            <div v-else class="py-16 text-center txt-muted">
-              笔记不存在
-            </div>
-          </div>
-        </main>
-
-        <aside v-if="currentNote?.toc?.length" class="docs-toc">
-          <div class="docs-toc-label">本页目录</div>
-          <DocTOC :items="currentNote.toc" />
-        </aside>
+      <div v-else class="py-16 text-center txt-muted">
+        笔记不存在
       </div>
     </div>
   </div>
@@ -237,101 +230,10 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
   text-decoration: underline;
 }
 
-/* ── Docs reading mode: left nav + content + right toc ── */
-.docs-page-root {
-  display: flex;
-  align-items: flex-start;
-  min-height: calc(100vh - 4rem);
-  max-width: 1600px;
+/* ── Docs reading mode: single column ── */
+.docs-reading {
+  max-width: 780px;
   margin: 0 auto;
-  padding: 0 2rem;
-}
-
-/* ── Left sidebar: doc nav ── */
-.docs-sidebar {
-  position: sticky;
-  top: calc(48px + 1rem);
-  flex-shrink: 0;
-  width: 260px;
-  max-height: calc(100vh - 48px - 2rem);
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  padding: 1rem 0.5rem 1rem 0;
-  border-right: 1px solid var(--border-primary);
-}
-
-.docs-sidebar-label {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-  margin-bottom: 0.75rem;
-  padding: 0 0.5rem;
-}
-
-/* ── Body wrapper: centers content+toc horizontally ── */
-.docs-body {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  justify-content: center;
-}
-
-.docs-body-inner {
-  display: flex;
-  width: 100%;
-  max-width: 1160px;
-}
-
-/* ── Content area ── */
-.docs-content {
-  flex: 1;
-  min-width: 0;
-  max-width: 880px;
-  padding: 1.5rem 2rem 4rem 2rem;
-}
-
-/* ── Right sidebar: file toc ── */
-.docs-toc {
-  position: sticky;
-  top: calc(48px + 1rem);
-  flex-shrink: 0;
-  width: 220px;
-  max-height: calc(100vh - 48px - 2rem);
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  padding: 1rem 0 1rem 1.5rem;
-  border-left: 1px solid var(--border-primary);
-}
-
-.docs-toc-label {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-  margin-bottom: 0.75rem;
-  padding: 0 0.75rem;
-}
-
-@media (max-width: 1200px) {
-  .docs-toc {
-    display: none;
-  }
-}
-
-@media (max-width: 900px) {
-  .docs-sidebar {
-    display: none;
-  }
-  .docs-body {
-    justify-content: flex-start;
-  }
-  .docs-content {
-    padding: 1rem 1rem 4rem;
-  }
+  padding: 1.5rem 1.5rem 4rem;
 }
 </style>

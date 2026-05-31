@@ -29,6 +29,7 @@ router.beforeEach((_to, _from) => {
 })
 router.afterEach(() => {
   stopRouter()
+  closeSidebar()
 })
 router.onError(() => {
   stopRouter()
