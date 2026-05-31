@@ -1,5 +1,5 @@
 // Virtual module provided by Vite plugin — types declared in vite-env.d.ts
-import { noteMeta, shareMeta } from 'virtual:content-index'
+import { noteMeta } from 'virtual:content-index'
 import { renderMarkdown, parseFrontmatter, extractTOC, type TocItem } from './markdown'
 
 /* ===== Types ===== */
@@ -17,34 +17,9 @@ export interface Note extends NoteMeta {
   toc: TocItem[]
 }
 
-export interface Note extends NoteMeta {
-  content: string
-  html: string
-  toc: TocItem[]
-}
-
-export interface ShareMeta {
-  slug: string
-  title: string
-  date: string
-  tag: string
-  url: string
-}
-
-export interface Share extends ShareMeta {
-  content: string
-  html: string
-  toc: TocItem[]
-}
-
 /* ===== Lazy globs ===== */
 
 const noteModules = import.meta.glob('/content/notes/**/*.md', {
-  query: '?raw',
-  import: 'default',
-}) as Record<string, () => Promise<string>>
-
-const shareModules = import.meta.glob('/content/shares/**/*.md', {
   query: '?raw',
   import: 'default',
 }) as Record<string, () => Promise<string>>
@@ -104,16 +79,6 @@ export function getNotesByCategory(category: string): NoteMeta[] {
   return getNoteList().filter((n) => n.category === category)
 }
 
-export function getShareList(): ShareMeta[] {
-  const list = Object.keys(shareModules).map((path) => {
-    const slug = slugFromPath(path)
-    const meta = shareMeta[slug] || { date: '', tag: '', url: '' }
-    return { slug, title: titleFromSlug(slug), ...meta }
-  })
-  list.sort((a, b) => b.date.localeCompare(a.date))
-  return list
-}
-
 /* ===== Async: full content loading  ===== */
 
 export async function loadNote(slug: string): Promise<Note | undefined> {
@@ -137,24 +102,4 @@ export async function loadNote(slug: string): Promise<Note | undefined> {
   }
 }
 
-export async function loadShare(slug: string): Promise<Share | undefined> {
-  const entry = Object.entries(shareModules).find(
-    ([path]) => slugFromPath(path) === slug
-  )
-  if (!entry) return undefined
 
-  const raw = await entry[1]()
-  const { frontmatter, content } = parseFrontmatter(raw)
-  const html = renderMarkdown(content)
-  const toc = extractTOC(html)
-  return {
-    slug,
-    title: titleFromSlug(slug),
-    date: frontmatter.date || shareMeta[slug]?.date || '',
-    tag: frontmatter.tag || shareMeta[slug]?.tag || '',
-    url: frontmatter.url || shareMeta[slug]?.url || '',
-    content,
-    html,
-    toc,
-  }
-}

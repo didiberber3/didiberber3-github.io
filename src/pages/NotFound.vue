@@ -1,9 +1,7 @@
 <template>
-  <ScrollProgress />
-  <TabNav />
   <div class="page-shell">
     <main class="page-content">
-      <div class="animate-fade-up">
+      <div class="animate-reveal">
         <div class="not-found">
           <h1 class="nf-code">404</h1>
           <p class="nf-text txt-secondary">页面不存在</p>
@@ -15,8 +13,6 @@
 </template>
 
 <script setup lang="ts">
-import TabNav from '../components/TabNav.vue'
-import ScrollProgress from '../components/ScrollProgress.vue'
 </script>
 
 <style scoped>

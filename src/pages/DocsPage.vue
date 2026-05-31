@@ -3,9 +3,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getNoteList, getCategories, loadNote } from '../utils/content'
 import type { NoteMeta, Note } from '../utils/content'
-import TabNav from '../components/TabNav.vue'
 import LoadingDots from '../components/LoadingDots.vue'
-import ScrollProgress from '../components/ScrollProgress.vue'
 import { useContentRenderer } from '../utils/useContentRenderer'
 import DocNav from '../components/DocNav.vue'
 import DocTOC from '../components/DocTOC.vue'
@@ -94,8 +92,6 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
 </script>
 
 <template>
-  <ScrollProgress />
-  <TabNav />
   <!-- Docs reading mode: left nav + content + right toc -->
   <div v-if="category" class="docs-page-root">
     <aside class="docs-sidebar">
@@ -110,7 +106,7 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
     <div class="docs-body">
       <div class="docs-body-inner">
         <main class="docs-content">
-          <div class="animate-fade-up">
+          <div class="animate-reveal">
             <div v-if="loading" class="py-16 text-center txt-muted">
               <LoadingDots text="加载中" />
             </div>
@@ -144,7 +140,7 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
   <!-- Docs home: category grid (no sidebar) -->
   <div v-else class="page-shell">
     <main class="page-content">
-      <div class="animate-fade-up">
+      <div class="animate-reveal">
         <div v-if="categories.length > 0" class="docs-home">
           <h1 class="docs-home-title">全部文档</h1>
           <p class="docs-home-subtitle">选择分类开始阅读</p>

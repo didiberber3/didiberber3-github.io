@@ -17,16 +17,6 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../pages/ArticleView.vue'),
   },
   {
-    path: '/shares',
-    name: 'shares',
-    component: () => import('../pages/Shares.vue'),
-  },
-  {
-    path: '/share/:slug',
-    name: 'share',
-    component: () => import('../pages/ShareView.vue'),
-  },
-  {
     path: '/docs/:category?/:slug?',
     name: 'docs',
     component: () => import('../pages/DocsPage.vue'),

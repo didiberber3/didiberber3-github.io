@@ -29,10 +29,8 @@ function contentIndexPlugin(): Plugin {
       if (id !== '\0virtual:content-index') return
 
       const notesDir = join(__dirname, 'content/notes')
-      const sharesDir = join(__dirname, 'content/shares')
 
       const noteMeta: Record<string, { date: string; title: string; slug: string }> = {}
-      const shareMeta: Record<string, { date: string; tag: string; url: string }> = {}
 
       // Notes — date & title from frontmatter, fallback to mtime
       function walkNotes(dir: string) {
@@ -65,28 +63,8 @@ function contentIndexPlugin(): Plugin {
       }
       walkNotes(notesDir)
 
-      // Shares — frontmatter
-      try {
-        const entries = readdirSync(sharesDir, { withFileTypes: true })
-        for (const entry of entries) {
-          if (entry.isFile() && entry.name.endsWith('.md')) {
-            const slug = entry.name.replace(/\.md$/, '')
-            const raw = readFileSync(join(sharesDir, entry.name), 'utf-8')
-            const fm = parseFrontmatter(raw)
-            shareMeta[slug] = {
-              date: fm.date || '',
-              tag: fm.tag || '',
-              url: fm.url || '',
-            }
-          }
-        }
-      } catch (e) {
-        console.warn('[content-index] Failed to read shares:', e)
-      }
-
       return `
 export const noteMeta = ${JSON.stringify(noteMeta)};
-export const shareMeta = ${JSON.stringify(shareMeta)};
 `
     },
   }

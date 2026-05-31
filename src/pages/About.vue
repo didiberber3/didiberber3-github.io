@@ -1,9 +1,7 @@
 <template>
-  <ScrollProgress />
-  <TabNav />
   <div class="page-shell">
     <main class="page-content">
-      <div class="animate-fade-up">
+      <div class="animate-reveal">
         <div class="about-page">
           <h1 class="about-title txt-primary">关于</h1>
 
@@ -37,8 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import TabNav from '../components/TabNav.vue'
-import ScrollProgress from '../components/ScrollProgress.vue'
+
 </script>
 
 <style scoped>

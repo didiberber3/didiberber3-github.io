@@ -3,8 +3,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import BackToTop from './BackToTop.vue'
 
-defineProps<{ visitUrl?: string }>()
-
 const route = useRoute()
 const router = useRouter()
 
@@ -31,7 +29,7 @@ const tabs = [
   { label: '首页', path: '/' },
   { label: '笔记', path: '/notes' },
   { label: '文档', path: '/docs' },
-  { label: '分享', path: '/shares' },
+
   { label: '关于', path: '/about' },
 ]
 
@@ -63,16 +61,6 @@ function go(path: string) {
       </div>
 
       <div class="flex items-center gap-3">
-         <a
-           v-if="visitUrl"
-           :href="visitUrl"
-           target="_blank"
-           rel="noopener noreferrer"
-           class="visit-btn interact-fill"
-         >
-           访问
-         </a>
-
         <BackToTop />
 
         <button

@@ -7,5 +7,4 @@ declare module 'virtual:content-index' {
     slug: string
   }
   export const noteMeta: Record<string, NoteEntry>
-  export const shareMeta: Record<string, { date: string; tag: string; url: string }>
 }
