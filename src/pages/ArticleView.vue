@@ -6,7 +6,7 @@ import type { Note } from '../utils/content'
 import LoadingDots from '../components/LoadingDots.vue'
 import { useContentRenderer } from '../utils/useContentRenderer'
 import { useGlobalLoading } from '../utils/useGlobalLoading'
-import { openSidebar } from '../utils/useSidebar'
+import { sidebar } from '../utils/useSidebar'
 
 const route = useRoute()
 const note = ref<Note | undefined>()
@@ -23,6 +23,9 @@ async function load() {
   loading.value = false
   stopPage()
   renderContent()
+  if (found?.toc?.length) {
+    sidebar.toc = found.toc
+  }
 }
 
 onMounted(load)
@@ -46,24 +49,8 @@ watch(() => route.params.slug, load)
         <!-- content -->
         <article v-else class="max-w-3xl mx-auto">
           <header class="mb-10">
-            <div class="flex items-start justify-between gap-2">
-            <div>
-              <h1 class="text-2xl font-bold mb-2 txt-primary">{{ note.title }}</h1>
-              <p v-if="note.date" class="text-xs txt-secondary">{{ note.date }}</p>
-            </div>
-            <button
-              v-if="note.toc && note.toc.length > 1"
-              class="sidebar-toggle"
-              @click="openSidebar({ toc: note.toc })"
-              aria-label="打开目录"
-            >
-              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <rect x="3" y="4" width="14" height="2" rx="1" fill="currentColor" />
-                <rect x="3" y="9" width="14" height="2" rx="1" fill="currentColor" />
-                <rect x="3" y="14" width="14" height="2" rx="1" fill="currentColor" />
-              </svg>
-            </button>
-          </div>
+            <h1 class="text-2xl font-bold mb-2 txt-primary">{{ note.title }}</h1>
+            <p v-if="note.date" class="text-xs txt-secondary">{{ note.date }}</p>
           </header>
 
           <div
@@ -77,21 +64,3 @@ watch(() => route.params.slug, load)
   </div>
 </template>
 
-<style scoped>
-.sidebar-toggle {
-  background: none;
-  border: 1px solid var(--border-primary);
-  padding: 0.375rem;
-  cursor: pointer;
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: color 0.2s, border-color 0.2s;
-}
-.sidebar-toggle:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-</style>

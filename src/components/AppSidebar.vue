@@ -30,9 +30,9 @@ function onSelectNote(slug: string) {
         </div>
 
         <div class="drawer-body">
-          <!-- Category Nav -->
-          <div v-if="sidebar.category && sidebar.notes.length" class="drawer-section">
-            <div class="drawer-section-label">分类</div>
+          <!-- Notes List -->
+          <div v-if="sidebar.notes.length" class="drawer-section">
+            <div class="drawer-section-label">{{ sidebar.category || '笔记' }}</div>
             <nav class="drawer-nav">
               <a
                 v-for="note in sidebar.notes"
@@ -46,7 +46,7 @@ function onSelectNote(slug: string) {
             </nav>
           </div>
 
-          <div v-if="sidebar.category && sidebar.notes.length && sidebar.toc.length" class="drawer-divider"></div>
+          <div v-if="sidebar.notes.length && sidebar.toc.length" class="drawer-divider"></div>
 
           <!-- Table of Contents -->
           <div v-if="sidebar.toc.length > 1" class="drawer-section">

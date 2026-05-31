@@ -2,6 +2,8 @@
 import { useRoute, useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import BackToTop from './BackToTop.vue'
+import { sidebar, openSidebar, closeSidebar } from '../utils/useSidebar'
+import { getNoteList } from '../utils/content'
 
 const route = useRoute()
 const router = useRouter()
@@ -41,6 +43,19 @@ function isActive(path: string): boolean {
 function go(path: string) {
   router.push(path)
 }
+
+function toggleSidebar() {
+  if (sidebar.visible) {
+    closeSidebar()
+    return
+  }
+  // On article pages, show TOC; otherwise show notes list
+  if (route.path.startsWith('/note/') && sidebar.toc.length > 0) {
+    sidebar.visible = true
+  } else {
+    openSidebar({ notes: getNoteList() })
+  }
+}
 </script>
 
 <template>
@@ -61,6 +76,18 @@ function go(path: string) {
       </div>
 
       <div class="flex items-center gap-3">
+        <button
+          class="sidebar-toggle"
+          @click="toggleSidebar"
+          aria-label="打开侧栏"
+          title="打开侧栏"
+        >
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <rect x="3" y="4" width="14" height="2" rx="1" fill="currentColor" />
+            <rect x="3" y="9" width="14" height="2" rx="1" fill="currentColor" />
+            <rect x="3" y="14" width="14" height="2" rx="1" fill="currentColor" />
+          </svg>
+        </button>
         <BackToTop />
 
         <button
@@ -140,12 +167,22 @@ function go(path: string) {
   transform: scaleX(1);
 }
 
-/* ── Visit button: uses .interact-fill from style.css ── */
-.visit-btn {
-  padding: 0.125rem 0.75rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-decoration: none;
+/* ── Sidebar toggle ── */
+.sidebar-toggle {
+  background: none;
+  border: 1px solid var(--border-primary);
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, border-color 0.2s, background-color 0.2s;
+}
+.sidebar-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background-color: var(--bg-secondary);
 }
 
 /* ── Theme toggle ── */
