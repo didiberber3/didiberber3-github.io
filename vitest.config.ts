@@ -1,8 +1,9 @@
 import { defineConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
+import { contentIndexPlugin } from './src/utils/contentIndexPlugin'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), contentIndexPlugin()],
   test: {
     environment: 'jsdom',
     globals: true,

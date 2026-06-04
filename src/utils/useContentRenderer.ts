@@ -1,6 +1,7 @@
 import { ref, nextTick, onUnmounted } from 'vue'
 import { highlightBlocks } from './highlight'
-import { addCopyButtons, setupLightbox } from './reader'
+import { addCopyButtons, addCodeFold, setupLightbox } from './reader'
+import pangu from 'pangu/browser'
 
 export function useContentRenderer() {
   const contentRef = ref<HTMLElement | null>(null)
@@ -11,6 +12,8 @@ export function useContentRenderer() {
       highlightBlocks()
       if (contentRef.value) {
         addCopyButtons(contentRef.value)
+        addCodeFold(contentRef.value)
+        pangu.spacingNode(contentRef.value)
         cleanupLightbox?.()
         cleanupLightbox = setupLightbox(contentRef.value)
       }

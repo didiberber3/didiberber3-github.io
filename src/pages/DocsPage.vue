@@ -115,7 +115,7 @@ watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
       <article v-else-if="currentNote" class="docs-article prose prose-sm max-w-none prose-headings:font-semibold">
         <header class="mb-10">
           <h1 class="text-2xl font-bold mb-2 txt-primary">{{ currentNote.title }}</h1>
-          <p v-if="currentNote.date" class="text-xs txt-secondary">{{ currentNote.date }}</p>
+          <p class="text-xs txt-secondary">{{ currentNote.date }} · {{ currentNote.readingTime }} 分钟 · 约 {{ currentNote.charCount }} 字</p>
         </header>
         <div
           ref="contentRef"

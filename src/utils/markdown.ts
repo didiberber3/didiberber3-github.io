@@ -72,6 +72,21 @@ export function extractTOC(html: string): TocItem[] {
   return items
 }
 
+export function computeReadingStats(text: string): { charCount: number; readingTime: number } {
+  // Strip markdown syntax to get plain text
+  const plain = text
+    .replace(/^---[\s\S]*?---\r?\n?/m, '')       // remove frontmatter
+    .replace(/```[\s\S]*?```/g, '')                // remove code fences
+    .replace(/`[^`]+`/g, '')                        // remove inline code
+    .replace(/!\[.*?\]\(.*?\)/g, '')                // remove images
+    .replace(/\[([^\]]*)\]\(.*?\)/g, '$1')          // replace links with text
+    .replace(/[#*_~>|]/g, '')                       // remove markdown markers
+    .replace(/---|\+|==/g, '')                      // remove horizontal rules/tables
+  const charCount = plain.replace(/\s/g, '').length
+  const readingTime = Math.max(1, Math.ceil(charCount / 300))
+  return { charCount, readingTime }
+}
+
 export function parseFrontmatter(raw: string): { frontmatter: Record<string, string>; content: string } {
   const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/)
   if (!match) return { frontmatter: {}, content: raw }

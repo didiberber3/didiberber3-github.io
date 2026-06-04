@@ -1,14 +1,3 @@
----
-date: 2026-05-31
-tags: Java
----
-
-
-
-
-
-
-
 # 文件
 
 
@@ -722,5 +711,682 @@ public class FileWriter_ {
 
 
 
+# 节点流 和 处理流
 
+
+
+> 这里好乱啊,请求AI支援
+
+
+
+弹幕:
+
+> 节点流是你只能点米饭，白菜，肉丝，白粥；包装流是你可以点早餐，午餐，晚餐，给包装流说一下你要吃什么类型的就行了
+
+> 简单地说就是文件只能用文件流，数组只能用数组流，字符串只能用字符串流，但是这玩意可以用所有流
+
+
+
+
+
+1. 节点流可以从一个特定的数据源读写数据
+2. 处理流（包装流）是连接在已存在的流（节点流或处理流）之上，为程序提供更为强大的读写能力（如BufferedReader，BufferedWriter）
+
+
+
+
+
+程序操作数组
+
+`ByteArrayInputStream`、`ByteArrayOutputStream`
+
+`BufferedReader`，`BufferedWriter`
+
+
+
+BufferedReader 类中,有属性Reader,即可以封装一个节点流,该节点流可以是任意的. 只要是Reader的子类就可以了
+
+
+
+## 节点流和处理流的区别和联系
+
+
+
+1. 节点流是底层流/低级流,可以直接跟数据源相接
+2. 处理流包装节点流,既可以消除不同节点的实现差异,也可以提供更方便的方法来完成输入输出
+3. 处理流(包装流)对节点流进行包装,使用了修饰器设计模式,不会直接与数据源相连
+
+
+
+**处理流的功能主要体现在以下两个方面:**
+
+
+
+1. 性能的提高,主要以增加缓冲的方式来提高输入输出的效率.
+2. 操作的便携,处理流可能提供了一系列便携的方法来一次输出大批量的数据,使用更加灵活方便
+
+
+
+# 处理流: BufferedReader和BufferedWriter
+
+属于字符流,是按照字符来读取数据的
+
+关闭时只需要关闭外层流即可
+
+
+
+## 应用案例
+
+
+
+### BufferedReader
+
+```java
+package com.jl.stream_.reader_;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class BufferedReader_ {
+    public static void main(String[] args) throws IOException {
+        String filePath = "C:\\Users\\chens\\Desktop\\泛型.md";
+//        创建BufferedReader
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath));
+//        读取
+        String line;
+
+//        当返回为null时表示读取完毕
+        while ((line = bufferedReader.readLine()) != null) {
+            System.out.println(line);
+        }
+
+//        关闭流
+        bufferedReader.close();
+        
+//        close源码:
+        
+//        public void close() throws IOException {
+//        synchronized (lock) {
+//            if (in == null)
+//                return;
+//            try {
+//                in.close();
+//            } finally {
+//                in = null;
+//                cb = null;
+//            }
+//        }
+//    }
+
+    }
+}
+
+```
+
+
+
+### BufferedWriter
+
+
+
+使用BufferedWriter 将”hello,韩顺平教育”，写入到文件中
+
+
+
+```java
+package com.jl.stream_.reader_;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class BufferedWriter_ {
+    public static void main(String[] args) throws IOException {
+//        定义路径
+        String fileName = "E:\\story.txt";
+//        新建bw对象,构造器中写对应的流,对应的流中写好路径
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName));
+
+//        定义要写入的文本
+        String line = "雨下整夜...";
+        String line2 = "我的爱溢出就像雨水...";
+
+//        写入
+        bufferedWriter.write(line);
+//        写入换行符
+        bufferedWriter.newLine();
+//        再次写入
+        bufferedWriter.write(line2);
+
+//        关闭流 
+        bufferedWriter.close();
+
+
+    }
+}
+```
+
+
+
+
+
+### BufferedCopy
+
+3)综合使用BufferedReader 和 BufferedWriter 完成文本文件拷贝，注
+意文件编码 
+
+
+
+```java
+package com.jl.stream_.reader_;
+
+import java.io.*;
+
+public class BufferedCopy_ {
+    public static void main(String[] args) throws IOException {
+
+        String fileName = "E:\\story.txt";
+        String fileCopy = "E:\\hello.txt";
+
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileCopy));
+        String line;
+        while ((line = bufferedReader.readLine()) != null) {
+            bufferedWriter.write(line);
+            bufferedWriter.newLine();
+
+        }
+        bufferedReader.close();
+        bufferedWriter.close();
+
+
+//        因为Reader和Writer是字符流,所以不能操作二进制文件,会导致文件读取数据错误,如音乐,图片,视频
+        
+//        弹幕:现在练习用throw可以精简代码，但如果真的出现异常，则下面的代码就不能继续执行了，包括关闭流语句
+//        所以实际使用时还是要用try-catch-finally，才能确保不管有没有异常都能关闭流。
+    }
+}
+
+```
+
+
+
+
+
+> 
+> 因为Reader和Writer是字符流,所以不能操作二进制文件,会导致文件读取数据错误,如音乐,图片,视频
+> 
+
+> 弹幕:现在练习用throw可以精简代码，但如果真的出现异常，则下面的代码就不能继续执行了，包括关闭流语句
+> 所以实际使用时还是要用try-catch-finally，才能确保不管有没有异常都能关闭流。
+
+
+
+# 节点流
+
+
+
+
+
+BufferedInputStream
+
+BufferedOutputStream
+
+
+
+
+
+## 案例 Copy02
+
+
+
+使用字节流进行Copy
+
+
+
+```java
+package com.jl.stream_.reader_;
+
+import java.io.*;
+
+public class BufferedCopy02_ {
+    public static void main(String[] args) {
+
+        String fileName = "E:\\JavaTest\\END1.png";
+        String fileCopy = "E:\\JavaTest\\END1copied.png";
+
+        BufferedInputStream bufferedInputStream = null;
+        BufferedOutputStream bufferedOutputStream = null;
+        try {
+            bufferedInputStream = new BufferedInputStream(new FileInputStream(fileName));
+            bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(fileCopy));
+            byte[] bytes = new byte[1024];
+            int length ;
+
+            while ((length = bufferedInputStream.read(bytes)) != -1) {
+                bufferedOutputStream.write(bytes, 0, length);
+
+
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+
+            try {
+                bufferedOutputStream.close();
+                bufferedInputStream.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("copyOK!");
+        }
+
+
+    }
+}
+
+```
+
+
+
+> 通过与ReaderWriter的对比可以知道,最简单的读写大概只是数据类型的不同,字节流选择用Byte作为单位,Copy1中选择String 并一次读取一整行作为单位
+
+
+
+
+
+
+
+# 对象流 Object In/Output Stream
+
+
+
+需求：
+
+1. 将 `int num =100;` 这个int数据保存到文件中，注意不是100，而是`int`类型的100，并且能够从文件中直接回复为`int`100
+2. 将 `Dog dog = new Dog("小黄",3);`这个Dog对象保存到文件中，并且能从文件中恢复，
+3. 上面的要求，就是能够将基本数据类型 或者对象进行序列化 和反序列化操作
+
+
+
+## 序列化和反序列化
+
+1. 序列化就是在保存数据时，保存**数据的值**和**数据类型**
+
+2. 反序列化就是在恢复数据时，恢复**数据的值**和**数据类型**
+
+3. 需要将某个对象支持序列化机制，则必须让其类是可序列化的，为了让某个类是可序列化的，该类必须实现如下两个接口之一：
+
+   `Serializable`  //这是一个标记接口
+
+   `Externalizable` //该接口有方法需要实现
+
+推荐使用`Serializable`
+
+
+
+## ObjectOutputStream
+
+
+
+```java
+package com.jl.stream_.outputstream_;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
+public class ObjectOutputStream_ {
+    public static void main(String[] args) throws IOException {
+
+//        序列化后，保存的文件格式不是纯文本，而是按照它的格式来保存
+        String filePath = "E:\\JavaTest\\data.txt";
+
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath));
+
+//        序列化文件到 filePath
+
+        oos.writeInt(100); //int -> Integer (实现了 Serializable 接口)
+        oos.writeBoolean(true); //boolean ->Boolean
+        oos.writeDouble(123.45);
+        oos.writeFloat(123.45F);
+        oos.writeChar('h');
+        oos.writeUTF("hello"); //String 实现了Serializable
+
+//        保存一个Dog对象
+        oos.writeObject(new Dog("旺财", 10)); // Dog对象没有实现Serializable接口会抛出异常
+        // NotSerializableException
+        // 需要对类进行实现
+
+
+        oos.close();
+
+        System.out.println("保存完毕.");
+
+    }
+}
+
+```
+
+
+
+## ObjectInputStream
+
+
+
+```java
+package com.jl.stream_.inputstream_;
+
+
+import com.jl.stream_.outputstream_.Dog;
+
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+
+public class ObjectInputStream_ {
+    public static void main(String[] args) throws Exception {
+
+        String filePath = "E:\\JavaTest\\data.txt";
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath));
+
+//        读取数据的反序列化的顺序需要和序列化时的顺序一致
+//        否则会出现异常
+//
+//        更改了序列化的类等之后,需要重新序列化,再进行反序列化
+
+        System.out.println(ois.readInt());
+        System.out.println(ois.readBoolean());
+        System.out.println(ois.readDouble());
+        System.out.println(ois.readFloat());
+        System.out.println(ois.readChar());
+        System.out.println(ois.readUTF());
+
+
+//        Dog的编译类型是Object,运行类型是Dog
+        Object o = ois.readObject();
+        System.out.println(o.getClass());
+        System.out.println(o);
+
+//        如果我们需要调用Dog的方法,需要进行向下转型
+//        还需要将类进行公有化,因为类会就近选择
+        Dog dog = (Dog) o;
+        System.out.println(dog.getName());
+        System.out.println(dog.getAge());
+
+
+    }
+}
+
+```
+
+
+
+## 对象处理流注意事项和使用细节
+
+
+
+1. 读写顺序要一致
+2. 要求实现序列化或反序列化对象，需要实现 `Serializable`
+3. 序列化的类中建议添加SerivalVersionUID，为了提高版本的兼容性
+4. 默认将里面所有属性都进行序列化，但除了static或transient修饰的成员
+5. 要求里面属性的类型也需要实现序列化接口
+6. 序列化具备可继承性，也就是如果某类已经实现序列化，则他的所有子类也默认实现了序列化
+
+
+
+```java
+public class Master implements Serializable {
+}
+```
+
+
+
+```java
+public class Dog implements Serializable {
+    //    序列化的版本号，可以提高兼容性
+    private static final long serialVersionUID = 1L;
+    //    static修饰符
+    private static String nation;
+    private String name;
+    private int age;
+    //    transient修饰符
+    private transient String color;
+
+    private Master master = new Master();
+
+```
+
+
+
+# 标准输入/输出流
+
+
+
+
+
+| 标准流       | 类型         | 默认设备 |
+| ------------ | ------------ | -------- |
+| `System.in`  | InputStream  | 键盘     |
+| `System.out` | OutputStream | 显示器   |
+
+
+
+```java
+
+package com.jl.stream_.standard;
+
+import java.util.Scanner;
+
+public class InputAndOutput {
+    public static void main(String[] args) {
+
+
+//        System.in 的编译类型是 InputStream
+//        System.in 的运行类型是 BufferedInputStream 缓冲流
+//        表示标准输入：键盘
+        System.out.println(System.in.getClass());
+
+        System.out.println("请输入内容");
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println(scanner.next());
+
+
+//        System.in 的编译类型是 PrintStream
+//        System.in 的运行类型是 PrintStream 打印流
+//        表示标准输出：显示器
+        System.out.println(System.out.getClass());
+
+        System.out.println("Hello World!");
+        System.out.println("Hello Jason!");
+
+
+    }
+}
+
+```
+
+
+
+
+
+# 转换流
+
+
+
+把字节流转成字符流：
+
+`InputStreamReader` 和 `InputStreamWriter`
+
+
+
+1. InputStreamReader ：Reader的子类， 可以将InputStream（字节流）包装成Reader（字符流）
+2. OutputStreamWriter：Writer的子类，可以将OutputStream（字节流）包装成Writer（字符流）
+3. 当处理纯文本数据时，如果使用字符流效率更高，并且可以有有效解决中文问题，所以建议将字节流转换成字符流
+4. 可以在使用时指定编码格式（比如UTF-8，GBK，GB2312，ISO8859-1）等
+
+
+
+**将字节流转成字符流,指定编码**
+
+```java
+package com.jl.stream_.transformation;
+
+import sun.nio.cs.ext.GBK;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class InputStreamReader_ {
+    public static void main(String[] args) throws Exception {
+//        将字节流转成字符流,指定编码
+        String filePath = "E:\\JavaTest\\hello.txt";
+////       1. 把 new FileInputStream 转成 InputStreamReader ,同时指定编码
+//        InputStreamReader gbk = new InputStreamReader(new FileInputStream(filePath), "utf-8");
+////       2. 把 gbk 传给BufferedStreamReader
+//        BufferedReader bufferedReader = new BufferedReader(gbk);
+
+
+//        将2和3合在一起写
+//        BufferedReader bufferedReader = new BufferedReader(
+//        new InputStreamReader(
+//        new FileInputStream(filePath), "utf-8"));
+
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "utf-8"));
+
+
+//       3. 读取
+        String s = bufferedReader.readLine();
+        System.out.println("读取内容= \"" + s + "\"");
+//       4. 关闭外层流
+
+        bufferedReader.close();
+
+    }
+}
+
+```
+
+
+
+
+
+```java
+package com.jl.stream_.transformation;
+
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+
+public class OutputStreamWriter_ {
+    public static void main(String[] args) throws Exception {
+        String filePath = "E:\\JavaTest\\hello.txt";
+        String charset = "utf-8";
+        OutputStreamWriter oSW = new OutputStreamWriter(new FileOutputStream(filePath), charset);
+
+        oSW.write("hello");
+
+        oSW.close();
+        System.out.println("按照" + charset + "运行文件");
+    }
+}
+
+```
+
+
+
+
+
+## 打印流
+
+
+
+## PrintStream 和PrintWriter
+
+
+
+打印流只有输入流 没有输出流
+
+
+
+### PrintStream
+
+
+
+```java
+package com.jl.stream_.print_;
+
+import java.io.IOException;
+import java.io.PrintStream;
+
+public class PrintStream_ {
+    public static void main(String[] args) throws IOException {
+
+        PrintStream out = System.out;
+//        在默认情况下，PrintStream 输出数据的位置是标准输出 即 显示器
+        out.print("helloJason");
+
+//        print源码：
+//        public void print(String s) {
+//        if (s == null) {
+//            s = "null";
+//        }
+//        write(s);
+//    }
+//        真正进行输出的是write方法
+        System.out.println();
+
+//        本质一样
+        out.write("hellojasons".getBytes());
+
+
+//        我们可以去修改打印流输出的位置 / 设备
+//        修改到 "E:\\JavaTest\\log1.txt"
+        System.setOut(new PrintStream("E:\\JavaTest\\log1.txt"));
+
+        //    public static void setOut(PrintStream out) {
+        //        checkIO();
+        //        setOut0(out);
+        //    }
+
+//       ⬆️ 这是个native方法，修改了out
+
+//        此字符串就会输出到 "E:\\JavaTest\\log1.txt"
+        System.out.println("helloJason");
+
+    }
+}
+
+```
+
+
+
+### PrintWriter
+
+
+
+```java
+package com.jl.stream_.print_;
+
+import java.io.FileWriter;
+import java.io.PrintWriter;
+
+public class PrintWriter_ {
+    public static void main(String[] args) throws Exception {
+
+
+//        PrintWriter printWriter = new PrintWriter(System.out);
+
+        String filePath = "E:\\JavaTest\\log2.txt";
+        PrintWriter printWriter = new PrintWriter(new FileWriter(filePath));
+        printWriter.print("helloJason");
+
+//        如果不关闭Writer，log就不会刷新
+        printWriter.close();
+    }
+}
+
+```
 

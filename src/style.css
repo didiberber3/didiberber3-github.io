@@ -248,7 +248,7 @@
   .btt-nav {
     position: relative;
     overflow: hidden;
-    background: none;
+  background: var(--code-bg);
     border: 1px solid var(--border-primary);
     color: var(--text-secondary);
     cursor: pointer;
@@ -389,27 +389,107 @@
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
+  overflow: hidden;
   padding: 0.125rem 0.5rem;
   font-size: 0.6875rem;
   font-family: inherit;
-  color: var(--text-muted);
-  background-color: var(--code-bg);
-  border: 1px solid var(--code-border);
+  color: var(--text-secondary);
+  background: none;
+  border: 1px solid var(--border-primary);
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.2s, color 0.2s, background-color 0.2s;
-  z-index: 1;
+  z-index: 0;
+  transition: opacity 0.2s, color 0.2s, border-color 0.2s;
+}
+.copy-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
+  z-index: -1;
 }
 pre:hover .copy-btn {
   opacity: 1;
 }
 .copy-btn:hover {
-  color: var(--accent);
+  color: white;
   border-color: var(--accent);
+}
+.copy-btn:hover::before {
+  transform: scaleX(1);
 }
 .copy-btn.copied {
   color: var(--accent);
   border-color: var(--accent);
+}
+
+/* ── Code block fold ── */
+.pre-wrap {
+  position: relative;
+  overflow: hidden;
+}
+.pre-wrap.collapsed {
+  max-height: 280px;
+  overflow: hidden;
+}
+.pre-wrap.collapsed::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(transparent, var(--code-bg));
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+.pre-wrap:not(.collapsed)::after {
+  opacity: 0;
+}
+.fold-btn {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  overflow: hidden;
+  padding: 0.125rem 0.75rem;
+  font-size: 0.6875rem;
+  font-family: inherit;
+  color: var(--text-secondary);
+  background: none;
+  border: 1px solid var(--border-primary);
+  cursor: pointer;
+  z-index: 0;
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s;
+}
+.fold-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
+  z-index: -1;
+}
+.fold-btn:hover {
+  color: white;
+  border-color: var(--accent);
+}
+.fold-btn:hover::before {
+  transform: scaleX(1);
+}
+.fold-btn .fold-arrow {
+  display: inline-block;
+  transition: transform 0.2s;
+  margin-right: 0.25rem;
+}
+.fold-btn.expanded .fold-arrow {
+  transform: rotate(180deg);
 }
 
 /* ── Image lightbox ── */

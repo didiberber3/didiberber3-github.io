@@ -1,16 +1,22 @@
 <template>
-  <div class="scroll-progress" :style="{ width: progress + '%' }" />
+  <div v-show="visible" class="scroll-progress" :style="{ width: progress + '%' }" />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const progress = ref(0)
+const visible = ref(true)
 
 function onScroll() {
-  const scrollTop = window.scrollY
   const docHeight = document.documentElement.scrollHeight - window.innerHeight
-  progress.value = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0
+  visible.value = docHeight > window.innerHeight
+  if (docHeight <= 0) {
+    progress.value = 0
+    return
+  }
+  const scrollTop = window.scrollY
+  progress.value = Math.min((scrollTop / docHeight) * 100, 100)
 }
 
 onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))

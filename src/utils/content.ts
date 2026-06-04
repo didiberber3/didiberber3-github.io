@@ -1,6 +1,6 @@
 // Virtual module provided by Vite plugin — types declared in vite-env.d.ts
 import { noteMeta } from 'virtual:content-index'
-import { renderMarkdown, parseFrontmatter, extractTOC, type TocItem } from './markdown'
+import { renderMarkdown, parseFrontmatter, extractTOC, computeReadingStats, type TocItem } from './markdown'
 
 /* ===== Types ===== */
 
@@ -15,6 +15,8 @@ export interface Note extends NoteMeta {
   content: string
   html: string
   toc: TocItem[]
+  charCount: number
+  readingTime: number
 }
 
 /* ===== Lazy globs ===== */
@@ -79,9 +81,47 @@ export function getNotesByCategory(category: string): NoteMeta[] {
   return getNoteList().filter((n) => n.category === category)
 }
 
+export function getAdjacentNotes(slug: string): { prev: NoteMeta | null; next: NoteMeta | null } {
+  const list = getNoteList()
+  const idx = list.findIndex((n) => n.slug === slug)
+  if (idx === -1) return { prev: null, next: null }
+  return {
+    prev: idx + 1 < list.length ? list[idx + 1] : null,
+    next: idx > 0 ? list[idx - 1] : null,
+  }
+}
+
+/* ===== LRU cache for loaded notes ===== */
+
+const noteCache = new Map<string, Note>()
+const CACHE_MAX = 20
+
+function cacheGet(slug: string): Note | undefined {
+  const hit = noteCache.get(slug)
+  if (hit) {
+    // Bump to most-recently-used
+    noteCache.delete(slug)
+    noteCache.set(slug, hit)
+  }
+  return hit
+}
+
+function cacheSet(slug: string, note: Note): void {
+  if (noteCache.has(slug)) noteCache.delete(slug)
+  else if (noteCache.size >= CACHE_MAX) {
+    // Delete least-recently-used (first inserted key)
+    const oldest = noteCache.keys().next()
+    if (!oldest.done) noteCache.delete(oldest.value)
+  }
+  noteCache.set(slug, note)
+}
+
 /* ===== Async: full content loading  ===== */
 
 export async function loadNote(slug: string): Promise<Note | undefined> {
+  const cached = cacheGet(slug)
+  if (cached) return cached
+
   const entry = Object.entries(noteModules).find(
     ([path]) => slugFromPath(path) === slug
   )
@@ -89,10 +129,11 @@ export async function loadNote(slug: string): Promise<Note | undefined> {
 
   const raw = await entry[1]()
   const { content } = parseFrontmatter(raw)
+  const { charCount, readingTime } = computeReadingStats(content)
   const html = renderMarkdown(content)
   const toc = extractTOC(html)
   const meta = noteMeta[slug]
-  return {
+  const note: Note = {
     slug,
     title: meta?.title || titleFromSlug(slug),
     date: meta?.date || '',
@@ -100,7 +141,11 @@ export async function loadNote(slug: string): Promise<Note | undefined> {
     content: raw,
     html,
     toc,
+    charCount,
+    readingTime,
   }
+  cacheSet(slug, note)
+  return note
 }
 
 

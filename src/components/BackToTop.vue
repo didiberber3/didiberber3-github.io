@@ -17,7 +17,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
 <template>
   <button
-    v-show="visible"
+    v-if="visible"
     class="btt-nav"
     @click="scrollToTop"
     aria-label="回到顶部"
