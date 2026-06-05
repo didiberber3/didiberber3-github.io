@@ -37,6 +37,7 @@ const tabs = [
 
 function isActive(path: string): boolean {
   if (path === '/') return route.path === '/'
+  if (path === '/notes') return route.path.startsWith('/note')
   return route.path.startsWith(path)
 }
 
