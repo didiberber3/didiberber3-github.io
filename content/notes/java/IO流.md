@@ -1390,3 +1390,341 @@ public class PrintWriter_ {
 
 ```
 
+
+
+# Properties类
+
+
+
+通过传统方法引入Properties类
+
+```java
+package properties_;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class Properties_ {
+    public static void main(String[] args) throws IOException {
+//        读取mysql.properties 文件，并得到相应的ip user psw
+        BufferedReader bufferedReader = new BufferedReader(new FileReader("src\\mysql.properties"));
+
+        String line = "";
+        while ((line = bufferedReader.readLine()) != null) {
+            String[] split = line.split("=");
+            System.out.println(split[0]+" 's value = "+split[1]);
+        }
+        bufferedReader.close();
+    }
+}
+
+```
+
+
+
+> 如果我们要求指定得到ip的值，还需要在while循环中进行判断split[0]是否在字符串中equals(ip),再输出spilit[1] 很麻烦
+
+
+
+## 介绍
+
+
+
+1. 专门用于读写配置文件的集合类
+
+   配置文件的格式： `key=value` 
+
+2. 注意：键值对不需要有空格，值也不需要用引号，默认类型是String
+
+
+
+## 常见方法
+
+
+
+- `load`：加载配置文件的键值到Properties对象
+- `list`：将数据显示到指定设备
+- `getProperty(key)` 根据键获取值
+- `setProperty(key,value)` 设置键值对到Properties对象
+- `store` 将Properties中的键值对存储到配置文件,在idea中,保存信息到配置文件,如果含有中文,会存储为Unicode码
+
+
+
+```java
+package properties_;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+public class Properties03 {
+    public static void main(String[] args) throws IOException {
+//        创建properties文件，修改文件内容
+        Properties properties = new Properties();
+
+//        创建
+//        如果该文件没有 这个key,那么set就是创建
+//        如果该文件有 这个key, 那么set就是修改
+
+
+        properties.setProperty("charset", "utf-8");
+        properties.setProperty("user", "jason");
+        properties.setProperty("password", "admin");
+
+//        将kv存储到文件中
+        properties.store(new FileOutputStream("src\\mysql2.propreties"),"hello world");
+        System.out.println("成功保存");
+
+    }
+}
+
+```
+
+
+
+```java
+
+        /*
+        * Properties 的父类是Hashtable ,所以底层就是Hashtable 核心方法 put
+        *
+        *   public synchronized V put(K key, V value) {
+        // Make sure the value is not null
+        if (value == null) {
+            throw new NullPointerException();
+        }
+
+        // Makes sure the key is not already in the hashtable.
+        Entry<?,?> tab[] = table;
+        int hash = key.hashCode();
+        int index = (hash & 0x7FFFFFFF) % tab.length;
+        @SuppressWarnings("unchecked")
+        Entry<K,V> entry = (Entry<K,V>)tab[index];
+        for(; entry != null ; entry = entry.next) {
+            if ((entry.hash == hash) && entry.key.equals(key)) {
+                V old = entry.value;
+                entry.value = value; //如果存在就替换
+                return old;
+            }
+        }
+
+        addEntry(hash, key, value, index); //如果是新的key 就addEntry
+        return null;
+    }
+        * */
+```
+
+
+
+
+
+# 作业
+
+
+
+## 编程题 Homework01.java
+
+(1)在判断e盘下是否有文件夹mytemp，如果没有就创建mytemp
+
+(2)在e:\\mytemp 目录下，创建文件 hello.txt
+
+(3)如果hello.txt已经存在，提示该文件已经存在，就不要再重复创建了
+
+
+
+```java
+package properties_hm;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class hm1 {
+    public static void main(String[] args) throws IOException {
+
+        String filePath = "src\\mytemp";
+        File file = new File(filePath);
+
+        if (!file.exists()) {
+            System.out.println("正在创建文件夹...");
+            file.mkdir();
+            String filePath1 = filePath + "\\hello.txt";
+            File file1 = new File(filePath1);
+            if (!file1.exists()) {
+                System.out.println("创建文件中...");
+                file1.createNewFile();
+
+                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file1));
+                bufferedWriter.write("hello,world~");
+
+                bufferedWriter.close();
+
+            } else {
+                System.out.println("文件已经存在!");
+            }
+        }else {
+            System.out.println("文件已经存在");
+        }
+        System.out.println("hm1完成");
+    }
+}
+```
+
+
+
+## 编程题 Homework02.java
+
+
+使用BufferedReader读取一个文本文件，为每行加上行号，再连同内容一并输出到屏幕上。
+
+
+
+
+
+```java
+package properties_hm;
+
+import java.io.*;
+
+public class hm2 {
+    public static void main(String[] args) throws IOException {
+
+        String filePath = "src\\mytemp\\hello.txt";
+
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "utf-8"));        String line;
+        int count = 0;
+        while ((line = bufferedReader.readLine()) != null) {
+
+            System.out.println(++count + " " + line);
+        }
+        if (bufferedReader!=null){
+            bufferedReader.close();
+        }
+    }
+}
+
+```
+
+
+
+
+
+## 编程题 Homework03.java
+(1)要编一个dog.properties
+name=tom
+age=5
+color=red
+
+(2)编写Dog类(name,age,color)创建一个dog对象，读取dog.properties 用相应的内容完成属性初始化，并输出
+
+
+
+
+
+```java
+package properties_hm;
+
+
+import java.io.*;
+import java.util.Properties;
+
+public class hm3 {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+
+        String filePath = "src\\mytemp\\dog.properties";
+
+        File file = new File(filePath);
+
+
+        Properties properties = new Properties();
+
+        properties.setProperty("name", "大黄");
+        properties.setProperty("age", String.valueOf(3));
+        properties.setProperty("color", "黑色");
+
+        properties.store(new FileOutputStream(file), "hm3 properties output.");
+
+        properties.load(new FileReader(file));
+
+        String name = properties.getProperty("name");
+        int age = Integer.parseInt(properties.getProperty("age"));
+        String color = properties.getProperty("color");
+
+        Dog dog = new Dog(name, age, color);
+
+        System.out.println(dog);
+
+//        将创建的Dog对象,序列化保存到文件dog.dat文件
+
+        System.out.println("正在将创建的 Dog对象 序列化保存到文件dog.dat文件...");
+
+        String dogData = "src\\mytemp\\dog.dat";
+
+        System.out.println("正在创建输出流");
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(dogData));
+
+        System.out.println("正在保存对象");
+        oos.writeObject(dog);
+
+        System.out.println("正在创建输入流");
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(dogData));
+        System.out.println("正在读取对象");
+        Object o = ois.readObject();
+
+        System.out.println("转换对象运行类型...");
+        Dog d = (Dog) o;
+
+        System.out.println("dog.dat反序列化成功,读取内容如下");
+
+        System.out.println(d);
+
+
+    }
+}
+
+class Dog implements Serializable {
+    private String name;
+    private int age;
+    private String color;
+
+
+    public Dog(String name, int age, String color) {
+        this.name = name;
+        this.age = age;
+        this.color = color;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    @Override
+    public String toString() {
+        return "Dog{" + "name='" + name + '\'' + ", age=" + age + ", color='" + color + '\'' + '}';
+    }
+}
+```
+
+
+
