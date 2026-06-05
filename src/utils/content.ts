@@ -77,10 +77,6 @@ export function getCategories(): string[] {
   return Array.from(cats).sort()
 }
 
-export function getNotesByCategory(category: string): NoteMeta[] {
-  return getNoteList().filter((n) => n.category === category)
-}
-
 export function getAdjacentNotes(slug: string): { prev: NoteMeta | null; next: NoteMeta | null } {
   const list = getNoteList()
   const idx = list.findIndex((n) => n.slug === slug)
