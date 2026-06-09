@@ -151,6 +151,13 @@ onMounted(() => {
   color: var(--text-primary);
 }
 
+.btn-more {
+  padding: 0.125rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
 /* ── article list (matching DocsPage) ── */
 .article-list {
   display: flex;

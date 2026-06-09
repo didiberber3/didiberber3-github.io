@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import type { TocItem, TocGroup } from '../utils/markdown'
 import { groupTocItems } from '../utils/markdown'
+import { activeHeadingId, startTocObserver, stopTocObserver } from '../utils/useTocObserver'
 
 const props = defineProps<{
   items: TocItem[]
@@ -9,45 +10,26 @@ const props = defineProps<{
 
 const groups = computed<TocGroup[]>(() => groupTocItems(props.items))
 
-const activeId = ref('')
-const observer = ref<IntersectionObserver | null>(null)
-
 function isActiveH2(group: TocGroup): boolean {
-  if (activeId.value === group.h2.id) return true
-  return group.children.some(c => c.id === activeId.value)
+  if (activeHeadingId.value === group.h2.id) return true
+  return group.children.some((c) => c.id === activeHeadingId.value)
 }
 
 function setupObserver() {
-  observer.value?.disconnect()
-
-  observer.value = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          activeId.value = entry.target.id
-        }
-      }
-    },
-    { rootMargin: '-80px 0px -50% 0px' }
-  )
-
-  nextTick(() => {
-    for (const item of props.items) {
-      const el = document.getElementById(item.id)
-      if (el) observer.value!.observe(el)
-    }
-  })
+  if (props.items.length) {
+    startTocObserver(props.items.map((i) => i.id))
+  }
 }
 
 onMounted(setupObserver)
 watch(() => props.items, () => nextTick(setupObserver))
-onUnmounted(() => observer.value?.disconnect())
+onUnmounted(() => stopTocObserver())
 
 function scrollTo(id: string) {
   const el = document.getElementById(id)
   if (el) {
     el.scrollIntoView({ behavior: 'smooth' })
-    activeId.value = id
+    activeHeadingId.value = id
   }
 }
 </script>
@@ -68,7 +50,7 @@ function scrollTo(id: string) {
           <li
             v-for="child in group.children"
             :key="child.id"
-            :class="['toc-sub', activeId === child.id ? 'active' : '']"
+            :class="['toc-sub', activeHeadingId === child.id ? 'active' : '']"
           >
             <a href="#" class="toc-link toc-link-h3" @click.prevent="scrollTo(child.id)">{{ child.text }}</a>
           </li>

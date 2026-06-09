@@ -1,32 +1,10 @@
 import { type Plugin } from 'vite'
 import { join } from 'path'
-import { readdirSync, statSync, readFileSync, writeFileSync } from 'fs'
+import { statSync, readFileSync, writeFileSync } from 'fs'
 
-function parseFrontmatter(raw: string): Record<string, string> {
-  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/)
-  if (!match) return {}
-  const fm: Record<string, string> = {}
-  for (const line of match[1].split(/\r?\n/)) {
-    const idx = line.indexOf(': ')
-    if (idx > 0) {
-      fm[line.slice(0, idx).trim()] = line.slice(idx + 2).trim()
-    }
-  }
-  return fm
-}
-
-function stripMarkdown(text: string): string {
-  return text
-    .replace(/^---[\s\S]*?---\r?\n?/m, '') // remove frontmatter
-    .replace(/```[\s\S]*?```/g, '')        // code fences
-    .replace(/`[^`]+`/g, '')               // inline code
-    .replace(/!\[.*?\]\(.*?\)/g, '')       // images
-    .replace(/\[([^\]]*)\]\(.*?\)/g, '$1') // links → text
-    .replace(/[#*_~>|]/g, '')              // markdown markers
-    .replace(/---|\+|==/g, '')             // horizontal rules
-    .replace(/\s+/g, ' ')                  // collapse whitespace
-    .trim()
-}
+import { parseFrontmatter } from './frontmatter'
+import { stripMarkdown } from './text'
+import { walkMdFiles, slugFromFilePath } from './fs'
 
 export function rssPlugin(): Plugin {
   return {
@@ -44,39 +22,27 @@ export function rssPlugin(): Plugin {
 
       const notes: NoteEntry[] = []
 
-      function walkNotes(dir: string) {
-        try {
-          const entries = readdirSync(dir, { withFileTypes: true })
-          for (const entry of entries) {
-            const fullPath = join(dir, entry.name)
-            if (entry.isDirectory()) {
-              walkNotes(fullPath)
-            } else if (entry.isFile() && entry.name.endsWith('.md')) {
-              const slug = entry.name.replace(/\.md$/, '')
-              const raw = readFileSync(fullPath, 'utf-8')
-              const fm = parseFrontmatter(raw)
-              const fallbackDate = statSync(fullPath).mtime.toISOString().split('T')[0]
-              const title = fm.title || slug
-              const date = fm.date || fallbackDate
-              // Strip frontmatter + markdown for the description
-              const content = raw.replace(/^---[\s\S]*?---\r?\n?/m, '')
-              const plain = stripMarkdown(content)
-              const description = plain.slice(0, 200) + (plain.length > 200 ? '…' : '')
+      for (const fullPath of walkMdFiles(notesDir)) {
+        const slug = slugFromFilePath(fullPath)
+        const raw = readFileSync(fullPath, 'utf-8')
+        const fm = parseFrontmatter(raw)
+        const fallbackDate = statSync(fullPath).mtime.toISOString().split('T')[0]
+        const title = fm.title || slug
+        const date = fm.date || fallbackDate
+        // Strip frontmatter + markdown for the description
+        const content = raw.replace(/^---[\s\S]*?---\r?\n?/m, '')
+        const plain = stripMarkdown(content)
+          .replace(/\s+/g, ' ')  // collapse whitespace (RSS-specific)
+          .trim()
+        const description = plain.slice(0, 200) + (plain.length > 200 ? '…' : '')
 
-              notes.push({
-                slug: fm.slug || slug,
-                title,
-                date,
-                description,
-              })
-            }
-          }
-        } catch (e) {
-          console.warn('[rss-feed] Failed to walk notes:', e)
-        }
+        notes.push({
+          slug: fm.slug || slug,
+          title,
+          date,
+          description,
+        })
       }
-
-      walkNotes(notesDir)
 
       // Sort by date descending
       notes.sort((a, b) => b.date.localeCompare(a.date))

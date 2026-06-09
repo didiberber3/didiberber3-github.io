@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import BackToTop from './BackToTop.vue'
-import { sidebar, openSidebar, closeSidebar } from '../utils/useSidebar'
+import { sidebar, openSidebar, closeSidebar, setSidebarVisible } from '../utils/useSidebar'
 import { getNoteList } from '../utils/content'
 
 const route = useRoute()
 const router = useRouter()
+
+const showBackToTop = computed(() =>
+  route.path.startsWith('/note/') || route.path.startsWith('/docs/')
+)
 
 const isDark = ref(false)
 const isAnimating = ref(false)
@@ -53,7 +57,7 @@ function toggleSidebar() {
   // On article pages or docs article pages: sidebar already pre-populated by page
   if (route.path.startsWith('/note/') || route.path.startsWith('/docs/')) {
     if (sidebar.toc.length > 0 || sidebar.notes.length > 0) {
-      sidebar.visible = true
+      setSidebarVisible(true)
       return
     }
   }
@@ -80,7 +84,7 @@ function toggleSidebar() {
       </div>
 
       <div class="flex items-center gap-3">
-        <BackToTop />
+        <BackToTop v-if="showBackToTop" />
         <button
           class="sidebar-toggle"
           @click="toggleSidebar"

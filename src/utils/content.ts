@@ -1,7 +1,6 @@
 // Virtual module provided by Vite plugin — types declared in vite-env.d.ts
 import { noteMeta } from 'virtual:content-index'
 import { renderMarkdown, parseFrontmatter, extractTOC, computeReadingStats, type TocItem } from './markdown'
-
 /* ===== Types ===== */
 
 export interface NoteMeta {
@@ -53,7 +52,11 @@ function titleFromSlug(slug: string): string {
 
 /* ===== Sync: metadata only (no .md content loaded) ===== */
 
+let noteListCache: NoteMeta[] | null = null
+let categoriesCache: string[] | null = null
+
 export function getNoteList(): NoteMeta[] {
+  if (noteListCache) return noteListCache
   const list = Object.keys(noteModules).map((path) => {
     const slug = slugFromPath(path)
     const meta = noteMeta[slug]
@@ -65,16 +68,19 @@ export function getNoteList(): NoteMeta[] {
     }
   })
   list.sort((a, b) => b.date.localeCompare(a.date))
+  noteListCache = list
   return list
 }
 
 export function getCategories(): string[] {
+  if (categoriesCache) return categoriesCache
   const cats = new Set<string>()
   for (const path of Object.keys(noteModules)) {
     const cat = categoryFromPath(path)
     if (cat) cats.add(cat)
   }
-  return Array.from(cats).sort()
+  categoriesCache = Array.from(cats).sort()
+  return categoriesCache
 }
 
 export function getAdjacentNotes(slug: string): { prev: NoteMeta | null; next: NoteMeta | null } {

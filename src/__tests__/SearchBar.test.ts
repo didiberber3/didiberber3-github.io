@@ -14,6 +14,8 @@ describe('SearchBar', () => {
     const wrapper = mount(SearchBar)
     const input = wrapper.find('input')
     await input.setValue('test')
+    // Wait for 200ms debounce
+    await new Promise((resolve) => setTimeout(resolve, 250))
     expect(wrapper.emitted('update:query')?.[0]).toEqual(['test'])
   })
 

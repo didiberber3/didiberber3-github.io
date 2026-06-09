@@ -43,7 +43,7 @@ const filtered = computed(() => {
             @update:query="query = $event"
           />
 
-          <div v-if="filtered.length === 0" class="text-sm py-16 text-center txt-muted">
+          <div v-if="filtered.length === 0" class="text-sm py-16 text-center text-muted">
              没有匹配的内容
           </div>
 

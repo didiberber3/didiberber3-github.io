@@ -5,7 +5,11 @@ const props = defineProps<{ placeholder?: string }>()
 const emit = defineEmits<{ (e: 'update:query', value: string): void }>()
 
 const input = ref('')
-watch(input, (val) => emit('update:query', val))
+let debounceTimer: ReturnType<typeof setTimeout>
+watch(input, (val) => {
+  clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(() => emit('update:query', val), 200)
+})
 </script>
 
 <template>

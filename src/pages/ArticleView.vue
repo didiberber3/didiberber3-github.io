@@ -6,7 +6,7 @@ import type { Note, NoteMeta } from '../utils/content'
 import LoadingDots from '../components/LoadingDots.vue'
 import ArticleContent from '../components/ArticleContent.vue'
 import { useGlobalLoading } from '../utils/useGlobalLoading'
-import { sidebar } from '../utils/useSidebar'
+import { setSidebarToc, setSidebarCurrentSlug } from '../utils/useSidebar'
 
 const route = useRoute()
 const note = ref<Note | undefined>()
@@ -30,9 +30,9 @@ async function load() {
   loading.value = false
   stopPage()
   if (found?.toc?.length) {
-    sidebar.toc = found.toc
+    setSidebarToc(found.toc)
   }
-  sidebar.currentSlug = slug
+  setSidebarCurrentSlug(slug)
 }
 
 onMounted(load)
@@ -44,12 +44,12 @@ watch(() => route.params.slug, load)
     <main class="page-content">
       <div class="animate-reveal">
         <!-- loading -->
-        <div v-if="loading" class="py-16 text-center txt-muted">
+        <div v-if="loading" class="py-16 text-center text-muted">
           <LoadingDots text="加载中" />
         </div>
 
         <!-- not found -->
-        <div v-else-if="!note" class="py-16 text-center txt-muted">
+        <div v-else-if="!note" class="py-16 text-center text-muted">
           笔记不存在
         </div>
 

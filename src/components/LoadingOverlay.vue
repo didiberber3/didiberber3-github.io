@@ -1,12 +1,28 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import { useGlobalLoading } from '../utils/useGlobalLoading'
 
 const { isLoading } = useGlobalLoading()
+const visible = ref(false)
+const MIN_DISPLAY = 200
+let showTime = 0
+let hideTimer: ReturnType<typeof setTimeout> | null = null
+
+watch(isLoading, (loading) => {
+  if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
+  if (loading) {
+    showTime = Date.now()
+    visible.value = true
+  } else {
+    const elapsed = Date.now() - showTime
+    hideTimer = setTimeout(() => { visible.value = false }, Math.max(0, MIN_DISPLAY - elapsed))
+  }
+})
 </script>
 
 <template>
   <Transition name="overlay-fade">
-    <div v-if="isLoading" class="loading-overlay">
+    <div v-if="visible" class="loading-overlay">
       <div class="loading-spinner" aria-label="加载中">
         <svg viewBox="0 0 160 160" width="120" height="120" fill="none">
 

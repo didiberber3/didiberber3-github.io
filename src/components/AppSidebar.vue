@@ -55,7 +55,7 @@ function toggleToc() {
                 v-for="note in sidebar.notes"
                 :key="note.slug"
                 href="#"
-                :class="['drawer-nav-item', 'interact-slide-bg', sidebar.currentSlug === note.slug ? 'list-item-active' : '']"
+                :class="['drawer-nav-item', 'interact-slide-bg', sidebar.currentSlug === note.slug ? 'text-accent border-l-accent bg-[var(--accent-bg)] pl-3' : '']"
                 @click.prevent="onSelectNote(note.slug)"
               >
                 <span class="drawer-nav-title">{{ note.title }}</span>
