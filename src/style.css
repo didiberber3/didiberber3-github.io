@@ -2,11 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── App root above body overlay ── */
+#app {
+  position: relative;
+  z-index: 1;
+}
+
 /* ========== Theme variables ========== */
 :root {
   --bg-primary: #f7f7f5;
+
   --bg-secondary: #efeeeb;
   --bg-tertiary: #e5e4e1;
+  --bg-overlay: rgba(247, 247, 245, 0.85);
+  --bg-glass: rgba(247, 247, 245, 0.55);
+  --shadow-glass: 0 2px 12px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-glass-lg: 0 4px 20px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
   --text-primary: #111827;
   --text-secondary: #6b7280;
   --text-muted: #9ca3af;
@@ -15,8 +26,8 @@
   --accent: #16a34a;
   --accent-hover: #15803d;
   --accent-bg: #f0fdf4;
-  --code-bg: #f1f3f5;
-  --code-border: #e5e7eb;
+  --code-bg: #eef4e8;
+  --code-border: #d5e0cb;
   --drawer-overlay: rgba(0, 0, 0, 0.15);
   --drawer-shadow: -4px 0 12px rgba(0, 0, 0, 0.06);
 }
@@ -25,6 +36,10 @@
   --bg-primary: #1a1f2e;
   --bg-secondary: #252b3d;
   --bg-tertiary: #2d3447;
+  --bg-overlay: rgba(26, 31, 46, 0.88);
+  --bg-glass: rgba(26, 31, 46, 0.6);
+  --shadow-glass: 0 2px 12px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.15);
+  --shadow-glass-lg: 0 4px 20px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.15);
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
@@ -49,11 +64,26 @@
 
   body {
     background-color: var(--bg-primary);
+    background-image: url('./bg1.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     color: var(--text-primary);
     font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
     -webkit-font-smoothing: antialiased;
     line-height: 1.8;
     letter-spacing: 0.01em;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-color: var(--bg-overlay);
+    pointer-events: none;
   }
 
   ::selection {
@@ -124,6 +154,24 @@
 
   .animate-reveal {
     animation: fadeUpEnhanced 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ── Glass effect ── */
+  .glass {
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .glass-hover {
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: background 0.25s, backdrop-filter 0.25s;
+  }
+  .glass-hover:hover {
+    background: var(--bg-secondary);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
   /* Reduced motion */
@@ -358,7 +406,7 @@
 
   .article-main {
     display: flex;
-    gap: 2rem;
+    gap: 1.5rem;
     align-items: flex-start;
   }
 
@@ -366,6 +414,12 @@
     flex: 1;
     min-width: 0;
     max-width: 720px;
+    padding: 2rem;
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-primary);
+    box-shadow: var(--shadow-glass);
   }
 
   .article-aside {
@@ -378,7 +432,10 @@
     display: flex;
     flex-direction: column;
     border: 1px solid var(--border-primary);
-    background: var(--bg-primary);
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-glass);
   }
 
   .aside-tabs {
@@ -457,7 +514,7 @@
   .aside-nav-item.active {
     border-left-color: var(--accent);
     color: var(--accent);
-    background: var(--accent-bg);
+    background: var(--bg-secondary);
   }
 
   .aside-nav-title {
@@ -523,7 +580,7 @@
 
   /* ── Global page layout (single column) ── */
   .page-shell {
-    max-width: 1280px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 1rem;
     min-height: calc(100vh - 4rem);
@@ -531,23 +588,59 @@
 
   .page-content {
     min-width: 0;
-    max-width: 65rem;
     margin: 0 auto;
     padding: 1.5rem 0 4rem 0;
   }
-
-  @media (min-width: 768px) {
-    .page-content {
-      padding: 1.5rem 1rem 4rem 1rem;
-    }
-  }
 }
 
-/* ── Code block copy button ── */
-.copy-btn {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+/* ── Code block ── */
+.code-block {
+  margin: 1.5em 0;
+}
+
+/* ── sticky header bar (green drawer) ── */
+.code-block-header {
+  position: sticky;
+  top: 3rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.375rem 0.75rem;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent);
+  border-bottom: none;
+}
+
+.code-lang {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.code-header-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+/* ── code body (gray drawer) ── */
+.code-block-body {
+  overflow: hidden;
+  max-height: none;
+  transition: max-height 0.3s ease;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-top: none;
+}
+.code-block-body.collapsed {
+  max-height: 0;
+}
+
+/* ── action buttons ── */
+.copy-btn,
+.fold-btn {
   overflow: hidden;
   padding: 0.125rem 0.5rem;
   font-size: 0.6875rem;
@@ -556,75 +649,12 @@
   background: none;
   border: 1px solid var(--border-primary);
   cursor: pointer;
-  opacity: 0;
   z-index: 0;
-  transition: opacity 0.2s, color 0.2s, border-color 0.2s;
-}
-.copy-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-color: var(--accent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.2s ease;
-  z-index: -1;
-}
-pre:hover .copy-btn {
-  opacity: 1;
-}
-.copy-btn:hover {
-  color: white;
-  border-color: var(--accent);
-}
-.copy-btn:hover::before {
-  transform: scaleX(1);
-}
-.copy-btn.copied {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-/* ── Code block fold ── */
-.pre-wrap {
   position: relative;
-  overflow: hidden;
-}
-.pre-wrap.collapsed {
-  max-height: 280px;
-  overflow: hidden;
-}
-.pre-wrap.collapsed::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: linear-gradient(transparent, var(--code-bg));
-  pointer-events: none;
-  transition: opacity 0.25s;
-}
-.pre-wrap:not(.collapsed)::after {
-  opacity: 0;
-}
-.fold-btn {
-  position: absolute;
-  bottom: 0.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  overflow: hidden;
-  padding: 0.125rem 0.75rem;
-  font-size: 0.6875rem;
-  font-family: inherit;
-  color: var(--text-secondary);
-  background: none;
-  border: 1px solid var(--border-primary);
-  cursor: pointer;
-  z-index: 0;
   white-space: nowrap;
   transition: color 0.2s, border-color 0.2s;
 }
+.copy-btn::before,
 .fold-btn::before {
   content: '';
   position: absolute;
@@ -635,20 +665,18 @@ pre:hover .copy-btn {
   transition: transform 0.2s ease;
   z-index: -1;
 }
+.copy-btn:hover,
 .fold-btn:hover {
   color: white;
   border-color: var(--accent);
 }
+.copy-btn:hover::before,
 .fold-btn:hover::before {
   transform: scaleX(1);
 }
-.fold-btn .fold-arrow {
-  display: inline-block;
-  transition: transform 0.2s;
-  margin-right: 0.25rem;
-}
-.fold-btn.expanded .fold-arrow {
-  transform: rotate(180deg);
+.copy-btn.copied {
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 /* ── Image lightbox ── */
@@ -692,8 +720,14 @@ pre:hover .copy-btn {
 
 /* Higher-specificity selectors to avoid !important */
 .prose pre:where(.prose pre) {
-  background-color: var(--code-bg);
-  border: 1px solid var(--code-border);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  margin: 0;
+}
+.code-block-body pre {
+  border: none;
+  margin: 0;
 }
 
 .prose code:where(.prose code) {

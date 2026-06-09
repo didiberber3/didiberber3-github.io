@@ -22,10 +22,13 @@ watch(input, (val) => emit('update:query', val))
 <style scoped>
 .search-input {
   border: 1px solid var(--border-primary);
-  background-color: var(--bg-primary);
+  background-color: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   color: var(--text-primary);
   outline: none;
-  transition: border-color 0.2s;
+  box-shadow: var(--shadow-glass);
+  transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
 }
 .search-input:focus {
   border-color: var(--accent);

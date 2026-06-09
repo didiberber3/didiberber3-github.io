@@ -1,73 +1,115 @@
 /**
  * 文章阅读增强工具
- * - addCopyButtons: 为代码块添加复制按钮
+ * - enhanceCodeBlocks: 统一处理代码块（header 导航栏 + 抽屉式展开/折叠 + 复制）
  * - setupLightbox: 为图片添加点击放大功能
  */
 
 const FOLD_THRESHOLD = 15
 
-export function addCodeFold(container: HTMLElement): void {
+const LANG_MAP: Record<string, string> = {
+  js: 'JavaScript', ts: 'TypeScript', tsx: 'TSX', jsx: 'JSX',
+  java: 'Java', python: 'Python', py: 'Python',
+  bash: 'Bash', shell: 'Shell', powershell: 'PowerShell', ps: 'PowerShell',
+  markdown: 'Markdown', md: 'Markdown',
+  json: 'JSON', yaml: 'YAML', yml: 'YAML',
+  css: 'CSS', scss: 'SCSS', html: 'HTML', xml: 'XML',
+  sql: 'SQL', go: 'Go', rust: 'Rust',
+  c: 'C', cpp: 'C++', cs: 'C#',
+  php: 'PHP', ruby: 'Ruby', r: 'R',
+  kotlin: 'Kotlin', swift: 'Swift', scala: 'Scala',
+  dart: 'Dart', lua: 'Lua', haskell: 'Haskell',
+}
+
+function detectLang(codeEl: HTMLElement): string {
+  for (const cls of codeEl.classList) {
+    if (cls.startsWith('language-')) {
+      const raw = cls.slice(9)
+      return LANG_MAP[raw] || raw
+    }
+  }
+  return ''
+}
+
+export function enhanceCodeBlocks(container: HTMLElement): void {
   container.querySelectorAll('pre').forEach((pre) => {
-    if (pre.closest('.pre-wrap')) return
+    if (pre.closest('.code-block')) return
 
     const code = pre.querySelector('code')
     if (!code) return
 
-    const lineCount = (code.textContent || '').split('\n').length
-    if (lineCount <= FOLD_THRESHOLD) return
+    const text = code.textContent || ''
+    const lineCount = text.split('\n').length
+    const isFoldable = lineCount > FOLD_THRESHOLD
+    const lang = detectLang(code as HTMLElement)
 
-    // Wrap pre in a div for controlled collapsing
-    const wrap = document.createElement('div')
-    wrap.className = 'pre-wrap collapsed'
-    pre.parentNode?.insertBefore(wrap, pre)
-    wrap.appendChild(pre)
+    // 1. .code-block 包裹
+    const block = document.createElement('div')
+    block.className = 'code-block'
+    pre.parentNode?.insertBefore(block, pre)
+    block.appendChild(pre)
 
-    // Create fold toggle button
-    const btn = document.createElement('button')
-    btn.className = 'fold-btn'
-    const rowLabel = `展开全部 ${lineCount} 行`
-    btn.innerHTML = `<span class="fold-arrow">▸</span> ${rowLabel}`
+    // 2. stiky header 导航栏
+    const header = document.createElement('div')
+    header.className = 'code-block-header'
 
-    let isExpanded = false
-    btn.addEventListener('click', () => {
-      isExpanded = !isExpanded
-      wrap.classList.toggle('collapsed', !isExpanded)
-      btn.classList.toggle('expanded', isExpanded)
-      btn.innerHTML = isExpanded
-        ? `<span class="fold-arrow">▾</span> 收起`
-        : `<span class="fold-arrow">▸</span> ${rowLabel}`
-    })
+    const langBadge = document.createElement('span')
+    langBadge.className = 'code-lang'
+    langBadge.textContent = lang
+    header.appendChild(langBadge)
 
-    wrap.appendChild(btn)
-  })
-}
+    const headerActions = document.createElement('div')
+    headerActions.className = 'code-header-actions'
 
-export function addCopyButtons(container: HTMLElement): void {
-  container.querySelectorAll('pre').forEach((pre) => {
-    if (pre.querySelector('.copy-btn')) return
-
-    const btn = document.createElement('button')
-    btn.className = 'copy-btn'
-    btn.textContent = '复制'
-
-    btn.addEventListener('click', async () => {
-      const code = pre.querySelector('code')?.textContent || ''
+    // 复制按钮
+    const copyBtn = document.createElement('button')
+    copyBtn.className = 'copy-btn'
+    copyBtn.textContent = '复制'
+    copyBtn.addEventListener('click', async () => {
       try {
-        await navigator.clipboard.writeText(code)
-        btn.textContent = '已复制'
-        btn.classList.add('copied')
-      } catch (err) {
-        console.warn('Clipboard API not available:', err)
-        btn.textContent = '复制失败'
+        await navigator.clipboard.writeText(text)
+        copyBtn.textContent = '已复制'
+        copyBtn.classList.add('copied')
+      } catch {
+        copyBtn.textContent = '复制失败'
       }
       setTimeout(() => {
-        btn.textContent = '复制'
-        btn.classList.remove('copied')
+        copyBtn.textContent = '复制'
+        copyBtn.classList.remove('copied')
       }, 2000)
     })
+    headerActions.appendChild(copyBtn)
 
-    pre.style.position = 'relative'
-    pre.appendChild(btn)
+    // 折叠/展开按钮（仅大块有，小块不需要）
+    if (isFoldable) {
+      const foldBtn = document.createElement('button')
+      foldBtn.className = 'fold-btn'
+      foldBtn.textContent = '展开'
+      const rowLabel = `展开全部 ${lineCount} 行`
+
+      const body = document.createElement('div')
+      body.className = 'code-block-body collapsed'
+      pre.parentNode?.insertBefore(body, pre)
+      body.appendChild(pre)
+
+      let isExpanded = false
+      foldBtn.addEventListener('click', () => {
+        isExpanded = !isExpanded
+        body.classList.toggle('collapsed', !isExpanded)
+        foldBtn.textContent = isExpanded ? '折叠' : rowLabel
+      })
+
+      headerActions.prepend(foldBtn)
+    } else {
+      // 小块直接放进 body（不折叠）
+      const body = document.createElement('div')
+      body.className = 'code-block-body'
+      pre.parentNode?.insertBefore(body, pre)
+      body.appendChild(pre)
+    }
+
+    header.appendChild(headerActions)
+    // header 插入到 block 的最前面
+    block.insertBefore(header, block.firstChild)
   })
 }
 

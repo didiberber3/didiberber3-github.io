@@ -80,6 +80,7 @@ function toggleSidebar() {
       </div>
 
       <div class="flex items-center gap-3">
+        <BackToTop />
         <button
           class="sidebar-toggle"
           @click="toggleSidebar"
@@ -92,8 +93,6 @@ function toggleSidebar() {
             <rect x="3" y="14" width="14" height="2" rx="1" fill="currentColor" />
           </svg>
         </button>
-        <BackToTop />
-
         <button
           @click="toggleTheme"
           class="theme-toggle"
@@ -124,8 +123,10 @@ function toggleSidebar() {
 
 <style scoped>
 .nav-bar {
-  background-color: var(--bg-primary);
-  border-color: var(--border-primary);
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-glass);
 }
 
 .tab-btn {

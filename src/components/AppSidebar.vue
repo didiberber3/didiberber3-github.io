@@ -99,9 +99,11 @@ function toggleToc() {
   width: 280px;
   max-width: 80vw;
   height: 100%;
-  background-color: var(--bg-primary);
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-left: 1px solid var(--border-primary);
-  box-shadow: var(--drawer-shadow, -4px 0 12px rgba(0, 0, 0, 0.06));
+  box-shadow: var(--shadow-glass-lg);
   display: flex;
   flex-direction: column;
   overflow-y: auto;

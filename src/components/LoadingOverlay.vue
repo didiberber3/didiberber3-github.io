@@ -8,19 +8,35 @@ const { isLoading } = useGlobalLoading()
   <Transition name="overlay-fade">
     <div v-if="isLoading" class="loading-overlay">
       <div class="loading-spinner" aria-label="加载中">
-        <svg viewBox="0 0 64 64" width="36" height="36" fill="none">
-          <!-- outer ring -->
-          <circle cx="32" cy="32" r="28" stroke="var(--border-secondary)" stroke-width="3" />
-          <circle
-            cx="32" cy="32" r="28"
-            stroke="var(--accent)"
-            stroke-width="3"
-            stroke-linecap="round"
-            stroke-dasharray="44 132"
-            class="spin-outer"
-          />
-          <!-- inner dot -->
-          <circle cx="32" cy="4" r="4" fill="var(--accent)" class="spin-dot" />
+        <svg viewBox="0 0 160 160" width="120" height="120" fill="none">
+
+          <!-- outer track ring -->
+          <circle cx="80" cy="80" r="72" stroke="var(--border-primary)" stroke-width="1" opacity="0.15" stroke-dasharray="4 6" />
+          <circle cx="80" cy="80" r="72" stroke="var(--accent)" stroke-width="1" opacity="0.08" />
+
+          <!-- dashed azimuth ring -->
+          <circle cx="80" cy="80" r="60" stroke="var(--border-primary)" stroke-width="1" opacity="0.06" stroke-dasharray="2 8" />
+
+          <!-- star: two overlapping triangles (hexagram) → orbit a -->
+          <path d="M80 30 L114 105 L46 105 Z" stroke="var(--accent)" stroke-width="1.2" stroke-linejoin="round" opacity="0.2" class="star-a" />
+          <path d="M80 130 L46 55 L114 55 Z" stroke="var(--accent)" stroke-width="1.2" stroke-linejoin="round" opacity="0.2" class="star-b" />
+
+          <!-- cross hairs -->
+          <line x1="20" y1="80" x2="140" y2="80" stroke="var(--accent)" stroke-width="0.5" opacity="0.06" />
+          <line x1="80" y1="20" x2="80" y2="140" stroke="var(--accent)" stroke-width="0.5" opacity="0.06" />
+
+          <!-- satellite dots on outer orbit -->
+          <circle cx="80" cy="8" r="3" fill="var(--accent)" class="sat s1" />
+          <circle cx="80" cy="8" r="2.5" fill="var(--accent)" class="sat s2" />
+          <circle cx="80" cy="8" r="2" fill="var(--accent)" class="sat s3" />
+          <circle cx="80" cy="8" r="1.5" fill="var(--accent)" class="sat s4" />
+
+          <!-- inner sweep arc -->
+          <path d="M80 8 A72 72 0 0 1 152 80" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" class="sweep" />
+
+          <!-- center diamond stack -->
+          <rect x="76" y="76" width="8" height="8" fill="var(--accent)" class="diamond-a" />
+          <rect x="78" y="78" width="4" height="4" fill="var(--accent)" class="diamond-b" />
         </svg>
       </div>
     </div>
@@ -43,36 +59,58 @@ const { isLoading } = useGlobalLoading()
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
+  width: 120px;
+  height: 120px;
 }
 
-/* outer arc: sweeps around */
-.spin-outer {
-  transform-origin: 32px 32px;
-  animation: spinOuter 1.2s ease-in-out infinite;
+/* ── all rotating elements share origin ── */
+.sweep,
+.star-a, .star-b,
+.sat, .diamond-a, .diamond-b {
+  transform-box: view-box;
+  transform-origin: 80px 80px;
 }
 
-/* inner dot: orbits */
-.spin-dot {
-  animation: spinDot 1.2s ease-in-out infinite;
+/* ── outer sweep arm ── */
+.sweep {
+  animation: spinCW 3s linear infinite;
 }
 
-@keyframes spinOuter {
+/* ── stars counter-rotate ── */
+.star-a {
+  animation: spinCW 20s linear infinite;
+}
+.star-b {
+  animation: spinCCW 16s linear infinite;
+}
+
+/* ── satellites each at own rhythm ── */
+.s1 { animation: spinCW 5s linear infinite; }
+.s2 { animation: spinCCW 7s linear infinite; }
+.s3 { animation: spinCW 11s linear infinite; }
+.s4 { animation: spinCCW 13s linear infinite; }
+
+/* ── center diamonds ── */
+.diamond-a {
+  animation: spinCW 4s ease-in-out infinite;
+}
+.diamond-b {
+  animation: spinCCW 3s ease-in-out infinite;
+}
+
+@keyframes spinCW {
   0%   { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-
-@keyframes spinDot {
-  0%   { transform: rotate(0deg) translateY(0); }
-  50%  { transform: rotate(180deg) translateY(-2px); }
-  100% { transform: rotate(360deg) translateY(0); }
+@keyframes spinCCW {
+  0%   { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
 }
 
-/* fade transition */
+/* ── fade transition ── */
 .overlay-fade-enter-active,
 .overlay-fade-leave-active {
-  transition: opacity 0.25s ease;
+  transition: opacity 0.3s ease;
 }
 .overlay-fade-enter-from,
 .overlay-fade-leave-to {
