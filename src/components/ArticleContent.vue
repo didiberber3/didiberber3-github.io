@@ -41,12 +41,29 @@ onUnmounted(() => stopTocObserver())
 
 <template>
   <article class="article-with-aside">
+    <header class="article-hd">
+      <svg class="article-geo" viewBox="0 0 960 260" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <radialGradient id="ga"><stop offset="0%" stop-color="var(--accent)" stop-opacity=".1"/><stop offset="100%" stop-color="transparent" stop-opacity="0"/></radialGradient>
+        </defs>
+        <ellipse cx="480" cy="130" rx="140" ry="90" fill="url(#ga)"/>
+        <g class="art-orbit-cw"><ellipse cx="480" cy="130" rx="80" ry="40" fill="none" stroke="var(--accent)" stroke-width=".8" opacity=".4" stroke-dasharray="6 4"/></g>
+        <g class="art-orbit-ccw"><circle cx="480" cy="130" r="60" fill="none" stroke="var(--accent2)" stroke-width=".6" opacity=".3" stroke-dasharray="3 6"/></g>
+        <g class="art-orbit-fast"><circle cx="480" cy="130" r="45" fill="none" stroke="var(--accent3)" stroke-width=".7" opacity=".35" stroke-dasharray="2 8"/></g>
+        <circle cx="480" cy="130" r="14" fill="var(--accent)" opacity=".2"/>
+        <circle cx="480" cy="130" r="7" fill="var(--accent)" opacity=".4"/>
+        <g class="art-orbit-cw"><circle cx="480" cy="90" r="3" fill="var(--accent3)" opacity=".7"/></g>
+        <g class="art-orbit-ccw"><circle cx="540" cy="130" r="2.5" fill="var(--accent2)" opacity=".5"/></g>
+        <g class="art-orbit-fast"><circle cx="420" cy="130" r="2" fill="var(--accent)" opacity=".5"/></g>
+        <line x1="60" y1="10" x2="900" y2="10" stroke="var(--accent)" stroke-width=".5" opacity=".15" stroke-dasharray="2 10"/>
+        <line x1="60" y1="250" x2="900" y2="250" stroke="var(--accent)" stroke-width=".5" opacity=".15" stroke-dasharray="2 10"/>
+      </svg>
+      <h1 class="article-hd-title">{{ note.title }}</h1>
+      <div class="article-hd-meta">{{ note.date }}<span class="article-hd-sep">·</span>{{ note.readingTime }} 分钟<span class="article-hd-sep">·</span>约 {{ note.charCount }} 字</div>
+    </header>
+
     <div class="article-main">
       <div class="article-body">
-        <header class="mb-10">
-          <h1 class="text-2xl font-bold mb-2 text-primary">{{ note.title }}</h1>
-          <p class="text-xs text-secondary">{{ note.date }} · {{ note.readingTime }} 分钟 · 约 {{ note.charCount }} 字</p>
-        </header>
 
         <div
           ref="contentRef"
@@ -91,7 +108,6 @@ onUnmounted(() => stopTocObserver())
         </div>
 
         <nav v-show="activeTab === 'nav'" class="aside-body aside-nav-list">
-          <div v-if="category" class="text-[0.6875rem] font-semibold uppercase tracking-wider text-muted px-3 pt-2 pb-1">{{ category }}</div>
           <router-link
             v-for="n in navItems"
             :key="n.slug"
@@ -120,6 +136,46 @@ onUnmounted(() => stopTocObserver())
 </template>
 
 <style scoped>
+/* ── Article header ── */
+.article-hd {
+  position: relative;
+  padding: 3rem 0 2.5rem;
+  text-align: center;
+}
+.article-geo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+@keyframes arcw{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes arccw{from{transform:rotate(360deg)}to{transform:rotate(0deg)}}
+.art-orbit-cw{animation:arcw 28s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.art-orbit-ccw{animation:arccw 22s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.art-orbit-fast{animation:arcw 14s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.article-hd-title {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -.03em;
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin-bottom: .75rem;
+  position: relative;
+  z-index: 1;
+}
+.article-hd-meta {
+  font-size: .8125rem;
+  color: var(--text-muted);
+  position: relative;
+  z-index: 1;
+}
+.article-hd-sep {
+  padding: 0 .5rem;
+  color: var(--border-secondary);
+}
+
 /* ── Inline article sidebar layout ── */
 .article-with-aside {
   width: 100%;
@@ -175,8 +231,13 @@ onUnmounted(() => stopTocObserver())
   border: none;
   background: none;
   color: var(--text-secondary);
-  transition: color 0.2s, background-color 0.2s;
+  transition: color 0.25s, background-color 0.25s;
   position: relative;
+  border-radius: 2px;
+}
+.aside-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
 }
 
 .aside-tab::after {
@@ -223,21 +284,23 @@ onUnmounted(() => stopTocObserver())
   padding: 0.5rem 0.75rem;
   text-decoration: none;
   font-size: 0.8125rem;
-  color: var(--text-primary);
+  color: var(--text-secondary);
   border-left: 2px solid transparent;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
 .aside-nav-item:hover {
   background: var(--bg-secondary);
-  border-left-color: var(--accent);
-  color: var(--accent);
+  border-left-color: var(--border-secondary);
+  color: var(--text-primary);
 }
 
-.aside-nav-item.active {
+.aside-nav-item.active,
+.aside-nav-item.active:hover {
   border-left-color: var(--accent);
-  color: var(--accent);
-  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-weight: 500;
+  background: var(--bg-tertiary);
 }
 
 .aside-nav-title {
@@ -261,7 +324,7 @@ onUnmounted(() => stopTocObserver())
   font-size: 0.8125rem;
   color: var(--text-secondary);
   text-decoration: none;
-  transition: color 0.15s, background 0.15s;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
   border-left: 2px solid transparent;
   line-height: 1.4;
 }
@@ -269,14 +332,15 @@ onUnmounted(() => stopTocObserver())
 .aside-toc-item:hover {
   color: var(--text-primary);
   background: var(--bg-secondary);
-  border-left-color: var(--accent);
+  border-left-color: var(--border-secondary);
 }
 
-/* active 状态 — 跟随阅读位置平滑切换 */
-.aside-toc-item.active {
-  color: var(--accent);
+.aside-toc-item.active,
+.aside-toc-item.active:hover {
+  color: var(--text-primary);
+  font-weight: 500;
   border-left-color: var(--accent);
-  background: var(--bg-secondary);
+  background: var(--bg-tertiary);
 }
 
 .aside-empty {

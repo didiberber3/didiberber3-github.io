@@ -22,21 +22,28 @@ const filtered = computed(() => {
     <main class="page-content">
       <div class="animate-reveal">
         <div class="page-notes">
-          <!-- deco line -->
-          <div class="notes-deco" aria-hidden="true">
-            <svg viewBox="0 0 200 12" fill="none">
-              <line x1="0" y1="6" x2="200" y2="6" stroke="var(--border-primary)" stroke-width="1" stroke-dasharray="4 4" opacity="0.3" />
-              <circle cx="40" cy="6" r="3" fill="var(--accent)" opacity="0.5" />
-              <circle cx="100" cy="6" r="3" fill="var(--accent)" opacity="0.5" />
-              <circle cx="160" cy="6" r="3" fill="var(--accent)" opacity="0.5" />
-            </svg>
-          </div>
-
           <!-- header -->
-          <div class="notes-header">
-            <h1 class="notes-title">笔记</h1>
-            <p class="notes-subtitle">共 {{ notes.length }} 篇笔记</p>
-          </div>
+          <section class="notes-hero">
+            <svg class="notes-geo" viewBox="0 0 960 280" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <defs>
+                <radialGradient id="gn1"><stop offset="0%" stop-color="var(--accent)" stop-opacity=".14"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></radialGradient>
+              </defs>
+              <ellipse cx="480" cy="140" rx="160" ry="110" fill="url(#gn1)"/>
+              <g class="notes-orbit-cw"><ellipse cx="480" cy="140" rx="90" ry="45" fill="none" stroke="var(--accent)" stroke-width=".8" opacity=".45" stroke-dasharray="6 4"/></g>
+              <g class="notes-orbit-ccw"><ellipse cx="480" cy="140" rx="70" ry="55" fill="none" stroke="var(--accent2)" stroke-width=".6" opacity=".35" stroke-dasharray="4 6"/></g>
+              <g class="notes-orbit-fast"><circle cx="480" cy="140" r="60" fill="none" stroke="var(--accent3)" stroke-width=".6" opacity=".35" stroke-dasharray="2 8"/></g>
+              <circle cx="480" cy="140" r="16" fill="var(--accent)" opacity=".22"/>
+              <circle cx="480" cy="140" r="8" fill="var(--accent)" opacity=".45"/>
+              <g class="notes-orbit-cw"><circle cx="480" cy="95" r="3.5" fill="var(--accent3)" opacity=".7"/></g>
+              <g class="notes-orbit-ccw"><circle cx="550" cy="140" r="3" fill="var(--accent2)" opacity=".6"/></g>
+              <g class="notes-orbit-fast"><circle cx="410" cy="140" r="2.5" fill="var(--accent)" opacity=".5"/></g>
+              <line x1="60" y1="10" x2="900" y2="10" stroke="var(--accent)" stroke-width=".5" opacity=".15" stroke-dasharray="2 10"/>
+              <line x1="60" y1="270" x2="900" y2="270" stroke="var(--accent)" stroke-width=".5" opacity=".15" stroke-dasharray="2 10"/>
+            </svg>
+            <h1 class="notes-hero-title">笔记</h1>
+            <p class="notes-hero-sub">浏览全部文章</p>
+            <span class="notes-hero-count">{{ notes.length }} <small>篇</small></span>
+          </section>
 
           <SearchBar
             :placeholder="`搜索 ${notes.length} 篇笔记...`"
@@ -82,46 +89,32 @@ const filtered = computed(() => {
 .page-notes {
   max-width: 56rem;
   margin: 0 auto;
-  padding: 3rem 1rem 6rem;
+  padding: 2rem 1rem 6rem;
 }
 
-/* ── deco line ── */
-.notes-deco {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-.notes-deco svg {
-  width: 200px;
-  height: 12px;
-}
-.notes-deco circle {
-  animation: dotPulse 2.4s ease-in-out infinite;
-}
-.notes-deco circle:nth-child(2) { animation-delay: 0.3s; }
-.notes-deco circle:nth-child(3) { animation-delay: 0.6s; }
-
-@keyframes dotPulse {
-  0%, 100% { opacity: 0.3; }
-  50%      { opacity: 0.9; }
-}
-
-/* ── header ── */
-.notes-header {
+/* ── hero ── */
+.notes-hero {
+  position: relative;
+  padding: 5rem 0 3.5rem;
   text-align: center;
-  margin-bottom: 2rem;
 }
-.notes-title {
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
+.notes-geo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
 }
-.notes-subtitle {
-  font-size: 0.875rem;
-  color: var(--text-muted);
-}
+@keyframes nocw{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes noccw{from{transform:rotate(360deg)}to{transform:rotate(0deg)}}
+.notes-orbit-cw{animation:nocw 28s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.notes-orbit-ccw{animation:noccw 22s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.notes-orbit-fast{animation:nocw 14s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.notes-hero-title{font-size:2.75rem;font-weight:800;letter-spacing:-.04em;color:var(--text-primary);line-height:1.15;margin-bottom:1.25rem;position:relative;z-index:1}
+.notes-hero-sub{font-size:.9375rem;color:var(--text-secondary);margin-bottom:1.5rem;position:relative;z-index:1}
+.notes-hero-count{font-size:1.75rem;font-weight:700;color:var(--accent);letter-spacing:-.02em;position:relative;z-index:1}
+.notes-hero-count small{font-size:.8125rem;font-weight:500;color:var(--text-muted);margin-left:.375rem}
 
 /* ── article list (matching DocsPage) ── */
 .article-list {

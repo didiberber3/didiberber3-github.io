@@ -1,0 +1,155 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Header 最终版</title><style>
+:root{--bg:#f7f7f5;--bg2:#efeeeb;--tx:#111827;--tx2:#6b7280;--tx3:#9ca3af;--bd:#e5e7eb;--a:#16a34a;--a2:#0d9488;--a3:#84cc16}
+.dark{--bg:#080c14;--bg2:#0f1621;--tx:#e2e8f0;--tx2:#94a3b8;--tx3:#475569;--bd:#1e293b;--a:#f97316;--a2:#e11d48;--a3:#fb923c}
+*,*::before,*::after{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased;line-height:1.6}
+.tb{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;gap:1rem;padding:.75rem 1.5rem;background:rgba(247,247,245,.6);backdrop-filter:blur(16px);border-bottom:1px solid var(--bd)}.dark .tb{background:rgba(8,12,20,.6)}
+.tb h2{font-size:.875rem;font-weight:600;color:var(--tx2)}
+.tb button{padding:.25rem .75rem;border:1px solid var(--bd);border-radius:2px;background:none;color:var(--tx2);cursor:pointer;font-size:.8125rem;font-family:inherit;transition:all .2s}
+.tb button:hover{border-color:var(--a);color:var(--a)}
+.tb button.on{background:var(--a);color:#080c14;border-color:var(--a);font-weight:600}
+.ct{max-width:960px;margin:4rem auto 2rem;padding:0 1.5rem}
+.sd{margin:4rem 0 1rem}
+.sl{font-size:.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);padding:.5rem 0;border-bottom:1px solid var(--bd);margin-bottom:2rem}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:2rem}.cg .sl{grid-column:1/-1}
+.geo{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden}
+
+@keyframes ocw{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes occw{from{transform:rotate(360deg)}to{transform:rotate(0deg)}}
+@keyframes pulse{0%,100%{opacity:.15}50%{opacity:.55}}
+@keyframes glow{0%,100%{opacity:.2}50%{opacity:.7}}
+@keyframes meteor{0%{transform:translate(-100px,0);opacity:1}70%{opacity:.8}100%{transform:translate(1060px,60px);opacity:0}}
+@keyframes spinS{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes breathe{0%,100%{opacity:.12;r:16}50%{opacity:.45;r:22}}
+.ocw{animation:ocw 28s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.occw{animation:occw 22s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.of{animation:ocw 14s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.ofx{animation:occw 16s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.pu{animation:pulse 3s ease-in-out infinite}
+.gl{animation:glow 2.5s ease-in-out infinite}
+.meteor{animation:meteor 8s linear infinite}.m2{animation-delay:4s}
+.ss{animation:spinS 50s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.br{animation:breathe 3s ease-in-out infinite}
+.d1{animation-delay:0s}.d2{animation-delay:.7s}.d3{animation-delay:1.4s}
+
+.hh{position:relative;padding:5rem 0 4.5rem;text-align:center;overflow:hidden}
+.hhi{display:flex;justify-content:center;margin-bottom:2rem;position:relative;z-index:1}
+.hhi svg{width:72px;height:72px;color:var(--a);filter:drop-shadow(0 0 8px var(--a));opacity:.95}
+.hht{font-size:2.75rem;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1.1;margin-bottom:.75rem;position:relative;z-index:1}
+.hhl{width:64px;height:3px;background:linear-gradient(90deg,transparent,var(--a),transparent);margin:.75rem auto 1rem;position:relative;z-index:1}
+.hhs{font-size:1rem;color:var(--tx2);margin-bottom:.5rem;position:relative;z-index:1}
+.hhst{font-size:.8125rem;color:var(--tx3);position:relative;z-index:1}.hhst strong{color:var(--a);font-weight:700}
+
+.hp{position:relative;padding:5rem 0 3.5rem;text-align:center;overflow:hidden}
+.hpi{position:relative;z-index:1}
+.hpb{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;margin-bottom:1.5rem;border:1px solid var(--bd);border-radius:2px;color:var(--tx3);cursor:pointer;font-size:.875rem;font-family:inherit;line-height:1;background:none;transition:all .25s}
+.hpb:hover{color:var(--a);border-color:var(--a);box-shadow:0 0 0 1px var(--a);transform:scale(1.05)}
+.hpt{font-size:2.75rem;font-weight:800;letter-spacing:-.04em;color:var(--tx);line-height:1.15;margin-bottom:1.25rem;text-transform:capitalize}
+.hps{font-size:.9375rem;color:var(--tx2);margin-bottom:1.5rem}
+.hpc{font-size:1.75rem;font-weight:700;color:var(--a);letter-spacing:-.02em}
+.hpc small{font-size:.8125rem;font-weight:500;color:var(--tx3);margin-left:.375rem}
+
+.ha{position:relative;padding:3rem 0 2.5rem;overflow:hidden}
+.hai{border-left:3px solid var(--a);padding-left:1.25rem;max-width:680px}
+@media(max-width:700px){.cg{grid-template-columns:1fr}.hht,.hpt{font-size:2rem}}
+</style></head><body>
+<div class="tb"><h2>Header 最终版</h2><button id="bl" class="on" onclick="M('l')">☀</button><button id="bd" onclick="M('d')">🌙</button><button id="bc" onclick="M('c')">↔</button></div>
+<div class="ct" id="P">
+
+<!-- 1 HOME -->
+<div class="sl">01 / Home · 星际导航站</div>
+<div class="hh">
+<svg class="geo" viewBox="0 0 960 340">
+  <defs><radialGradient id="gh1"><stop offset="0%" stop-color="var(--a)" stop-opacity=".18"/><stop offset="100%" stop-color="var(--a)" stop-opacity="0"/></radialGradient><radialGradient id="gh2"><stop offset="0%" stop-color="var(--a2)" stop-opacity=".1"/><stop offset="100%" stop-color="var(--a2)" stop-opacity="0"/></radialGradient><radialGradient id="ph"><stop offset="0%" stop-color="var(--a3)" stop-opacity=".35"/><stop offset="50%" stop-color="var(--a)" stop-opacity=".12"/><stop offset="100%" stop-color="var(--a)" stop-opacity="0"/></radialGradient><filter id="fh"><feGaussianBlur stdDeviation="2"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="mgh" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="var(--a3)" stop-opacity="0"/><stop offset="40%" stop-color="var(--a3)" stop-opacity=".6"/><stop offset="100%" stop-color="var(--a)" stop-opacity="0"/></linearGradient></defs>
+  <ellipse cx="480" cy="100" rx="180" ry="120" fill="url(#gh1)"/><ellipse cx="200" cy="250" rx="100" ry="60" fill="url(#gh2)"/>
+  <circle cx="480" cy="100" r="48" fill="var(--a)" opacity=".08"/>
+  <circle cx="480" cy="100" r="36" fill="none" stroke="var(--a)" stroke-width="1.5" opacity=".4"/>
+  <circle cx="480" cy="100" r="8" fill="var(--a)" opacity=".35"/>
+  <circle cx="480" cy="100" r="3" fill="var(--a3)" opacity=".6"/>
+  <g class="ocw"><ellipse cx="480" cy="100" rx="140" ry="40" fill="none" stroke="var(--a)" stroke-width=".8" opacity=".4" stroke-dasharray="8 4"/></g>
+  <g class="occw"><ellipse cx="480" cy="100" rx="100" ry="70" fill="none" stroke="var(--a2)" stroke-width=".6" opacity=".35" stroke-dasharray="3 6"/></g>
+  <g class="of"><circle cx="480" cy="100" r="100" fill="none" stroke="var(--a3)" stroke-width=".7" opacity=".3" stroke-dasharray="2 8"/></g>
+  <g class="ocw"><circle cx="480" cy="-30" r="4" fill="var(--a3)" opacity=".8" filter="url(#fh)" class="gl"/></g>
+  <g class="ocw"><circle cx="610" cy="100" r="3" fill="var(--a2)" opacity=".7" filter="url(#fh)" class="gl d2"/></g>
+  <g class="ocw"><circle cx="480" cy="230" r="2.5" fill="var(--a)" opacity=".6" class="gl d3"/></g>
+  <g class="ofx"><circle cx="380" cy="100" r="2.5" fill="var(--a)" opacity=".6" class="gl d3"/></g>
+  <g fill="var(--a)" opacity=".3"><circle cx="80" cy="50" r="1.5" class="pu d1"/><circle cx="150" cy="280" r="1" class="pu d2"/><circle cx="750" cy="30" r="1.5" class="pu d3"/><circle cx="850" cy="200" r="1" class="pu d1"/><circle cx="50" cy="180" r="1" class="pu d2"/><circle cx="900" cy="100" r="1.5" class="pu d3"/></g>
+  <line x1="0" y1="50" x2="160" y2="70" stroke="url(#mgh)" stroke-width="1.5" class="meteor"/><line x1="0" y1="200" x2="140" y2="215" stroke="url(#mgh)" stroke-width="1" class="meteor m2"/>
+  <line x1="40" y1="320" x2="920" y2="320" stroke="var(--a)" stroke-width=".6" opacity=".2" stroke-dasharray="2 12"/><circle cx="480" cy="320" r="3" fill="var(--a)" opacity=".35" class="pu"/>
+</svg>
+<h1 class="hht">记录与分享</h1>
+<div class="hhl"></div>
+<p class="hhs">学习 · 记录 · 成长</p>
+<p class="hhst"><strong>24</strong> 篇笔记 &nbsp;·&nbsp; <strong>5</strong> 个分类 &nbsp;·&nbsp; <strong>2026-06-09</strong></p></div>
+
+<!-- 2 NOTES : single orbit centered -->
+<div class="sd"></div><div class="sl">02 / Notes · 单轨道居中</div>
+<div class="hp">
+<svg class="geo" viewBox="0 0 960 280">
+  <defs><radialGradient id="gn1"><stop offset="0%" stop-color="var(--a)" stop-opacity=".14"/><stop offset="100%" stop-color="var(--a)" stop-opacity="0"/></radialGradient><filter id="fn"><feGaussianBlur stdDeviation="1.5"/></filter></defs>
+  <ellipse cx="480" cy="140" rx="160" ry="110" fill="url(#gn1)"/>
+  <g class="ocw"><ellipse cx="480" cy="140" rx="90" ry="45" fill="none" stroke="var(--a)" stroke-width=".8" opacity=".45" stroke-dasharray="6 4"/></g>
+  <g class="occw"><ellipse cx="480" cy="140" rx="70" ry="55" fill="none" stroke="var(--a2)" stroke-width=".6" opacity=".35" stroke-dasharray="4 6"/></g>
+  <g class="of"><circle cx="480" cy="140" r="60" fill="none" stroke="var(--a3)" stroke-width=".6" opacity=".35" stroke-dasharray="2 8"/></g>
+  <circle cx="480" cy="140" r="16" fill="var(--a)" opacity=".22" filter="url(#fn)" class="pu"/><circle cx="480" cy="140" r="8" fill="var(--a)" opacity=".45"/>
+  <g class="ocw"><circle cx="480" cy="95" r="3.5" fill="var(--a3)" opacity=".7" filter="url(#fn)" class="gl"/></g>
+  <g class="occw"><circle cx="550" cy="140" r="3" fill="var(--a2)" opacity=".6" filter="url(#fn)" class="gl d2"/></g>
+  <g class="of"><circle cx="410" cy="140" r="2.5" fill="var(--a)" opacity=".5" class="gl d3"/></g>
+  <line x1="60" y1="10" x2="900" y2="10" stroke="var(--a)" stroke-width=".5" opacity=".15" stroke-dasharray="2 10"/>
+  <line x1="60" y1="270" x2="900" y2="270" stroke="var(--a)" stroke-width=".5" opacity=".15" stroke-dasharray="2 10"/>
+</svg>
+<div class="hpi"><h1 class="hpt">笔记</h1><p class="hps">浏览全部文章</p><span class="hpc">24 <small>篇</small></span></div></div>
+
+<!-- 3 DOCS -->
+<div class="sd"></div><div class="sl">03 / Docs · 环状星云</div>
+<div class="hp">
+<svg class="geo" viewBox="0 0 960 280">
+  <defs><radialGradient id="gd"><stop offset="0%" stop-color="var(--a3)" stop-opacity=".14"/><stop offset="60%" stop-color="var(--a)" stop-opacity=".05"/><stop offset="100%" stop-color="transparent" stop-opacity="0"/></radialGradient><filter id="fd"><feGaussianBlur stdDeviation="3"/></filter></defs>
+  <ellipse cx="480" cy="140" rx="200" ry="120" fill="url(#gd)"/>
+  <g class="ss"><ellipse cx="480" cy="140" rx="160" ry="70" fill="none" stroke="var(--a)" stroke-width=".7" opacity=".35" stroke-dasharray="10 5"/></g>
+  <g class="occw"><ellipse cx="480" cy="140" rx="120" ry="60" fill="none" stroke="var(--a2)" stroke-width=".8" opacity=".4" stroke-dasharray="4 8"/></g>
+  <g class="of"><ellipse cx="480" cy="140" rx="80" ry="40" fill="none" stroke="var(--a3)" stroke-width="1" opacity=".5"/></g>
+  <circle cx="480" cy="140" r="18" fill="var(--a3)" opacity=".18" filter="url(#fd)" class="pu"/><circle cx="480" cy="140" r="8" fill="var(--a)" opacity=".5"/>
+  <g class="of"><circle cx="480" cy="100" r="3" fill="var(--a3)" opacity=".8" filter="url(#fd)" class="gl"/></g>
+  <g class="occw"><circle cx="560" cy="140" r="2.5" fill="var(--a2)" opacity=".6" class="gl d2"/></g>
+  <g class="ss"><circle cx="400" cy="140" r="2" fill="var(--a)" opacity=".5" class="gl d3"/></g>
+  <line x1="60" y1="10" x2="900" y2="10" stroke="var(--a)" stroke-width=".5" opacity=".15" stroke-dasharray="2 10"/>
+  <line x1="60" y1="270" x2="900" y2="270" stroke="var(--a)" stroke-width=".5" opacity=".15" stroke-dasharray="2 10"/>
+</svg>
+<div class="hpi"><h1 class="hpt">全部文档</h1><p class="hps">选择分类开始阅读</p><span class="hpc">5 <small>个分类</small></span></div></div>
+
+<!-- 4 CATEGORY -->
+<div class="sd"></div><div class="sl">04 / 分类 · 引力透镜</div>
+<div class="hp">
+<svg class="geo" viewBox="0 0 960 260">
+  <defs><radialGradient id="gc"><stop offset="0%" stop-color="var(--a2)" stop-opacity=".1"/><stop offset="40%" stop-color="var(--a)" stop-opacity=".05"/><stop offset="100%" stop-color="transparent" stop-opacity="0"/></radialGradient><filter id="fc"><feGaussianBlur stdDeviation="2"/></filter></defs>
+  <ellipse cx="480" cy="130" rx="160" ry="100" fill="url(#gc)"/>
+  <g class="ocw"><ellipse cx="480" cy="130" rx="90" ry="45" fill="none" stroke="var(--a)" stroke-width=".8" opacity=".4" stroke-dasharray="8 4"/></g>
+  <g class="ofx"><ellipse cx="480" cy="130" rx="60" ry="30" fill="none" stroke="var(--a3)" stroke-width=".7" opacity=".5"/></g>
+  <circle cx="480" cy="130" r="12" fill="var(--a)" opacity=".25" filter="url(#fc)" class="pu"/><circle cx="480" cy="130" r="5" fill="var(--a3)" opacity=".6"/>
+  <g class="ocw"><circle cx="480" cy="85" r="3" fill="var(--a3)" opacity=".7" filter="url(#fc)" class="gl"/></g>
+  <g class="ofx"><circle cx="540" cy="130" r="2" fill="var(--a2)" opacity=".5" class="gl d2"/></g>
+  <circle cx="100" cy="30" r="1.5" fill="var(--a)" opacity=".25" class="pu"/><circle cx="200" cy="230" r="1" fill="var(--a3)" opacity=".2" class="pu d2"/><circle cx="800" cy="40" r="1.5" fill="var(--a2)" opacity=".25" class="pu d3"/><circle cx="850" cy="220" r="1" fill="var(--a)" opacity=".2" class="pu d1"/>
+</svg>
+<div class="hpi"><button class="hpb">←</button><h1 class="hpt">java</h1><p class="hps">该分类下的文档</p><span class="hpc">12 <small>篇文档</small></span></div></div>
+
+<!-- 5 ARTICLE -->
+<div class="sd"></div><div class="sl">05 / Article · 深空探测</div>
+<div class="hp">
+<svg class="geo" viewBox="0 0 960 260">
+  <defs><radialGradient id="ga"><stop offset="0%" stop-color="var(--a)" stop-opacity=".1"/><stop offset="100%" stop-color="transparent" stop-opacity="0"/></radialGradient><filter id="fa"><feGaussianBlur stdDeviation="1.5"/></filter></defs>
+  <ellipse cx="480" cy="130" rx="140" ry="90" fill="url(#ga)"/>
+  <g class="ocw"><ellipse cx="480" cy="130" rx="80" ry="40" fill="none" stroke="var(--a)" stroke-width=".8" opacity=".4" stroke-dasharray="6 4"/></g>
+  <g class="occw"><circle cx="480" cy="130" r="60" fill="none" stroke="var(--a2)" stroke-width=".6" opacity=".3" stroke-dasharray="3 6"/></g>
+  <g class="of"><circle cx="480" cy="130" r="45" fill="none" stroke="var(--a3)" stroke-width=".7" opacity=".35" stroke-dasharray="2 8"/></g>
+  <circle cx="480" cy="130" r="14" fill="var(--a)" opacity=".2" filter="url(#fa)" class="pu"/><circle cx="480" cy="130" r="7" fill="var(--a)" opacity=".4"/>
+  <g class="ocw"><circle cx="480" cy="90" r="3" fill="var(--a3)" opacity=".7" filter="url(#fa)" class="gl"/></g>
+  <g class="occw"><circle cx="540" cy="130" r="2.5" fill="var(--a2)" opacity=".5" class="gl d2"/></g>
+  <g class="of"><circle cx="420" cy="130" r="2" fill="var(--a)" opacity=".5" class="gl d3"/></g>
+  <line x1="60" y1="10" x2="900" y2="10" stroke="var(--a)" stroke-width=".5" opacity=".15" stroke-dasharray="2 10"/>
+  <line x1="60" y1="250" x2="900" y2="250" stroke="var(--a)" stroke-width=".5" opacity=".15" stroke-dasharray="2 10"/>
+</svg>
+<div class="hpi"><h1 class="hpt" style="font-size:2rem">Java 集合框架深度解析</h1><p class="hps">2026-06-09 · 12 分钟 · 约 3500 字</p><span class="hpc">3500 <small>字</small></span></div></div>
+
+</div>
+<script>const P=document.getElementById('P'),O=P.innerHTML;function A(b){document.querySelectorAll('.tb button').forEach(x=>x.classList.remove('on'));b.classList.add('on')}window.M=function(m){if(m==='d'){A(document.getElementById('bd'));document.documentElement.classList.add('dark');P.innerHTML=O}else if(m==='c'){A(document.getElementById('bc'));P.innerHTML='<div class="cg"><div class="sl" style="grid-column:1/-1">对比 · 左亮右暗</div>'+O+'</div>';const d=document.createElement('div');d.innerHTML=O;d.style.cssText='--bg:#080c14;--bg2:#0f1621;--tx:#e2e8f0;--tx2:#94a3b8;--tx3:#475569;--bd:#1e293b;--a:#f97316;--a2:#e11d48;--a3:#fb923c;background:var(--bg);border-radius:2px;padding:0 1rem';P.querySelector('.cg').appendChild(d)}else{A(document.getElementById('bl'));document.documentElement.classList.remove('dark');P.innerHTML=O}}</script></body></html>

@@ -36,27 +36,40 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   border: 1px solid var(--border-primary);
   color: var(--text-secondary);
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  font-size: 1rem;
-  line-height: 1;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 0;
-  transition: color 0.2s, border-color 0.2s;
+  border-radius: 2px;
+  transition: color 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.15s;
 }
 .btt-nav::before {
   content: '';
   position: absolute;
   inset: 0;
   background-color: var(--accent);
-  transform: scaleY(0);
-  transform-origin: bottom;
-  transition: transform 0.2s ease;
+  transform: scale(0);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   z-index: -1;
+  border-radius: 1px;
 }
 .btt-nav:hover {
   color: white;
   border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+  transform: scale(1.05);
 }
 .btt-nav:hover::before {
-  transform: scaleY(1);
+  transform: scale(1);
+}
+.btt-nav:active {
+  transform: scale(0.97);
+}
+.btt-nav:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 </style>

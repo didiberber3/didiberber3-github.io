@@ -17,7 +17,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../pages/ArticleView.vue'),
   },
   {
-    path: '/docs/:category?/:slug?',
+    path: '/docs/:category/:slug',
+    name: 'docs-article',
+    component: () => import('../pages/ArticleView.vue'),
+  },
+  {
+    path: '/docs/:category?',
     name: 'docs',
     component: () => import('../pages/DocsPage.vue'),
   },

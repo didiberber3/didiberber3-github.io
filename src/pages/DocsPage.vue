@@ -1,43 +1,21 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getNoteList, getCategories, loadNote } from '../utils/content'
-import type { NoteMeta, Note } from '../utils/content'
-import LoadingDots from '../components/LoadingDots.vue'
-import ArticleContent from '../components/ArticleContent.vue'
-import { useGlobalLoading } from '../utils/useGlobalLoading'
+import { getNoteList, getCategories } from '../utils/content'
+import type { NoteMeta } from '../utils/content'
+import { iconForCategory } from '../utils/categoryIcons'
 
 const route = useRoute()
 const router = useRouter()
 
 const allNotes = ref<NoteMeta[]>([])
 const categories = ref<string[]>([])
-const currentNote = ref<Note | undefined>()
-const loading = ref(true)
-const { startPage, stopPage } = useGlobalLoading()
 
 const category = computed(() => route.params.category as string | undefined)
-const slug = computed(() => route.params.slug as string | undefined)
 
 const categoryNotes = computed(() =>
   category.value ? allNotes.value.filter((n) => n.category === category.value) : []
 )
-
-async function selectNote(noteSlug: string) {
-  if (!category.value) return
-  startPage()
-  loading.value = true
-  currentNote.value = undefined
-
-  const note = await loadNote(noteSlug)
-  currentNote.value = note
-  loading.value = false
-  stopPage()
-
-  if (noteSlug !== slug.value) {
-    router.replace({ params: { category: category.value, slug: noteSlug } })
-  }
-}
 
 function selectCategory(cat: string) {
   router.push({ params: { category: cat } })
@@ -50,30 +28,7 @@ function goHome() {
 onMounted(() => {
   allNotes.value = getNoteList()
   categories.value = getCategories()
-
-  if (category.value && slug.value) {
-    selectNote(slug.value)
-  } else {
-    loading.value = false
-  }
 })
-
-watch([category, slug], ([newCat, newSlug], [oldCat, oldSlug]) => {
-  if (newCat === oldCat && newSlug === oldSlug) return
-  if (!newCat) {
-    currentNote.value = undefined
-    loading.value = false
-    return
-  }
-  if (newSlug) {
-    selectNote(newSlug)
-  } else {
-    currentNote.value = undefined
-    loading.value = false
-  }
-})
-
-import { iconForCategory } from '../utils/categoryIcons'
 </script>
 
 <template>
@@ -82,18 +37,27 @@ import { iconForCategory } from '../utils/categoryIcons'
     <main class="page-content">
       <div class="animate-reveal">
         <div v-if="categories.length > 0" class="docs-home">
-          <header class="docs-home-header">
-            <div class="docs-home-deco" aria-hidden="true">
-              <svg viewBox="0 0 200 12" fill="none">
-                <line x1="0" y1="6" x2="200" y2="6" stroke="var(--border-primary)" stroke-width="1" stroke-dasharray="4 4" opacity="0.3" />
-                <circle cx="40" cy="6" r="3" fill="var(--accent)" opacity="0.5" />
-                <circle cx="100" cy="6" r="3" fill="var(--accent)" opacity="0.5" />
-                <circle cx="160" cy="6" r="3" fill="var(--accent)" opacity="0.5" />
-              </svg>
-            </div>
-            <h1 class="docs-home-title">全部文档</h1>
-            <p class="docs-home-subtitle">选择分类开始阅读</p>
-          </header>
+          <div class="docs-hero">
+            <svg class="docs-geo" viewBox="0 0 960 280" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <defs>
+                <radialGradient id="gd"><stop offset="0%" stop-color="var(--accent3)" stop-opacity=".14"/><stop offset="60%" stop-color="var(--accent)" stop-opacity=".05"/><stop offset="100%" stop-color="transparent" stop-opacity="0"/></radialGradient>
+              </defs>
+              <ellipse cx="480" cy="140" rx="200" ry="120" fill="url(#gd)"/>
+              <g class="docs-orbit-slow"><ellipse cx="480" cy="140" rx="160" ry="70" fill="none" stroke="var(--accent)" stroke-width=".7" opacity=".35" stroke-dasharray="10 5"/></g>
+              <g class="docs-orbit-ccw"><ellipse cx="480" cy="140" rx="120" ry="60" fill="none" stroke="var(--accent2)" stroke-width=".8" opacity=".4" stroke-dasharray="4 8"/></g>
+              <g class="docs-orbit-fast"><ellipse cx="480" cy="140" rx="80" ry="40" fill="none" stroke="var(--accent3)" stroke-width="1" opacity=".5"/></g>
+              <circle cx="480" cy="140" r="18" fill="var(--accent3)" opacity=".18"/>
+              <circle cx="480" cy="140" r="8" fill="var(--accent)" opacity=".5"/>
+              <g class="docs-orbit-fast"><circle cx="480" cy="100" r="3" fill="var(--accent3)" opacity=".8"/></g>
+              <g class="docs-orbit-ccw"><circle cx="560" cy="140" r="2.5" fill="var(--accent2)" opacity=".6"/></g>
+              <g class="docs-orbit-slow"><circle cx="400" cy="140" r="2" fill="var(--accent)" opacity=".5"/></g>
+              <line x1="60" y1="10" x2="900" y2="10" stroke="var(--accent)" stroke-width=".5" opacity=".15" stroke-dasharray="2 10"/>
+              <line x1="60" y1="270" x2="900" y2="270" stroke="var(--accent)" stroke-width=".5" opacity=".15" stroke-dasharray="2 10"/>
+            </svg>
+            <h1 class="docs-hero-title">全部文档</h1>
+            <p class="docs-hero-sub">选择分类开始阅读</p>
+            <span class="docs-hero-count">{{ categories.length }} <small>个分类</small></span>
+          </div>
 
           <div class="docs-category-grid">
             <button
@@ -118,22 +82,28 @@ import { iconForCategory } from '../utils/categoryIcons'
   </div>
 
   <!-- Category article list -->
-  <div v-else-if="!slug" class="page-shell">
+  <div v-else class="page-shell">
     <main class="page-content">
       <div class="animate-reveal">
         <div class="max-w-4xl mx-auto px-4">
-          <header class="category-header">
-            <button class="category-back" @click="goHome" aria-label="返回全部分类">
-              <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                <path d="M12 4L6 10L12 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
-            <div>
-              <span class="cat-icon cat-icon-lg" v-html="iconForCategory(category)"></span>
-              <h1 class="text-2xl font-bold text-primary">{{ category }}</h1>
-              <p class="text-xs text-muted mt-1">{{ categoryNotes.length }} 篇文档</p>
-            </div>
-          </header>
+          <div class="cat-hero">
+            <svg class="cat-geo" viewBox="0 0 960 260" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <defs>
+                <radialGradient id="gc"><stop offset="0%" stop-color="var(--accent2)" stop-opacity=".1"/><stop offset="40%" stop-color="var(--accent)" stop-opacity=".05"/><stop offset="100%" stop-color="transparent" stop-opacity="0"/></radialGradient>
+              </defs>
+              <ellipse cx="480" cy="130" rx="160" ry="100" fill="url(#gc)"/>
+              <g class="cat-orbit-cw"><ellipse cx="480" cy="130" rx="90" ry="45" fill="none" stroke="var(--accent)" stroke-width=".8" opacity=".4" stroke-dasharray="8 4"/></g>
+              <g class="cat-orbit-ccw"><ellipse cx="480" cy="130" rx="60" ry="30" fill="none" stroke="var(--accent3)" stroke-width=".7" opacity=".5"/></g>
+              <circle cx="480" cy="130" r="12" fill="var(--accent)" opacity=".25"/>
+              <circle cx="480" cy="130" r="5" fill="var(--accent3)" opacity=".6"/>
+              <g class="cat-orbit-cw"><circle cx="480" cy="85" r="3" fill="var(--accent3)" opacity=".7"/></g>
+              <g class="cat-orbit-ccw"><circle cx="540" cy="130" r="2" fill="var(--accent2)" opacity=".5"/></g>
+            </svg>
+            <button class="cat-back" @click="goHome" aria-label="返回全部分类">←</button>
+            <h1 class="cat-hero-title">{{ category }}</h1>
+            <p class="cat-hero-sub">该分类下的文档</p>
+            <span class="cat-hero-count">{{ categoryNotes.length }} <small>篇文档</small></span>
+          </div>
 
           <div v-if="categoryNotes.length === 0" class="text-sm py-16 text-center text-muted">
             该分类暂无文章
@@ -168,30 +138,6 @@ import { iconForCategory } from '../utils/categoryIcons'
       </div>
     </main>
   </div>
-
-  <!-- Article reading -->
-  <div v-else class="page-shell">
-    <main class="page-content">
-      <div class="animate-reveal">
-        <div v-if="loading" class="py-16 text-center text-muted">
-          <LoadingDots text="加载中" />
-        </div>
-
-        <ArticleContent
-          v-else-if="currentNote"
-          :note="currentNote"
-          :nav-items="categoryNotes"
-          :nav-link-to="s => `/docs/${category}/${s}`"
-          :current-slug="slug"
-          :category="category"
-        />
-
-        <div v-else class="py-16 text-center text-muted">
-          文档不存在
-        </div>
-      </div>
-    </main>
-  </div>
 </template>
 
 <style scoped>
@@ -202,132 +148,53 @@ import { iconForCategory } from '../utils/categoryIcons'
   padding: 3rem 1rem 6rem;
 }
 
-.docs-home-header {
+/* ── hero ── */
+.docs-hero {
+  position: relative;
+  padding: 5rem 0 3.5rem;
   text-align: center;
-  margin-bottom: 3rem;
 }
+.docs-geo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+@keyframes docw{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes doccw{from{transform:rotate(360deg)}to{transform:rotate(0deg)}}
+@keyframes doss{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.docs-orbit-cw{animation:docw 28s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.docs-orbit-ccw{animation:doccw 22s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.docs-orbit-fast{animation:docw 14s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.docs-orbit-slow{animation:doss 50s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.docs-hero-title{font-size:2.75rem;font-weight:800;letter-spacing:-.04em;color:var(--text-primary);line-height:1.15;margin-bottom:1.25rem;position:relative;z-index:1}
+.docs-hero-sub{font-size:.9375rem;color:var(--text-secondary);margin-bottom:1.5rem;position:relative;z-index:1}
+.docs-hero-count{font-size:1.75rem;font-weight:700;color:var(--accent);letter-spacing:-.02em;position:relative;z-index:1}
+.docs-hero-count small{font-size:.8125rem;font-weight:500;color:var(--text-muted);margin-left:.375rem}
 
-.docs-home-deco {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-.docs-home-deco svg {
-  width: 200px;
-  height: 12px;
-}
-.docs-home-deco circle {
-  animation: dotPulse 2.4s ease-in-out infinite;
-}
-.docs-home-deco circle:nth-child(2) { animation-delay: 0.3s; }
-.docs-home-deco circle:nth-child(3) { animation-delay: 0.6s; }
-@keyframes dotPulse {
-  0%, 100% { opacity: 0.3; }
-  50%      { opacity: 0.9; }
-}
-
-.docs-home-title {
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-}
-.docs-home-subtitle {
-  font-size: 0.875rem;
-  color: var(--text-muted);
-}
+/* ── category header ── */
+.cat-hero{position:relative;padding:3rem 0 2.5rem;text-align:center;overflow:hidden}
+.cat-geo{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+@keyframes catcw{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes catccw{from{transform:rotate(360deg)}to{transform:rotate(0deg)}}
+.cat-orbit-cw{animation:catcw 28s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.cat-orbit-ccw{animation:catccw 22s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.cat-back{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;margin-bottom:1.5rem;border:1px solid var(--border-primary);border-radius:2px;color:var(--text-muted);cursor:pointer;font-size:.875rem;font-family:inherit;line-height:1;background:none;transition:all .25s;position:relative;z-index:1}
+.cat-back:hover{color:var(--accent);border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);transform:scale(1.05)}
+.cat-hero-title{font-size:2.75rem;font-weight:800;letter-spacing:-.04em;color:var(--text-primary);line-height:1.15;margin-bottom:1.25rem;text-transform:capitalize;position:relative;z-index:1}
+.cat-hero-sub{font-size:.9375rem;color:var(--text-secondary);margin-bottom:1.5rem;position:relative;z-index:1}
+.cat-hero-count{font-size:1.75rem;font-weight:700;color:var(--accent);letter-spacing:-.02em;position:relative;z-index:1}
+.cat-hero-count small{font-size:.8125rem;font-weight:500;color:var(--text-muted);margin-left:.375rem}
 
 /* ── category cards ── */
-.docs-category-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 1px;
-  background: var(--border-primary);
-  box-shadow: var(--shadow-glass);
-}
-
-.docs-category-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 2rem 1.25rem;
-  background: var(--bg-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-  transition: background 0.2s, backdrop-filter 0.2s;
-  animation: cardIn 0.5s ease both;
-  animation-delay: calc(var(--i, 0) * 0.06s);
-}
-.docs-category-card:hover {
-  background: var(--bg-secondary);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-@keyframes cardIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.cat-icon {
-  display: flex;
-  width: 2.25rem;
-  height: 2.25rem;
-  color: var(--accent);
-}
-.cat-icon :deep(svg) {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.cat-icon-lg {
-  width: 2rem;
-  height: 2rem;
-}
-
-.cat-name {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-.cat-count {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-/* ═══════════ CATEGORY HEADER (article list) ═══════════ */
-.category-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding-top: 1rem;
-}
-
-.category-back {
-  flex-shrink: 0;
-  margin-top: 0.15rem;
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: 1px solid var(--border-primary);
-  cursor: pointer;
-  color: var(--text-secondary);
-  font-family: inherit;
-  transition: background 0.2s, color 0.2s;
-}
-.category-back:hover {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-}
+.docs-category-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1px;background:var(--border-primary);box-shadow:var(--shadow-glass)}
+.docs-category-card{display:flex;flex-direction:column;align-items:center;gap:.5rem;padding:2rem 1.25rem;background:var(--bg-glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:none;cursor:pointer;font-family:inherit;transition:background .2s,backdrop-filter .2s;animation:cardIn .5s ease both;animation-delay:calc(var(--i,0)*.06s)}
+.docs-category-card:hover{background:var(--bg-secondary);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.cat-icon{display:flex;width:2.25rem;height:2.25rem;color:var(--accent)}.cat-icon :deep(svg){width:100%;height:100%;display:block}
+.cat-icon-lg{width:2rem;height:2rem}.cat-name{font-size:1rem;font-weight:600;color:var(--text-primary)}.cat-count{font-size:.75rem;color:var(--text-muted)}
 
 /* ═══════════ ARTICLE LIST ═══════════ */
 .article-list {

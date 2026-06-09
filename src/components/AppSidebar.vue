@@ -55,7 +55,7 @@ function toggleToc() {
                 v-for="note in sidebar.notes"
                 :key="note.slug"
                 href="#"
-                :class="['drawer-nav-item', 'interact-slide-bg', sidebar.currentSlug === note.slug ? 'text-accent border-l-accent bg-[var(--accent-bg)] pl-3' : '']"
+                :class="['drawer-nav-item', sidebar.currentSlug === note.slug ? 'active' : '']"
                 @click.prevent="onSelectNote(note.slug)"
               >
                 <span class="drawer-nav-title">{{ note.title }}</span>
@@ -130,14 +130,17 @@ function toggleToc() {
   overflow: hidden;
   background: none;
   border: 1px solid var(--border-primary);
-  padding: 0.25rem;
+  width: 28px;
+  height: 28px;
+  padding: 0;
   cursor: pointer;
   color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 0;
-  transition: color 0.2s, border-color 0.2s;
+  border-radius: 2px;
+  transition: color 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.15s;
 }
 .drawer-close::before {
   content: '';
@@ -145,15 +148,25 @@ function toggleToc() {
   inset: 0;
   background-color: var(--accent);
   transform: scale(0);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   z-index: -1;
+  border-radius: 1px;
 }
 .drawer-close:hover {
   color: white;
   border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+  transform: scale(1.05);
 }
 .drawer-close:hover::before {
-  transform: scale(1.5);
+  transform: scale(1);
+}
+.drawer-close:active {
+  transform: scale(0.97);
+}
+.drawer-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 .drawer-close:hover svg {
   animation: drawerCloseRotate 0.6s ease;
@@ -183,12 +196,17 @@ function toggleToc() {
   padding: 0.5rem 0.5rem 0.25rem;
   border-left: 2px solid transparent;
   padding-left: 0.5rem;
-  transition: background-color 0.2s, border-color 0.2s, padding-left 0.2s;
+  border-radius: 2px;
+  transition: background-color 0.25s, border-color 0.25s, padding-left 0.25s;
 }
 .drawer-section-header:hover {
   background-color: var(--bg-secondary);
   border-left-color: var(--accent);
   padding-left: 0.75rem;
+}
+.drawer-section-header:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
 }
 .drawer-section-header:hover .drawer-section-label,
 .drawer-section-header:hover .drawer-chevron {
@@ -201,7 +219,7 @@ function toggleToc() {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-secondary);
-  transition: color 0.2s;
+  transition: color 0.25s;
 }
 
 .drawer-chevron {
@@ -230,8 +248,29 @@ function toggleToc() {
   padding: 0.45rem 0.5rem;
   text-decoration: none;
   cursor: pointer;
+  color: var(--text-secondary);
+  border-left: 2px solid transparent;
+  border-radius: 0;
+  transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+}
+
+.drawer-nav-item:hover {
   color: var(--text-primary);
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s, padding-left 0.2s;
+  background-color: var(--bg-secondary);
+  border-left-color: var(--border-secondary);
+}
+
+.drawer-nav-item.active {
+  color: var(--text-primary);
+  background-color: var(--bg-tertiary);
+  border-left-color: var(--accent);
+  font-weight: 500;
+}
+
+.drawer-nav-item.active:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-tertiary);
+  border-left-color: var(--accent);
 }
 
 .drawer-nav-title {

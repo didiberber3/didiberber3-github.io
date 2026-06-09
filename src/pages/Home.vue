@@ -2,7 +2,6 @@
 import { onMounted, ref } from 'vue'
 import { getNoteList, getCategories } from '../utils/content'
 import type { NoteMeta } from '../utils/content'
-import HeroSvg from '../components/HeroSvg.vue'
 
 const notes = ref<NoteMeta[]>([])
 const noteTotal = ref(0)
@@ -20,27 +19,38 @@ onMounted(() => {
     <main class="page-content">
       <div class="animate-reveal">
         <div class="page-home">
-          <!-- deco line -->
-          <div class="home-deco" aria-hidden="true">
-            <svg viewBox="0 0 200 12" fill="none">
-              <line x1="0" y1="6" x2="200" y2="6" stroke="var(--border-primary)" stroke-width="1" stroke-dasharray="4 4" opacity="0.3" />
-              <circle cx="40" cy="6" r="3" fill="var(--accent)" opacity="0.5" />
-              <circle cx="100" cy="6" r="3" fill="var(--accent)" opacity="0.5" />
-              <circle cx="160" cy="6" r="3" fill="var(--accent)" opacity="0.5" />
-            </svg>
-          </div>
-
           <!-- hero -->
-          <div class="home-hero">
-            <div class="home-hero-svg">
-              <HeroSvg />
+          <section class="hero-home">
+            <svg class="hero-geo" viewBox="0 0 960 500" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <defs>
+                <radialGradient id="gh1"><stop offset="0%" stop-color="var(--accent)" stop-opacity=".18"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></radialGradient>
+                <radialGradient id="gh2"><stop offset="0%" stop-color="var(--accent2)" stop-opacity=".1"/><stop offset="100%" stop-color="var(--accent2)" stop-opacity="0"/></radialGradient>
+                <linearGradient id="mgh" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="var(--accent3)" stop-opacity="0"/><stop offset="40%" stop-color="var(--accent3)" stop-opacity=".6"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></linearGradient>
+              </defs>
+              <ellipse cx="480" cy="180" rx="180" ry="120" fill="url(#gh1)"/>
+              <ellipse cx="200" cy="330" rx="100" ry="60" fill="url(#gh2)"/>
+              <circle cx="480" cy="180" r="48" fill="var(--accent)" opacity=".08"/>
+              <circle cx="480" cy="180" r="36" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity=".4"/>
+              <circle cx="480" cy="180" r="8" fill="var(--accent)" opacity=".35"/>
+              <circle cx="480" cy="180" r="3" fill="var(--accent3)" opacity=".6"/>
+              <g class="home-orbit-cw"><ellipse cx="480" cy="180" rx="140" ry="40" fill="none" stroke="var(--accent)" stroke-width=".8" opacity=".4" stroke-dasharray="8 4"/></g>
+              <g class="home-orbit-ccw"><ellipse cx="480" cy="180" rx="100" ry="70" fill="none" stroke="var(--accent2)" stroke-width=".6" opacity=".35" stroke-dasharray="3 6"/></g>
+              <g class="home-orbit-fast"><circle cx="480" cy="180" r="100" fill="none" stroke="var(--accent3)" stroke-width=".7" opacity=".3" stroke-dasharray="2 8"/></g>
+              <g class="home-orbit-cw"><circle cx="480" cy="50" r="4" fill="var(--accent3)" opacity=".8"/></g>
+              <g class="home-orbit-cw"><circle cx="610" cy="180" r="3" fill="var(--accent2)" opacity=".7"/></g>
+              <g class="home-orbit-cw"><circle cx="480" cy="310" r="2.5" fill="var(--accent)" opacity=".6"/></g>
+              <g class="home-orbit-fast-ccw"><circle cx="380" cy="180" r="2.5" fill="var(--accent)" opacity=".6"/></g>
+              <line x1="0" y1="130" x2="160" y2="150" stroke="url(#mgh)" stroke-width="1.5" class="home-meteor"/>
+              <line x1="0" y1="280" x2="140" y2="295" stroke="url(#mgh)" stroke-width="1" class="home-meteor home-meteor-d2"/>
+              <line x1="40" y1="470" x2="920" y2="470" stroke="var(--accent)" stroke-width=".6" opacity=".2" stroke-dasharray="2 12"/>
+            </svg>
+            <div class="hero-overlay">
+              <h1 class="hero-home-title">记录与分享</h1>
+              <div class="hero-home-line"></div>
+              <p class="hero-home-sub">学习 · 记录 · 成长</p>
+              <p class="hero-home-stats"><strong>{{ noteTotal }}</strong> 篇笔记 &nbsp;·&nbsp; <strong>{{ categories.length }}</strong> 个分类</p>
             </div>
-            <h1 class="home-title">记录与分享</h1>
-            <p class="home-subtitle">学习 · 记录 · 成长</p>
-            <p class="home-stats">
-              {{ noteTotal }} 篇笔记 · {{ categories.length }} 个分类
-            </p>
-          </div>
+          </section>
 
           <!-- recent notes -->
           <section class="home-section">
@@ -84,56 +94,46 @@ onMounted(() => {
 .page-home {
   max-width: 56rem;
   margin: 0 auto;
-  padding: 3rem 1rem 6rem;
-}
-
-/* ── deco line ── */
-.home-deco {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-.home-deco svg {
-  width: 200px;
-  height: 12px;
-}
-.home-deco circle {
-  animation: dotPulse 2.4s ease-in-out infinite;
-}
-.home-deco circle:nth-child(2) { animation-delay: 0.3s; }
-.home-deco circle:nth-child(3) { animation-delay: 0.6s; }
-
-@keyframes dotPulse {
-  0%, 100% { opacity: 0.3; }
-  50%      { opacity: 0.9; }
+  padding: 2rem 1rem 6rem;
 }
 
 /* ── hero ── */
-.home-hero {
+.hero-home {
+  position: relative;
+  aspect-ratio: 960 / 500;
   text-align: center;
-  margin-bottom: 3.5rem;
 }
-.home-hero-svg {
+.hero-geo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+@keyframes ocw{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes occw{from{transform:rotate(360deg)}to{transform:rotate(0deg)}}
+@keyframes hmeteor{0%{transform:translate(-100px,0);opacity:1}70%{opacity:.8}100%{transform:translate(1060px,60px);opacity:0}}
+.home-orbit-cw{animation:ocw 28s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.home-orbit-ccw{animation:occw 22s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.home-orbit-fast{animation:ocw 14s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.home-orbit-fast-ccw{animation:occw 16s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.home-meteor{animation:hmeteor 8s linear infinite}
+.home-meteor-d2{animation-delay:4s}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  z-index: 1;
+  pointer-events: none;
 }
-.home-title {
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-}
-.home-subtitle {
-  font-size: 0.9375rem;
-  color: var(--text-secondary);
-  margin-bottom: 0.75rem;
-}
-.home-stats {
-  font-size: 0.8125rem;
-  color: var(--text-muted);
-}
+.hero-home-title{font-size:2.75rem;font-weight:800;letter-spacing:-.04em;color:var(--text-primary);line-height:1.1;margin-bottom:.75rem}
+.hero-home-line{width:64px;height:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:.75rem auto 1rem}
+.hero-home-sub{font-size:1rem;color:var(--text-secondary);margin-bottom:.5rem}
+.hero-home-stats{font-size:.8125rem;color:var(--text-muted)}
+.hero-home-stats strong{color:var(--accent);font-weight:700}
 
 /* ── section ── */
 .home-section {

@@ -1,16 +1,12 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import BackToTop from './BackToTop.vue'
 import { sidebar, openSidebar, closeSidebar, setSidebarVisible } from '../utils/useSidebar'
 import { getNoteList } from '../utils/content'
 
 const route = useRoute()
 const router = useRouter()
-
-const showBackToTop = computed(() =>
-  route.path.startsWith('/note/') || route.path.startsWith('/docs/')
-)
 
 const isDark = ref(false)
 const isAnimating = ref(false)
@@ -84,7 +80,7 @@ function toggleSidebar() {
       </div>
 
       <div class="flex items-center gap-3">
-        <BackToTop v-if="showBackToTop" />
+        <BackToTop />
         <button
           class="sidebar-toggle"
           @click="toggleSidebar"
@@ -141,7 +137,12 @@ function toggleSidebar() {
   background: none;
   border: none;
   cursor: pointer;
-  transition: color 0.2s, background-color 0.2s;
+  border-radius: 2px;
+  transition: color 0.25s, background-color 0.25s;
+}
+.tab-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
 }
 
 .tab-btn::after {
@@ -182,14 +183,17 @@ function toggleSidebar() {
   overflow: hidden;
   background: none;
   border: 1px solid var(--border-primary);
-  padding: 0.25rem 0.5rem;
+  width: 28px;
+  height: 28px;
+  padding: 0;
   cursor: pointer;
   color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 0;
-  transition: color 0.2s, border-color 0.2s;
+  border-radius: 2px;
+  transition: color 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.15s;
 }
 .sidebar-toggle::before {
   content: '';
@@ -197,16 +201,25 @@ function toggleSidebar() {
   inset: 0;
   background-color: var(--accent);
   transform: scale(0);
-  transform-origin: right center;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   z-index: -1;
+  border-radius: 1px;
 }
 .sidebar-toggle:hover {
   color: white;
   border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+  transform: scale(1.05);
 }
 .sidebar-toggle:hover::before {
-  transform: scale(1.5);
+  transform: scale(1);
+}
+.sidebar-toggle:active {
+  transform: scale(0.97);
+}
+.sidebar-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* ── Theme toggle ── */
@@ -215,13 +228,19 @@ function toggleSidebar() {
   overflow: hidden;
   background: none;
   border: 1px solid var(--border-primary);
-  padding: 0.25rem 0.5rem;
+  width: 28px;
+  height: 28px;
+  padding: 0;
   font-size: 1rem;
   line-height: 1;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 0;
   color: var(--text-secondary);
-  transition: color 0.2s, border-color 0.2s;
+  border-radius: 2px;
+  transition: color 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.15s;
 }
 .theme-toggle::before {
   content: '';
@@ -229,15 +248,25 @@ function toggleSidebar() {
   inset: 0;
   background-color: var(--accent);
   transform: scale(0);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   z-index: -1;
+  border-radius: 1px;
 }
 .theme-toggle:hover {
   color: white;
   border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+  transform: scale(1.05);
 }
 .theme-toggle:hover::before {
-  transform: scale(1.5);
+  transform: scale(1);
+}
+.theme-toggle:active {
+  transform: scale(0.97);
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* ── Theme icon rotation (kept) ── */

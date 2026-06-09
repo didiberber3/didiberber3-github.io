@@ -14,6 +14,19 @@ const loading = ref(true)
 const { startPage, stopPage } = useGlobalLoading()
 const adjacent = ref<{ prev: NoteMeta | null; next: NoteMeta | null }>({ prev: null, next: null })
 
+const isDocs = computed(() => route.path.startsWith('/docs/'))
+
+const navPrefix = computed(() => {
+  if (isDocs.value && note.value) {
+    return `/docs/${note.value.category}/`
+  }
+  return '/note/'
+})
+
+const slug = computed(() =>
+  (route.params.slug as string) || ''
+)
+
 const sidebarNotes = computed(() => {
   const all = getNoteList()
   if (!note.value) return all
@@ -23,46 +36,43 @@ const sidebarNotes = computed(() => {
 async function load() {
   startPage()
   loading.value = true
-  const slug = typeof route.params.slug === 'string' ? route.params.slug : ''
-  const found = await loadNote(slug)
+  const s = slug.value
+  const found = await loadNote(s)
   note.value = found
-  adjacent.value = getAdjacentNotes(slug)
+  adjacent.value = getAdjacentNotes(s)
   loading.value = false
   stopPage()
   if (found?.toc?.length) {
     setSidebarToc(found.toc)
   }
-  setSidebarCurrentSlug(slug)
+  setSidebarCurrentSlug(s)
 }
 
 onMounted(load)
-watch(() => route.params.slug, load)
+watch(slug, load)
 </script>
 
 <template>
   <div class="page-shell">
     <main class="page-content">
       <div class="animate-reveal">
-        <!-- loading -->
         <div v-if="loading" class="py-16 text-center text-muted">
           <LoadingDots text="加载中" />
         </div>
 
-        <!-- not found -->
         <div v-else-if="!note" class="py-16 text-center text-muted">
           笔记不存在
         </div>
 
-        <!-- content -->
         <ArticleContent
           v-else
           :note="note"
           :nav-items="sidebarNotes"
-          :nav-link-to="slug => `/note/${slug}`"
-          :current-slug="typeof route.params.slug === 'string' ? route.params.slug : ''"
+          :nav-link-to="s => navPrefix + s"
+          :current-slug="slug"
           :category="note.category"
           :adjacent="adjacent"
-          :adjacent-link-to="slug => `/note/${slug}`"
+          :adjacent-link-to="s => `/note/${s}`"
         />
       </div>
     </main>

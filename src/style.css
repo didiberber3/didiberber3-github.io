@@ -26,6 +26,8 @@
   --accent: #16a34a;
   --accent-hover: #15803d;
   --accent-bg: #f0fdf4;
+  --accent2: #0d9488;
+  --accent3: #84cc16;
   --code-bg: #eef4e8;
   --code-border: #d5e0cb;
   --drawer-overlay: rgba(0, 0, 0, 0.15);
@@ -33,25 +35,27 @@
 }
 
 .dark {
-  --bg-primary: #1a1f2e;
-  --bg-secondary: #252b3d;
-  --bg-tertiary: #2d3447;
-  --bg-overlay: rgba(26, 31, 46, 0.88);
-  --bg-glass: rgba(26, 31, 46, 0.6);
-  --shadow-glass: 0 2px 12px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.15);
-  --shadow-glass-lg: 0 4px 20px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.15);
-  --text-primary: #f1f5f9;
+  --bg-primary: #080c14;
+  --bg-secondary: #0f1621;
+  --bg-tertiary: #182232;
+  --bg-overlay: rgba(8, 12, 20, 0.88);
+  --bg-glass: rgba(8, 12, 20, 0.6);
+  --shadow-glass: 0 2px 12px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-glass-lg: 0 4px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.2);
+  --text-primary: #e2e8f0;
   --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --border-primary: #334155;
-  --border-secondary: #475569;
-  --accent: #67e8f9;
-  --accent-hover: #22d3ee;
-  --accent-bg: #0c1e2e;
-  --code-bg: #252b3d;
-  --code-border: #334155;
-  --drawer-overlay: rgba(0, 0, 0, 0.45);
-  --drawer-shadow: -4px 0 12px rgba(0, 0, 0, 0.2);
+  --text-muted: #475569;
+  --border-primary: #1e293b;
+  --border-secondary: #334155;
+  --accent: #f97316;
+  --accent-hover: #fb923c;
+  --accent-bg: #1a0e05;
+  --accent2: #e11d48;
+  --accent3: #fb923c;
+  --code-bg: #0f1621;
+  --code-border: #1e293b;
+  --drawer-overlay: rgba(0, 0, 0, 0.55);
+  --drawer-shadow: -4px 0 12px rgba(0, 0, 0, 0.3);
 }
 
 /* ========== Base layer ========== */
@@ -191,7 +195,7 @@
 
   /*
    * Pattern B: Fill button
-   * 主题色从左至右填充
+   * 主题色居中扩散填充
    * 用于: .btn-more, .visit-btn
    */
   .interact-fill {
@@ -199,8 +203,9 @@
     overflow: hidden;
     border: 2px solid var(--accent);
     color: var(--accent);
-    transition: color 0.2s;
+    transition: color 0.25s, box-shadow 0.25s, transform 0.15s;
     z-index: 0;
+    border-radius: 2px;
   }
 
   .interact-fill::before {
@@ -208,18 +213,28 @@
     position: absolute;
     inset: 0;
     background-color: var(--accent);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.2s ease;
+    transform: scale(0);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     z-index: -1;
   }
 
   .interact-fill:hover {
     color: white;
+    box-shadow: 0 0 0 1px var(--accent);
+    transform: scale(1.05);
   }
 
   .interact-fill:hover::before {
-    transform: scaleX(1);
+    transform: scale(1);
+  }
+
+  .interact-fill:active {
+    transform: scale(0.97);
+  }
+
+  .interact-fill:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   /* ── Article list ── */
@@ -311,7 +326,7 @@
 .copy-btn,
 .fold-btn {
   overflow: hidden;
-  padding: 0.125rem 0.5rem;
+  padding: 0.125rem 0.625rem;
   font-size: 0.6875rem;
   font-family: inherit;
   color: var(--text-secondary);
@@ -321,7 +336,8 @@
   z-index: 0;
   position: relative;
   white-space: nowrap;
-  transition: color 0.2s, border-color 0.2s;
+  border-radius: 2px;
+  transition: color 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.15s;
 }
 .copy-btn::before,
 .fold-btn::before {
@@ -329,19 +345,30 @@
   position: absolute;
   inset: 0;
   background-color: var(--accent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.2s ease;
+  transform: scale(0);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   z-index: -1;
+  border-radius: 1px;
 }
 .copy-btn:hover,
 .fold-btn:hover {
   color: white;
   border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+  transform: scale(1.05);
 }
 .copy-btn:hover::before,
 .fold-btn:hover::before {
-  transform: scaleX(1);
+  transform: scale(1);
+}
+.copy-btn:active,
+.fold-btn:active {
+  transform: scale(0.97);
+}
+.copy-btn:focus-visible,
+.fold-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 .copy-btn.copied {
   color: var(--accent);
