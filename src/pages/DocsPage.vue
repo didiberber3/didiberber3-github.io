@@ -56,7 +56,7 @@ onMounted(() => {
             </svg>
             <h1 class="docs-hero-title">全部文档</h1>
             <p class="docs-hero-sub">选择分类开始阅读</p>
-            <span class="docs-hero-count">{{ categories.length }} <small>个分类</small></span>
+            <div class="docs-hero-count"><strong>{{ categories.length }}</strong><span>个分类</span></div>
           </div>
 
           <div class="docs-category-grid">
@@ -102,7 +102,7 @@ onMounted(() => {
             <button class="cat-back" @click="goHome" aria-label="返回全部分类">←</button>
             <h1 class="cat-hero-title">{{ category }}</h1>
             <p class="cat-hero-sub">该分类下的文档</p>
-            <span class="cat-hero-count">{{ categoryNotes.length }} <small>篇文档</small></span>
+            <div class="cat-hero-count"><strong>{{ categoryNotes.length }}</strong><span>篇文档</span></div>
           </div>
 
           <div v-if="categoryNotes.length === 0" class="text-sm py-16 text-center text-muted">
@@ -171,8 +171,24 @@ onMounted(() => {
 .docs-orbit-slow{animation:doss 50s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
 .docs-hero-title{font-size:2.75rem;font-weight:800;letter-spacing:-.04em;color:var(--text-primary);line-height:1.15;margin-bottom:1.25rem;position:relative;z-index:1}
 .docs-hero-sub{font-size:.9375rem;color:var(--text-secondary);margin-bottom:1.5rem;position:relative;z-index:1}
-.docs-hero-count{font-size:1.75rem;font-weight:700;color:var(--accent);letter-spacing:-.02em;position:relative;z-index:1}
-.docs-hero-count small{font-size:.8125rem;font-weight:500;color:var(--text-muted);margin-left:.375rem}
+.docs-hero-count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+.docs-hero-count strong {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.1;
+}
+.docs-hero-count span {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
 
 /* ── category header ── */
 .cat-hero{position:relative;padding:3rem 0 2.5rem;text-align:center;overflow:hidden}
@@ -185,11 +201,28 @@ onMounted(() => {
 .cat-back:hover{color:var(--accent);border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);transform:scale(1.05)}
 .cat-hero-title{font-size:2.75rem;font-weight:800;letter-spacing:-.04em;color:var(--text-primary);line-height:1.15;margin-bottom:1.25rem;text-transform:capitalize;position:relative;z-index:1}
 .cat-hero-sub{font-size:.9375rem;color:var(--text-secondary);margin-bottom:1.5rem;position:relative;z-index:1}
-.cat-hero-count{font-size:1.75rem;font-weight:700;color:var(--accent);letter-spacing:-.02em;position:relative;z-index:1}
-.cat-hero-count small{font-size:.8125rem;font-weight:500;color:var(--text-muted);margin-left:.375rem}
+.cat-hero-count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+.cat-hero-count strong {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.1;
+}
+.cat-hero-count span {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
 
 /* ── category cards ── */
 .docs-category-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1px;background:var(--border-primary);box-shadow:var(--shadow-glass)}
+@media (max-width: 480px){.docs-category-grid{grid-template-columns:1fr}}
 .docs-category-card{display:flex;flex-direction:column;align-items:center;gap:.5rem;padding:2rem 1.25rem;background:var(--bg-glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:none;cursor:pointer;font-family:inherit;transition:background .2s,backdrop-filter .2s;animation:cardIn .5s ease both;animation-delay:calc(var(--i,0)*.06s)}
 .docs-category-card:hover{background:var(--bg-secondary);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 @keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}

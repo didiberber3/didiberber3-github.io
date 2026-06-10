@@ -71,30 +71,7 @@ onUnmounted(() => stopTocObserver())
           v-html="note.html"
         ></div>
 
-        <!-- prev/next navigation -->
-        <nav
-          v-if="adjacent"
-          class="flex items-center justify-between mt-16 pt-8 border-t"
-          style="border-color: var(--border-primary)"
-        >
-          <router-link
-            v-if="adjacent.prev"
-            :to="adjacentLinkTo ? adjacentLinkTo(adjacent.prev.slug) : ''"
-            class="interact-slide-bg inline-flex items-center gap-1 text-sm px-3 py-2"
-          >
-            ← {{ adjacent.prev.title }}
-          </router-link>
-          <div v-else />
-          <router-link
-            v-if="adjacent.next"
-            :to="adjacentLinkTo ? adjacentLinkTo(adjacent.next.slug) : ''"
-            class="interact-slide-bg inline-flex items-center gap-1 text-sm px-3 py-2"
-          >
-            {{ adjacent.next.title }} →
-          </router-link>
-        </nav>
       </div>
-
       <aside class="article-aside">
         <div class="aside-tabs">
           <button
@@ -356,6 +333,23 @@ onUnmounted(() => stopTocObserver())
   }
   .article-aside {
     display: none;
+  }
+  .article-body {
+    padding: 1.25rem;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  .article-hd {
+    padding: 2rem 0 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .article-body {
+    padding: 0.875rem;
+  }
+  .article-hd-title {
+    font-size: 1.5rem;
   }
 }
 </style>

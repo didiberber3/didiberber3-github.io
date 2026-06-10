@@ -26,7 +26,12 @@ export function rssPlugin(): Plugin {
         const slug = slugFromFilePath(fullPath)
         const raw = readFileSync(fullPath, 'utf-8')
         const fm = parseFrontmatter(raw)
-        const fallbackDate = statSync(fullPath).mtime.toISOString().split('T')[0]
+        const mtime = statSync(fullPath).mtime
+        const fallbackDate = [
+          mtime.getFullYear(),
+          String(mtime.getMonth() + 1).padStart(2, '0'),
+          String(mtime.getDate()).padStart(2, '0'),
+        ].join('-')
         const title = fm.title || slug
         const date = fm.date || fallbackDate
         // Strip frontmatter + markdown for the description

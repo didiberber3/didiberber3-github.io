@@ -72,4 +72,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+@media (max-width: 768px) {
+  .btt-nav { display: none; }
+}
 </style>

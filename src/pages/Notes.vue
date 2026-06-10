@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { getNoteList } from '../utils/content'
 import type { NoteMeta } from '../utils/content'
 import SearchBar from '../components/SearchBar.vue'
+
 const notes = ref<NoteMeta[]>([])
 const query = ref('')
 
@@ -14,6 +15,49 @@ const filtered = computed(() => {
   if (!query.value.trim()) return notes.value
   const q = query.value.toLowerCase()
   return notes.value.filter((n) => n.title.toLowerCase().includes(q))
+})
+
+interface GroupedItem {
+  type: 'year' | 'month' | 'note'
+  label?: string
+  count?: number
+  month?: string
+  note?: NoteMeta
+  index?: number
+}
+
+const grouped = computed<GroupedItem[]>(() => {
+  const list = filtered.value
+  if (!list.length) return []
+
+  const result: GroupedItem[] = []
+  let lastYear = ''
+  let lastMonth = ''
+  let noteIndex = 0
+
+  for (const note of list) {
+    const [year, month] = note.date ? note.date.split('-') : ['', '']
+    if (!year) {
+      result.push({ type: 'note', note, index: noteIndex++ })
+      continue
+    }
+
+    if (year !== lastYear) {
+      const yearNotes = list.filter((n) => n.date?.startsWith(year))
+      result.push({ type: 'year', label: year, count: yearNotes.length })
+      lastYear = year
+      lastMonth = ''
+    }
+
+    if (month && month !== lastMonth) {
+      result.push({ type: 'month', label: month })
+      lastMonth = month
+    }
+
+    result.push({ type: 'note', note, index: noteIndex++ })
+  }
+
+  return result
 })
 </script>
 
@@ -40,9 +84,9 @@ const filtered = computed(() => {
               <line x1="60" y1="10" x2="900" y2="10" stroke="var(--accent)" stroke-width=".5" opacity=".15" stroke-dasharray="2 10"/>
               <line x1="60" y1="270" x2="900" y2="270" stroke="var(--accent)" stroke-width=".5" opacity=".15" stroke-dasharray="2 10"/>
             </svg>
-            <h1 class="notes-hero-title">笔记</h1>
-            <p class="notes-hero-sub">浏览全部文章</p>
-            <span class="notes-hero-count">{{ notes.length }} <small>篇</small></span>
+            <h1 class="notes-hero-title">时间轴</h1>
+            <p class="notes-hero-sub">按时间浏览全部笔记</p>
+            <div class="notes-hero-count"><strong>{{ notes.length }}</strong><span>篇</span></div>
           </section>
 
           <SearchBar
@@ -54,30 +98,35 @@ const filtered = computed(() => {
              没有匹配的内容
           </div>
 
-          <div v-else :key="query" class="article-list">
-            <div
-              v-for="(note, i) in filtered"
-              :key="note.slug"
-              class="article-card-wrapper"
-              :style="{ '--i': i }"
-            >
-              <router-link
-                :to="`/note/${note.slug}`"
-                class="article-card interact-slide-bg"
-              >
-                <div class="article-card-main">
-                  <h2 class="article-title">{{ note.title }}</h2>
-                </div>
-                <div class="article-card-meta">
-                  <span v-if="note.date" class="article-date">{{ note.date }}</span>
-                </div>
-                <span class="article-arrow" aria-hidden="true">
-                  <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
-                    <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-              </router-link>
-            </div>
+          <div v-else class="article-list">
+            <template v-for="item in grouped" :key="item.type === 'note' ? item.note!.slug : (item.type + '-' + item.label)">
+              <!-- year divider -->
+              <div v-if="item.type === 'year'" class="notes-year-bar">
+                <span class="notes-year-dot"></span>
+                <span class="notes-year-label">{{ item.label }}</span>
+                <span class="notes-year-count">{{ item.count }} 篇</span>
+              </div>
+              <!-- month divider -->
+              <div v-else-if="item.type === 'month'" class="notes-month-bar">
+                <span class="notes-month-label">{{ item.label }}月</span>
+              </div>
+              <!-- note card -->
+              <div v-else :key="item.note!.slug" class="article-card-wrapper" :style="{ '--i': item.index }">
+                <router-link :to="`/note/${item.note!.slug}`" class="article-card interact-slide-bg">
+                  <div class="article-card-main">
+                    <h2 class="article-title">{{ item.note!.title }}</h2>
+                  </div>
+                  <div class="article-card-meta">
+                    <span v-if="item.note!.date" class="article-date">{{ item.note!.date }}</span>
+                  </div>
+                  <span class="article-arrow" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                      <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                </router-link>
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -113,8 +162,24 @@ const filtered = computed(() => {
 .notes-orbit-fast{animation:nocw 14s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
 .notes-hero-title{font-size:2.75rem;font-weight:800;letter-spacing:-.04em;color:var(--text-primary);line-height:1.15;margin-bottom:1.25rem;position:relative;z-index:1}
 .notes-hero-sub{font-size:.9375rem;color:var(--text-secondary);margin-bottom:1.5rem;position:relative;z-index:1}
-.notes-hero-count{font-size:1.75rem;font-weight:700;color:var(--accent);letter-spacing:-.02em;position:relative;z-index:1}
-.notes-hero-count small{font-size:.8125rem;font-weight:500;color:var(--text-muted);margin-left:.375rem}
+.notes-hero-count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+.notes-hero-count strong {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.1;
+}
+.notes-hero-count span {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
 
 /* ── article list (matching DocsPage) ── */
 .article-list {
@@ -124,6 +189,41 @@ const filtered = computed(() => {
   background: var(--border-primary);
   box-shadow: var(--shadow-glass);
 }
+
+/* ── year divider ── */
+.notes-year-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0.75rem 0.5rem;
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.notes-year-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--accent); background: var(--bg-primary);
+  flex-shrink: 0;
+}
+.notes-year-label {
+  font-size: 1.25rem; font-weight: 800; color: var(--accent); line-height: 1;
+}
+.notes-year-count {
+  font-size: 0.6875rem; color: var(--text-muted); margin-left: auto;
+}
+
+/* ── month divider ── */
+.notes-month-bar {
+  padding: 0.25rem 0.75rem;
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.notes-month-label {
+  font-size: 0.6875rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--text-secondary);
+}
+
 .article-card-wrapper {
   animation: cardIn 0.5s ease both;
   animation-delay: calc(var(--i, 0) * 0.04s);

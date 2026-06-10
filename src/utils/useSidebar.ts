@@ -45,3 +45,7 @@ export function setSidebarCurrentSlug(slug: string) {
 export function setSidebarVisible(visible: boolean) {
   sidebar.visible = visible
 }
+
+export function setSidebarNotes(notes: NoteMeta[]) {
+  sidebar.notes = notes
+}

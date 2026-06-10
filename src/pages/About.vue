@@ -56,9 +56,6 @@
               <p>这是一个基于 <strong>Vue 3 + Vite + TypeScript</strong> 构建的个人博客站点。</p>
               <p>用于记录学习笔记、分享技术文章和项目经验。</p>
             </div>
-            <div class="bio-marquee" aria-hidden="true">
-              <span v-for="n in 6" :key="n" class="marquee-item">{{ marqueeLine }}</span>
-            </div>
           </div>
         </section>
 
@@ -131,7 +128,6 @@
               <path d="M120 12L112 8V16L120 12Z" fill="var(--accent)" opacity="0.6" />
             </svg>
           </div>
-          <p class="end-text">{{ marqueeLine }}</p>
         </section>
 
       </div>
@@ -143,8 +139,6 @@
 import { ref, onMounted, onUnmounted, reactive } from 'vue'
 
 /* ── data ── */
-const marqueeLine = 'BUILT WITH VUE 3 · VITE · TYPESCRIPT · HIGHLIGHT.JS · TAILWIND'
-
 const decorations = reactive([
   { id: 1, type: 'circle',   size: 160, r: 40,  sw: 1, opacity: 0.25, pos: 'tl', depth: 0.6 },
   { id: 2, type: 'cross',    size: 80,           sw: 1.5, opacity: 0.2,  pos: 'tr', depth: 0.4 },
@@ -424,28 +418,6 @@ onUnmounted(() => {
   margin-top: 0.75rem;
 }
 
-.bio-marquee {
-  margin-top: 3rem;
-  display: flex;
-  gap: 2rem;
-  overflow: hidden;
-  white-space: nowrap;
-  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-}
-.marquee-item {
-  font-size: 0.6875rem;
-  letter-spacing: 0.15em;
-  color: var(--text-muted);
-  font-weight: 500;
-  animation: marquee 20s linear infinite;
-  flex-shrink: 0;
-}
-@keyframes marquee {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
-}
-
 /* ═══════════ DIVIDER ═══════════ */
 .section-divider {
   display: flex;
@@ -596,11 +568,6 @@ onUnmounted(() => {
 .end-visual {
   display: flex;
   justify-content: center;
-}
-.end-text {
-  font-size: 0.6875rem;
-  letter-spacing: 0.2em;
-  color: var(--text-muted);
 }
 
 /* ═══════════ RESPONSIVE ═══════════ */

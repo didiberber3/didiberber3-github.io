@@ -8,6 +8,7 @@ export interface NoteMeta {
   title: string
   date: string
   category: string
+  charCount: number
 }
 
 export interface Note extends NoteMeta {
@@ -65,6 +66,7 @@ export function getNoteList(): NoteMeta[] {
       title: meta?.title || titleFromSlug(slug),
       date: meta?.date || '',
       category: categoryFromPath(path),
+      charCount: meta?.charCount || 0,
     }
   })
   list.sort((a, b) => b.date.localeCompare(a.date))

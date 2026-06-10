@@ -5,6 +5,7 @@ declare module 'virtual:content-index' {
     date: string
     title: string
     slug: string
+    charCount: number
   }
   export const noteMeta: Record<string, NoteEntry>
 }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import TOCSidebar from './TOCSidebar.vue'
 import { sidebar, closeSidebar } from '../utils/useSidebar'
 
@@ -7,20 +8,31 @@ const emit = defineEmits<{
   selectNote: [slug: string]
 }>()
 
-const notesOpen = ref(true)
+const route = useRoute()
+const router = useRouter()
+const notesOpen = ref(false)
 const tocOpen = ref(true)
+
+const navLinks = [
+  { label: '首页', path: '/' },
+  { label: '时间轴', path: '/notes' },
+  { label: '文档', path: '/docs' },
+  { label: '关于', path: '/about' },
+]
+
+function isActiveNav(path: string) {
+  if (path === '/') return route.path === '/'
+  return route.path.startsWith(path)
+}
+
+function go(path: string) {
+  router.push(path)
+  closeSidebar()
+}
 
 function onSelectNote(slug: string) {
   emit('selectNote', slug)
   closeSidebar()
-}
-
-function toggleNotes() {
-  notesOpen.value = !notesOpen.value
-}
-
-function toggleToc() {
-  tocOpen.value = !tocOpen.value
 }
 </script>
 
@@ -29,52 +41,46 @@ function toggleToc() {
     <div v-if="sidebar.visible" class="drawer-overlay" @click="closeSidebar">
       <aside class="drawer-panel" @click.stop>
         <div class="drawer-header">
-          <span class="drawer-title">
-            {{ sidebar.category || '导航' }}
-          </span>
-          <button class="drawer-close" @click="closeSidebar" aria-label="关闭侧栏">
-            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-              <path d="M5 5L15 15M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-            </svg>
+          <span class="drawer-title">导航</span>
+          <button class="drawer-close" @click="closeSidebar" aria-label="关闭">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M5 5L15 15M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           </button>
         </div>
 
         <div class="drawer-body">
-          <!-- Notes List (collapsible) -->
+          <!-- Nav links -->
+          <nav class="drawer-nav-links">
+            <button
+              v-for="link in navLinks"
+              :key="link.path"
+              @click="go(link.path)"
+              :class="['drawer-nav-btn', isActiveNav(link.path) ? 'active' : '']"
+            >{{ link.label }}</button>
+          </nav>
+
+          <!-- Notes -->
           <div v-if="sidebar.notes.length" class="drawer-section">
-            <div class="drawer-section-header" @click="toggleNotes" role="button" tabindex="0" @keydown.enter="toggleNotes" @keydown.space.prevent="toggleNotes">
-              <span class="drawer-section-label">{{ sidebar.category || '笔记' }}</span>
-              <span class="drawer-chevron" :class="{ rotated: notesOpen }">
-                <svg width="12" height="12" viewBox="0 0 20 20" fill="none">
-                  <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </span>
-            </div>
-            <nav v-show="notesOpen" class="drawer-nav">
+            <button class="drawer-section-btn" @click="notesOpen = !notesOpen">
+              <span>{{ sidebar.category || '笔记' }}</span>
+              <svg width="12" height="12" viewBox="0 0 20 20" fill="none" :class="{ rotated: notesOpen }"><path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div v-show="notesOpen" class="drawer-list">
               <a
                 v-for="note in sidebar.notes"
                 :key="note.slug"
                 href="#"
-                :class="['drawer-nav-item', sidebar.currentSlug === note.slug ? 'active' : '']"
+                :class="['drawer-list-item', sidebar.currentSlug === note.slug ? 'active' : '']"
                 @click.prevent="onSelectNote(note.slug)"
-              >
-                <span class="drawer-nav-title">{{ note.title }}</span>
-              </a>
-            </nav>
+              >{{ note.title }}</a>
+            </div>
           </div>
 
-          <div v-if="sidebar.notes.length && sidebar.toc.length" class="drawer-divider"></div>
-
-          <!-- Table of Contents (collapsible) -->
+          <!-- TOC -->
           <div v-if="sidebar.toc.length > 1" class="drawer-section">
-            <div class="drawer-section-header" @click="toggleToc" role="button" tabindex="0" @keydown.enter="toggleToc" @keydown.space.prevent="toggleToc">
-              <span class="drawer-section-label">目录</span>
-              <span class="drawer-chevron" :class="{ rotated: tocOpen }">
-                <svg width="12" height="12" viewBox="0 0 20 20" fill="none">
-                  <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </span>
-            </div>
+            <button class="drawer-section-btn" @click="tocOpen = !tocOpen">
+              <span>目录</span>
+              <svg width="12" height="12" viewBox="0 0 20 20" fill="none" :class="{ rotated: tocOpen }"><path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
             <div v-show="tocOpen">
               <TOCSidebar :items="sidebar.toc" />
             </div>
@@ -107,6 +113,19 @@ function toggleToc() {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  position: relative;
+}
+.drawer-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--accent);
+  z-index: 1;
+  opacity: 0.3;
+  pointer-events: none;
 }
 
 .drawer-header {
@@ -116,13 +135,23 @@ function toggleToc() {
   padding: 1rem 1rem 0.75rem;
   border-bottom: 1px solid var(--border-primary);
 }
-
 .drawer-title {
   font-size: 0.8125rem;
   font-weight: 700;
   color: var(--text-primary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.drawer-title::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.7;
 }
 
 .drawer-close {
@@ -171,7 +200,6 @@ function toggleToc() {
 .drawer-close:hover svg {
   animation: drawerCloseRotate 0.6s ease;
 }
-
 @keyframes drawerCloseRotate {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -180,109 +208,111 @@ function toggleToc() {
 .drawer-body {
   flex: 1;
   overflow-y: auto;
-  padding: 0.75rem 0;
 }
 
-.drawer-section {
-  padding: 0 0.75rem;
-}
-
-.drawer-section-header {
+/* ── nav links ── */
+.drawer-nav-links {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  user-select: none;
-  padding: 0.5rem 0.5rem 0.25rem;
-  border-left: 2px solid transparent;
-  padding-left: 0.5rem;
+  flex-direction: column;
+  padding: 0.5rem;
+  gap: 0.125rem;
+  border-bottom: 1px solid var(--border-primary);
+}
+.drawer-nav-btn {
+  width: 100%;
+  text-align: left;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
   border-radius: 2px;
-  transition: background-color 0.25s, border-color 0.25s, padding-left 0.25s;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  padding-left: 0.625rem;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, padding-left 0.15s;
 }
-.drawer-section-header:hover {
-  background-color: var(--bg-secondary);
+.drawer-nav-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-left-color: var(--border-secondary);
+  padding-left: 0.875rem;
+}
+.drawer-nav-btn.active {
+  color: var(--accent);
+  background: var(--bg-tertiary);
+  font-weight: 500;
   border-left-color: var(--accent);
-  padding-left: 0.75rem;
+  padding-left: 0.875rem;
 }
-.drawer-section-header:focus-visible {
+.drawer-nav-btn:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: -2px;
 }
-.drawer-section-header:hover .drawer-section-label,
-.drawer-section-header:hover .drawer-chevron {
-  color: var(--accent);
-}
 
-.drawer-section-label {
+/* ── sections ── */
+.drawer-section { padding: 0; }
+.drawer-section + .drawer-section { border-top: 1px solid var(--border-primary); }
+.drawer-section-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 1rem;
   font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-secondary);
-  transition: color 0.25s;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.2s, background 0.2s;
 }
+.drawer-section-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+.drawer-section-btn svg {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.25s;
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+.drawer-section-btn:hover svg { opacity: 0.8; }
+.drawer-section-btn svg.rotated { transform: rotate(90deg); }
 
-.drawer-chevron {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  color: var(--text-secondary);
-  transition: color 0.2s, transform 0.25s ease;
-}
-.drawer-chevron.rotated {
-  transform: rotate(90deg);
-}
-
-.drawer-nav {
+/* ── list items ── */
+.drawer-list {
   display: flex;
   flex-direction: column;
-  gap: 0.125rem;
 }
-
-.drawer-nav-item {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  padding: 0.45rem 0.5rem;
-  text-decoration: none;
-  cursor: pointer;
+.drawer-list-item {
+  display: block;
+  padding: 0.5rem 1rem 0.5rem 1.5rem;
+  font-size: 0.8125rem;
   color: var(--text-secondary);
+  text-decoration: none;
   border-left: 2px solid transparent;
-  border-radius: 0;
-  transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+  transition: color 0.15s, background 0.15s, border-color 0.15s, padding-left 0.15s;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-
-.drawer-nav-item:hover {
+.drawer-list-item:hover {
   color: var(--text-primary);
-  background-color: var(--bg-secondary);
+  background: var(--bg-secondary);
   border-left-color: var(--border-secondary);
+  padding-left: 1.75rem;
 }
-
-.drawer-nav-item.active {
+.drawer-list-item.active {
   color: var(--text-primary);
-  background-color: var(--bg-tertiary);
+  background: var(--bg-tertiary);
   border-left-color: var(--accent);
   font-weight: 500;
-}
-
-.drawer-nav-item.active:hover {
-  color: var(--text-primary);
-  background-color: var(--bg-tertiary);
-  border-left-color: var(--accent);
-}
-
-.drawer-nav-title {
-  font-size: 0.8125rem;
-  color: inherit;
-  line-height: 1.4;
-}
-
-.drawer-divider {
-  height: 1px;
-  background-color: var(--border-primary);
-  margin: 0.75rem 0;
 }
 
 /* Transition animations */

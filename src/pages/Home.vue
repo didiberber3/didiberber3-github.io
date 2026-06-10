@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { getNoteList, getCategories } from '../utils/content'
 import type { NoteMeta } from '../utils/content'
 
@@ -11,6 +11,20 @@ onMounted(() => {
   noteTotal.value = getNoteList().length
   notes.value = getNoteList().slice(0, 5)
   categories.value = getCategories()
+})
+
+const totalWords = computed(() => {
+  const list = getNoteList()
+  const total = list.reduce((sum, n) => sum + (n.charCount || 0), 0)
+  if (total >= 10000) return `${(total / 10000).toFixed(1)}w`
+  if (total >= 1000) return `${(total / 1000).toFixed(1)}k`
+  return String(total)
+})
+
+const latestDate = computed(() => {
+  const list = getNoteList()
+  if (!list.length) return '--'
+  return list[0].date?.slice(5) || '--'
 })
 </script>
 
@@ -48,16 +62,42 @@ onMounted(() => {
               <h1 class="hero-home-title">记录与分享</h1>
               <div class="hero-home-line"></div>
               <p class="hero-home-sub">学习 · 记录 · 成长</p>
-              <p class="hero-home-stats"><strong>{{ noteTotal }}</strong> 篇笔记 &nbsp;·&nbsp; <strong>{{ categories.length }}</strong> 个分类</p>
+              <div class="hero-home-stats">
+                <div class="hero-stat"><strong>{{ noteTotal }}</strong><span>篇笔记</span></div>
+                <div class="hero-stat"><strong>{{ categories.length }}</strong><span>个分类</span></div>
+              </div>
             </div>
           </section>
+
+          <!-- intro card -->
+          <div class="home-card">
+            <div class="home-card-top">
+              <div class="home-card-avatar">
+                <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" stroke="var(--accent)" stroke-width="1.5"/><circle cx="20" cy="15" r="6" fill="var(--accent)" opacity=".3"/><ellipse cx="20" cy="34" rx="10" ry="6" fill="var(--accent)" opacity=".2"/></svg>
+              </div>
+              <div class="home-card-text">
+                <p>个人技术博客 — 记录学习过程中的笔记、项目经验和思考。</p>
+                <div class="home-card-tags">
+                  <span>Java</span><span>Vue</span><span>Spring</span><span>前端</span>
+                </div>
+              </div>
+            </div>
+            <div class="home-card-div"></div>
+            <div class="home-card-stats">
+              <div class="hcs-item"><strong>{{ noteTotal }}</strong><span>篇文章</span></div>
+              <div class="hcs-item"><strong>{{ categories.length }}</strong><span>个分类</span></div>
+              <div class="hcs-item"><strong>{{ totalWords }}</strong><span>字</span></div>
+              <div class="hcs-item"><strong>{{ latestDate }}</strong><span>最新</span></div>
+            </div>
+          </div>
 
           <!-- recent notes -->
           <section class="home-section">
             <div class="section-head">
               <h2 class="section-heading">最新笔记</h2>
-              <router-link to="/notes" class="btn-more interact-fill">全部 {{ noteTotal }} 篇</router-link>
+              <router-link to="/notes" class="section-more">全部 {{ noteTotal }} 篇 →</router-link>
             </div>
+            <div class="section-divider"></div>
             <div class="article-list">
               <div
                 v-for="(note, i) in notes"
@@ -102,6 +142,7 @@ onMounted(() => {
   position: relative;
   aspect-ratio: 960 / 500;
   text-align: center;
+  margin-bottom: 3rem;
 }
 .hero-geo {
   position: absolute;
@@ -132,8 +173,27 @@ onMounted(() => {
 .hero-home-title{font-size:2.75rem;font-weight:800;letter-spacing:-.04em;color:var(--text-primary);line-height:1.1;margin-bottom:.75rem}
 .hero-home-line{width:64px;height:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:.75rem auto 1rem}
 .hero-home-sub{font-size:1rem;color:var(--text-secondary);margin-bottom:.5rem}
-.hero-home-stats{font-size:.8125rem;color:var(--text-muted)}
-.hero-home-stats strong{color:var(--accent);font-weight:700}
+.hero-home-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.hero-stat strong {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.1;
+}
+.hero-stat span {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
 
 /* ── section ── */
 .home-section {
@@ -141,22 +201,114 @@ onMounted(() => {
 }
 .section-head {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 .section-heading {
   font-size: 1.125rem;
   font-weight: 700;
   color: var(--text-primary);
+  border-left: 3px solid var(--accent);
+  padding-left: 0.75rem;
+}
+.section-more {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--border-primary);
+  border-radius: 2px;
+  white-space: nowrap;
+  transition: color 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.15s;
+}
+.section-more:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+  transform: scale(1.05);
+}
+.section-more:active {
+  transform: scale(0.97);
+}
+.section-divider {
+  height: 1px;
+  background: var(--accent);
+  opacity: 0.15;
+  margin-bottom: 1.25rem;
 }
 
-.btn-more {
-  padding: 0.125rem 0.75rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-decoration: none;
+/* ── intro card ── */
+.home-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-primary);
+  border-radius: 2px;
+  box-shadow: var(--shadow-glass);
+  margin-bottom: 2.5rem;
+  overflow: hidden;
 }
+.home-card-top {
+  display: flex;
+  gap: 1rem;
+  padding: 1.25rem;
+  align-items: flex-start;
+}
+.home-card-avatar {
+  width: 40px; height: 40px; flex-shrink: 0;
+}
+.home-card-text { flex: 1; min-width: 0; }
+.home-card-text p {
+  font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 0.625rem; line-height: 1.5;
+}
+.home-card-tags {
+  display: flex; flex-wrap: wrap; gap: 0.375rem;
+}
+.home-card-tags span {
+  font-size: 0.625rem; font-weight: 500; color: var(--text-muted);
+  padding: 0.125rem 0.5rem; border: 1px solid var(--border-primary); border-radius: 2px;
+}
+.home-card-div {
+  height: 1px; background: var(--border-primary);
+  margin: 0 1rem;
+}
+.home-card-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 0.75rem 0.5rem;
+}
+.hcs-item {
+  display: flex; flex-direction: column; align-items: center; gap: 0.25rem;
+}
+.hcs-item strong {
+  font-size: 1.125rem; font-weight: 700; color: var(--accent); line-height: 1.1;
+}
+.hcs-item span {
+  font-size: 0.625rem; color: var(--text-muted);
+}
+
+/* ── section more button ── */
+.section-more {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--border-primary);
+  border-radius: 2px;
+  white-space: nowrap;
+  background: var(--bg-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: color 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.15s;
+}
+.section-more:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+  transform: scale(1.05);
+}
+.section-more:active { transform: scale(0.97); }
 
 /* ── article list (matching DocsPage) ── */
 .article-list {

@@ -29,7 +29,7 @@ function toggleTheme() {
 
 const tabs = [
   { label: '首页', path: '/' },
-  { label: '笔记', path: '/notes' },
+  { label: '时间轴', path: '/notes' },
   { label: '文档', path: '/docs' },
 
   { label: '关于', path: '/about' },
@@ -37,7 +37,7 @@ const tabs = [
 
 function isActive(path: string): boolean {
   if (path === '/') return route.path === '/'
-  if (path === '/notes') return route.path.startsWith('/note')
+  if (path === '/notes') return route.path === '/notes' || route.path.startsWith('/notes/')
   return route.path.startsWith(path)
 }
 
@@ -289,5 +289,18 @@ function toggleSidebar() {
 @keyframes rotateOnce {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+@media (max-width: 640px) {
+  .tab-btn {
+    padding: 0.625rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
+@media (max-width: 420px) {
+  .tab-btn {
+    padding: 0.5rem 0.5rem;
+    font-size: 0.75rem;
+  }
 }
 </style>

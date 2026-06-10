@@ -6,7 +6,7 @@ import type { Note, NoteMeta } from '../utils/content'
 import LoadingDots from '../components/LoadingDots.vue'
 import ArticleContent from '../components/ArticleContent.vue'
 import { useGlobalLoading } from '../utils/useGlobalLoading'
-import { setSidebarToc, setSidebarCurrentSlug } from '../utils/useSidebar'
+import { setSidebarToc, setSidebarCurrentSlug, setSidebarNotes } from '../utils/useSidebar'
 
 const route = useRoute()
 const note = ref<Note | undefined>()
@@ -46,6 +46,7 @@ async function load() {
     setSidebarToc(found.toc)
   }
   setSidebarCurrentSlug(s)
+  setSidebarNotes(sidebarNotes.value)
 }
 
 onMounted(load)
