@@ -176,6 +176,7 @@ onUnmounted(() => stopTocObserver())
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-primary);
   box-shadow: var(--shadow-glass);
+  border-radius: 2px;
 }
 
 .article-aside {
@@ -192,6 +193,7 @@ onUnmounted(() => stopTocObserver())
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   box-shadow: var(--shadow-glass);
+  border-radius: 2px;
 }
 
 .aside-tabs {
