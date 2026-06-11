@@ -12,6 +12,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../pages/Notes.vue'),
   },
   {
+    path: '/timeline',
+    name: 'timeline',
+    component: () => import('../pages/Timeline.vue'),
+  },
+  {
     path: '/note/:slug',
     name: 'note',
     component: () => import('../pages/ArticleView.vue'),

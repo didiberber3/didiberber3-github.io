@@ -15,7 +15,8 @@ const tocOpen = ref(true)
 
 const navLinks = [
   { label: '首页', path: '/' },
-  { label: '时间轴', path: '/notes' },
+  { label: '时间轴', path: '/timeline' },
+  { label: '笔记', path: '/notes' },
   { label: '文档', path: '/docs' },
   { label: '关于', path: '/about' },
 ]
