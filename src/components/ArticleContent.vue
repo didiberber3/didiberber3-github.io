@@ -42,22 +42,6 @@ onUnmounted(() => stopTocObserver())
 <template>
   <article class="article-with-aside">
     <header class="article-hd">
-      <svg class="article-geo" viewBox="0 0 960 260" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-        <defs>
-          <radialGradient id="ga"><stop offset="0%" stop-color="var(--accent)" stop-opacity=".1"/><stop offset="100%" stop-color="transparent" stop-opacity="0"/></radialGradient>
-        </defs>
-        <ellipse cx="480" cy="130" rx="140" ry="90" fill="url(#ga)"/>
-        <g class="art-orbit-cw"><ellipse cx="480" cy="130" rx="80" ry="40" fill="none" stroke="var(--accent)" stroke-width=".8" opacity=".4" stroke-dasharray="6 4"/></g>
-        <g class="art-orbit-ccw"><circle cx="480" cy="130" r="60" fill="none" stroke="var(--accent2)" stroke-width=".6" opacity=".3" stroke-dasharray="3 6"/></g>
-        <g class="art-orbit-fast"><circle cx="480" cy="130" r="45" fill="none" stroke="var(--accent3)" stroke-width=".7" opacity=".35" stroke-dasharray="2 8"/></g>
-        <circle cx="480" cy="130" r="14" fill="var(--accent)" opacity=".2"/>
-        <circle cx="480" cy="130" r="7" fill="var(--accent)" opacity=".4"/>
-        <g class="art-orbit-cw"><circle cx="480" cy="90" r="3" fill="var(--accent3)" opacity=".7"/></g>
-        <g class="art-orbit-ccw"><circle cx="540" cy="130" r="2.5" fill="var(--accent2)" opacity=".5"/></g>
-        <g class="art-orbit-fast"><circle cx="420" cy="130" r="2" fill="var(--accent)" opacity=".5"/></g>
-        <line x1="60" y1="10" x2="900" y2="10" stroke="var(--accent)" stroke-width=".5" opacity=".15" stroke-dasharray="2 10"/>
-        <line x1="60" y1="250" x2="900" y2="250" stroke="var(--accent)" stroke-width=".5" opacity=".15" stroke-dasharray="2 10"/>
-      </svg>
       <h1 class="article-hd-title">{{ note.title }}</h1>
       <div class="article-hd-meta">{{ note.date }}<span class="article-hd-sep">·</span>{{ note.readingTime }} 分钟<span class="article-hd-sep">·</span>约 {{ note.charCount }} 字</div>
     </header>
@@ -119,19 +103,6 @@ onUnmounted(() => stopTocObserver())
   padding: 3rem 0 2.5rem;
   text-align: center;
 }
-.article-geo {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: auto;
-  pointer-events: none;
-}
-@keyframes arcw{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-@keyframes arccw{from{transform:rotate(360deg)}to{transform:rotate(0deg)}}
-.art-orbit-cw{animation:arcw 28s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
-.art-orbit-ccw{animation:arccw 22s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
-.art-orbit-fast{animation:arcw 14s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
 .article-hd-title {
   font-size: 2rem;
   font-weight: 800;
@@ -172,8 +143,8 @@ onUnmounted(() => stopTocObserver())
   max-width: 720px;
   padding: 2rem;
   background: var(--bg-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   border: 1px solid var(--border-primary);
   box-shadow: var(--shadow-glass);
   border-radius: 2px;
@@ -190,8 +161,8 @@ onUnmounted(() => stopTocObserver())
   flex-direction: column;
   border: 1px solid var(--border-primary);
   background: var(--bg-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   box-shadow: var(--shadow-glass);
   border-radius: 2px;
 }
@@ -210,7 +181,7 @@ onUnmounted(() => stopTocObserver())
   border: none;
   background: none;
   color: var(--text-secondary);
-  transition: color 0.25s, background-color 0.25s;
+  transition: color 0.2s, background-color 0.2s;
   position: relative;
   border-radius: 2px;
 }

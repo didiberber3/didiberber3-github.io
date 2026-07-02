@@ -453,8 +453,8 @@ onUnmounted(() => {
 .card {
   position: relative;
   background: var(--bg-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   padding: 2rem 1.5rem;
   display: flex;
   flex-direction: column;
@@ -508,8 +508,8 @@ onUnmounted(() => {
 }
 .tech-card:hover {
   background: var(--bg-secondary);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 .tech-card .card-icon,
 .tech-card .card-label {
@@ -540,8 +540,8 @@ onUnmounted(() => {
 }
 .feat-card:hover {
   background: var(--bg-secondary);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   outline-color: var(--border-secondary);
 }
 .feat-card .card-icon {

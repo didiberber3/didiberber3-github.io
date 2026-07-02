@@ -40,7 +40,7 @@ watch(input, (val) => {
   left: 0.75rem;
   color: var(--text-muted);
   pointer-events: none;
-  transition: color 0.25s;
+  transition: color 0.2s;
 }
 .search-input {
   width: 100%;
@@ -49,12 +49,12 @@ watch(input, (val) => {
   border: 1px solid var(--border-primary);
   border-radius: 2px;
   background-color: var(--bg-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   color: var(--text-primary);
   outline: none;
   box-shadow: var(--shadow-glass);
-  transition: border-color 0.25s, box-shadow 0.25s, background-color 0.25s;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
 }
 .search-input::placeholder {
   color: var(--text-muted);

@@ -43,7 +43,7 @@ function onSelectNote(slug: string) {
       <aside class="drawer-panel" @click.stop>
         <div class="drawer-header">
           <span class="drawer-title">导航</span>
-          <button class="drawer-close" @click="closeSidebar" aria-label="关闭">
+          <button class="drawer-close interact-btn-icon" @click="closeSidebar" aria-label="关闭">
             <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M5 5L15 15M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           </button>
         </div>
@@ -107,8 +107,8 @@ function onSelectNote(slug: string) {
   max-width: 80vw;
   height: 100%;
   background: var(--bg-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   border-left: 1px solid var(--border-primary);
   box-shadow: var(--shadow-glass-lg);
   display: flex;
@@ -156,47 +156,9 @@ function onSelectNote(slug: string) {
 }
 
 .drawer-close {
-  position: relative;
-  overflow: hidden;
-  background: none;
-  border: 1px solid var(--border-primary);
   width: 28px;
   height: 28px;
-  padding: 0;
-  cursor: pointer;
   color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 0;
-  border-radius: 2px;
-  transition: color 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.15s;
-}
-.drawer-close::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-color: var(--accent);
-  transform: scale(0);
-  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-  z-index: -1;
-  border-radius: 1px;
-}
-.drawer-close:hover {
-  color: white;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent);
-  transform: scale(1.05);
-}
-.drawer-close:hover::before {
-  transform: scale(1);
-}
-.drawer-close:active {
-  transform: scale(0.97);
-}
-.drawer-close:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
 }
 .drawer-close:hover svg {
   animation: drawerCloseRotate 0.6s ease;
@@ -232,7 +194,7 @@ function onSelectNote(slug: string) {
   cursor: pointer;
   border-left: 2px solid transparent;
   padding-left: 0.625rem;
-  transition: background 0.15s, color 0.15s, border-color 0.15s, padding-left 0.15s;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, padding-left 0.2s;
 }
 .drawer-nav-btn:hover {
   background: var(--bg-secondary);
@@ -241,7 +203,7 @@ function onSelectNote(slug: string) {
   padding-left: 0.875rem;
 }
 .drawer-nav-btn.active {
-  color: var(--accent);
+  color: var(--text-primary);
   background: var(--bg-tertiary);
   font-weight: 500;
   border-left-color: var(--accent);
@@ -279,7 +241,7 @@ function onSelectNote(slug: string) {
 .drawer-section-btn svg {
   width: 12px;
   height: 12px;
-  transition: transform 0.25s;
+  transition: transform 0.2s;
   flex-shrink: 0;
   opacity: 0.5;
 }
@@ -298,7 +260,7 @@ function onSelectNote(slug: string) {
   color: var(--text-secondary);
   text-decoration: none;
   border-left: 2px solid transparent;
-  transition: color 0.15s, background 0.15s, border-color 0.15s, padding-left 0.15s;
+  transition: color 0.2s, background 0.2s, border-color 0.2s, padding-left 0.2s;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

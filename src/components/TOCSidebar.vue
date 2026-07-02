@@ -102,16 +102,16 @@ function scrollTo(id: string) {
 
 /* ── Active states ── */
 .toc-h2.active > .toc-link-h2 {
-  color: var(--accent);
+  color: var(--text-primary);
   border-left-color: var(--accent);
-  background-color: var(--accent-bg);
+  background-color: var(--bg-tertiary);
   padding-left: 0.75rem;
 }
 
 .toc-sub.active > .toc-link-h3 {
-  color: var(--accent);
+  color: var(--text-primary);
   border-left-color: var(--accent);
-  background-color: var(--accent-bg);
+  background-color: var(--bg-tertiary);
   padding-left: 1.5rem;
 }
 

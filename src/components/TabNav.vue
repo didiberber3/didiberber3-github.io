@@ -82,7 +82,7 @@ function toggleSidebar() {
       <div class="flex items-center gap-3">
         <BackToTop />
         <button
-          class="sidebar-toggle"
+          class="sidebar-toggle interact-btn-icon"
           @click="toggleSidebar"
           aria-label="打开侧栏"
           title="打开侧栏"
@@ -95,7 +95,7 @@ function toggleSidebar() {
         </button>
         <button
           @click="toggleTheme"
-          class="theme-toggle"
+          class="theme-toggle interact-btn-icon"
           :class="{ rotating: isAnimating }"
           :title="isDark ? '切换亮色' : '切换暗色'"
         >
@@ -124,8 +124,8 @@ function toggleSidebar() {
 <style scoped>
 .nav-bar {
   background: var(--bg-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   box-shadow: var(--shadow-glass);
 }
 
@@ -138,7 +138,7 @@ function toggleSidebar() {
   border: none;
   cursor: pointer;
   border-radius: 2px;
-  transition: color 0.25s, background-color 0.25s;
+  transition: color 0.2s, background-color 0.2s;
 }
 .tab-btn:focus-visible {
   outline: 2px solid var(--accent);
@@ -179,94 +179,17 @@ function toggleSidebar() {
 
 /* ── Sidebar toggle ── */
 .sidebar-toggle {
-  position: relative;
-  overflow: hidden;
-  background: none;
-  border: 1px solid var(--border-primary);
   width: 28px;
   height: 28px;
-  padding: 0;
-  cursor: pointer;
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 0;
-  border-radius: 2px;
-  transition: color 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.15s;
-}
-.sidebar-toggle::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-color: var(--accent);
-  transform: scale(0);
-  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-  z-index: -1;
-  border-radius: 1px;
-}
-.sidebar-toggle:hover {
-  color: white;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent);
-  transform: scale(1.05);
-}
-.sidebar-toggle:hover::before {
-  transform: scale(1);
-}
-.sidebar-toggle:active {
-  transform: scale(0.97);
-}
-.sidebar-toggle:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
 }
 
 /* ── Theme toggle ── */
 .theme-toggle {
-  position: relative;
-  overflow: hidden;
-  background: none;
-  border: 1px solid var(--border-primary);
   width: 28px;
   height: 28px;
-  padding: 0;
   font-size: 1rem;
   line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 0;
   color: var(--text-secondary);
-  border-radius: 2px;
-  transition: color 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.15s;
-}
-.theme-toggle::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-color: var(--accent);
-  transform: scale(0);
-  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-  z-index: -1;
-  border-radius: 1px;
-}
-.theme-toggle:hover {
-  color: white;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent);
-  transform: scale(1.05);
-}
-.theme-toggle:hover::before {
-  transform: scale(1);
-}
-.theme-toggle:active {
-  transform: scale(0.97);
-}
-.theme-toggle:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
 }
 
 /* ── Theme icon rotation (kept) ── */

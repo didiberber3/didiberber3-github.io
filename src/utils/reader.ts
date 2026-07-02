@@ -62,7 +62,7 @@ export function enhanceCodeBlocks(container: HTMLElement): void {
 
     // 复制按钮
     const copyBtn = document.createElement('button')
-    copyBtn.className = 'copy-btn'
+    copyBtn.className = 'copy-btn interact-btn-icon'
     copyBtn.textContent = '复制'
     copyBtn.addEventListener('click', async () => {
       try {
@@ -82,7 +82,7 @@ export function enhanceCodeBlocks(container: HTMLElement): void {
     // 折叠/展开按钮（仅大块有，小块不需要）
     if (isFoldable) {
       const foldBtn = document.createElement('button')
-      foldBtn.className = 'fold-btn'
+      foldBtn.className = 'fold-btn interact-btn-icon'
       foldBtn.textContent = '展开'
       const rowLabel = `展开全部 ${lineCount} 行`
 
