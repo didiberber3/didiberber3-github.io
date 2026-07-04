@@ -13,6 +13,7 @@ interface MonthGroup {
   month: string
   notes: NoteMeta[]
 }
+
 interface YearGroup {
   year: string
   count: number
@@ -69,7 +70,8 @@ const yearGroups = computed<YearGroup[]>(() => {
   <div class="page-shell">
     <main class="page-content">
       <div class="animate-reveal">
-        <div class="page-timeline">
+        <div class="page-timeline-test">
+          <!-- hero -->
           <section class="page-hero">
             <h1 class="page-hero-title">时间轴</h1>
             <p class="page-hero-sub">按时间线浏览全部笔记</p>
@@ -80,33 +82,42 @@ const yearGroups = computed<YearGroup[]>(() => {
             还没有内容
           </div>
 
-          <div v-else class="tl-grid">
+          <div v-else class="tl-sections">
             <template v-for="yg in yearGroups" :key="yg.year">
-              <div class="tl-year-cell">
-                <span class="tl-year-num">{{ yg.year }}</span>
+              <!-- year divider -->
+              <div class="tl-year-divider">
+                <span class="tl-year-label">{{ yg.year }}</span>
+                <span class="tl-year-count">{{ yg.count }} 篇</span>
+                <div class="tl-year-line"></div>
               </div>
-              <div class="tl-content-cell">
+
+              <div class="tl-month-blocks">
                 <div v-for="mg in yg.months" :key="mg.month || '_'" class="tl-month-group">
                   <div v-if="mg.month" class="tl-month-heading">{{ mg.month }}月</div>
-                  <div
-                    v-for="(note, ni) in mg.notes"
-                    :key="note.slug"
-                    class="article-card-wrapper"
-                    :style="{ '--i': ni }"
-                  >
-                    <router-link :to="`/note/${note.slug}`" class="article-card interact-slide-bg">
-                      <div class="article-card-main">
-                        <h2 class="article-title">{{ note.title }}</h2>
-                      </div>
-                      <div class="article-card-meta">
-                        <span v-if="note.date" class="article-date">{{ note.date }}</span>
-                      </div>
-                      <span class="article-arrow" aria-hidden="true">
-                        <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
-                          <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                      </span>
-                    </router-link>
+                  <div class="article-list">
+                    <div
+                      v-for="(note, ni) in mg.notes"
+                      :key="note.slug"
+                      class="article-card-wrapper"
+                      :style="{ '--i': ni }"
+                    >
+                      <router-link
+                        :to="`/note/${note.slug}`"
+                        class="article-card interact-slide-bg"
+                      >
+                        <div class="article-card-main">
+                          <h2 class="article-title">{{ note.title }}</h2>
+                        </div>
+                        <div class="article-card-meta">
+                          <span v-if="note.date" class="article-date">{{ note.date }}</span>
+                        </div>
+                        <span class="article-arrow" aria-hidden="true">
+                          <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                            <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </span>
+                      </router-link>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -119,55 +130,46 @@ const yearGroups = computed<YearGroup[]>(() => {
 </template>
 
 <style scoped>
-.page-timeline {
-  max-width: 60rem;
+.page-timeline-test {
+  max-width: 48rem;
   margin: 0 auto;
-  padding: 2rem 1rem 6rem;
-  overflow-x: hidden; /* prevent any child from blowing out */
+  padding: 0.5rem 1rem 6rem;
 }
 
-/* ── two-column grid ── */
-.tl-grid {
-  display: grid;
-  grid-template-columns: 5rem 1fr;
-  column-gap: 1.25rem;
+/* ── year divider ── */
+.tl-year-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 2.5rem 0 1.25rem;
 }
-
-/* ── year column (left) ── */
-.tl-year-cell {
-  position: relative;
-  padding: 1.5rem 0 0;
-  text-align: right;
+.tl-year-divider:first-of-type {
+  margin-top: 0;
 }
-.tl-year-num {
-  font-size: 1.375rem;
+.tl-year-line {
+  flex: 1;
+  height: 1px;
+  background: var(--accent);
+  opacity: 0.15;
+}
+.tl-year-label {
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--accent);
-  line-height: 1;
   letter-spacing: -0.02em;
+  flex-shrink: 0;
 }
-.tl-year-cell::after {
-  content: '';
-  position: absolute;
-  top: 1.7rem;
-  right: -0.625rem;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  border: 2px solid var(--bg-primary);
-  z-index: 1;
-}
-
-/* ── content column (right) ── */
-.tl-content-cell {
-  position: relative;
-  padding: 0 0 0 1.25rem;
-  border-left: 2px solid var(--border-primary);
-  min-width: 0; /* allow flex children to shrink below content width */
+.tl-year-count {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
 }
 
 /* ── month heading ── */
+.tl-month-blocks {
+  border-left: 2px solid var(--border-primary);
+  padding-left: 1rem;
+}
 .tl-month-group {
   margin-bottom: 1px;
 }
@@ -175,23 +177,29 @@ const yearGroups = computed<YearGroup[]>(() => {
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--text-secondary);
-  padding: 0.75rem 0 0.375rem;
+  padding: 0.75rem 0 0.375rem 0.5rem;
   letter-spacing: 0.04em;
   position: relative;
 }
 .tl-month-heading::before {
   content: '';
   position: absolute;
-  left: -1.25rem;
+  left: -1rem;
   top: 0.9rem;
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--text-muted);
   transform: translateX(-50%);
+  border: 2px solid var(--bg-primary);
 }
 
-/* ── cards ── */
+/* ── cards - identical to Home.vue article-card ── */
+.article-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 .article-card-wrapper {
   animation: cardIn 0.5s ease both;
   animation-delay: calc(var(--i, 0) * 0.05s);
@@ -207,8 +215,7 @@ const yearGroups = computed<YearGroup[]>(() => {
   box-shadow: var(--shadow-glass);
   text-decoration: none;
   border-radius: 2px;
-  transition: background 0.2s, backdrop-filter 0.2s, box-shadow 0.2s;
-  margin-bottom: 2px;
+  transition: background 0.2s, backdrop-filter 0.2s, box-shadow 0.2s, border-color 0.2s, padding-left 0.2s, color 0.2s;
 }
 .article-card:hover {
   background: var(--bg-secondary);
@@ -229,6 +236,9 @@ const yearGroups = computed<YearGroup[]>(() => {
 }
 .article-card-meta {
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 .article-date {
   font-size: 0.75rem;
@@ -252,24 +262,13 @@ const yearGroups = computed<YearGroup[]>(() => {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── mobile (≤767px) ── */
+/* ── mobile ── */
 @media (max-width: 767px) {
-  .tl-grid {
-    grid-template-columns: 1fr;
+  .tl-month-blocks {
+    padding-left: 0.75rem;
   }
-
-  .tl-year-cell {
-    text-align: left;
-    padding: 2.5rem 0 0 1.25rem; /* indent to align with content vertical line */
-  }
-
-  .tl-year-cell::after {
-    right: auto;
-    left: -0.625rem; /* dot sits on the timeline line */
-  }
-
-  .tl-content-cell {
-    padding-left: 1.25rem; /* keep the line indent */
+  .tl-month-heading::before {
+    left: -0.75rem;
   }
 }
 </style>

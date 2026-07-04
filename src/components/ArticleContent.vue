@@ -4,6 +4,7 @@ import type { Note, NoteMeta } from '../utils/content'
 import type { TocItem } from '../utils/markdown'
 import { useContentRenderer } from '../utils/useContentRenderer'
 import { activeHeadingId, startTocObserver, stopTocObserver } from '../utils/useTocObserver'
+import { iconForCategory } from '../utils/categoryIcons'
 
 const props = defineProps<{
   note: Note
@@ -43,7 +44,14 @@ onUnmounted(() => stopTocObserver())
   <article class="article-with-aside">
     <header class="article-hd">
       <h1 class="article-hd-title">{{ note.title }}</h1>
-      <div class="article-hd-meta">{{ note.date }}<span class="article-hd-sep">·</span>{{ note.readingTime }} 分钟<span class="article-hd-sep">·</span>约 {{ note.charCount }} 字</div>
+      <div class="article-hd-meta">
+        <span v-if="note.category" class="article-hd-cat">
+          <span class="cat-svg" v-html="iconForCategory(note.category)"></span>
+          <span>{{ note.category }}</span>
+        </span>
+        <span class="article-hd-sep">·</span>
+        {{ note.date }}<span class="article-hd-sep">·</span>{{ note.readingTime }} 分钟<span class="article-hd-sep">·</span>约 {{ note.charCount }} 字
+      </div>
     </header>
 
     <div class="article-main">
@@ -118,6 +126,15 @@ onUnmounted(() => stopTocObserver())
   color: var(--text-muted);
   position: relative;
   z-index: 1;
+}
+.article-hd-cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.article-hd-cat .cat-svg {
+  width: 13px;
+  height: 13px;
 }
 .article-hd-sep {
   padding: 0 .5rem;
@@ -248,7 +265,7 @@ onUnmounted(() => stopTocObserver())
 .aside-nav-item.active,
 .aside-nav-item.active:hover {
   border-left-color: var(--accent);
-  color: var(--text-primary);
+  color: var(--accent);
   font-weight: 500;
   background: var(--bg-tertiary);
 }

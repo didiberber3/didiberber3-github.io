@@ -10,6 +10,7 @@ const router = useRouter()
 
 const allNotes = ref<NoteMeta[]>([])
 const categories = ref<string[]>([])
+const isSelected = ref<number | null>(null)
 
 const category = computed(() => route.params.category as string | undefined)
 
@@ -43,18 +44,19 @@ onMounted(() => {
             <div class="page-hero-count"><strong>{{ categories.length }}</strong><span>个分类</span></div>
           </div>
 
-          <div class="docs-category-grid">
-            <button
+          <div class="edit-grid" @mouseleave="isSelected = null">
+            <div
               v-for="(cat, i) in categories"
               :key="cat"
-              class="docs-category-card"
-              :style="{ '--i': i }"
+              class="edit-card"
+              :class="{ 'is-active': isSelected === i }"
+              @mouseenter="isSelected = i"
               @click="selectCategory(cat)"
             >
-              <span class="cat-icon" v-html="iconForCategory(cat)"></span>
-              <span class="cat-name">{{ cat }}</span>
-              <span class="cat-count">{{ allNotes.filter(n => n.category === cat).length }} 篇</span>
-            </button>
+              <span class="edit-icon" v-html="iconForCategory(cat)"></span>
+              <span class="edit-bignum">{{ cat }}</span>
+              <span class="edit-body">{{ allNotes.filter(n => n.category === cat).length }}</span>
+            </div>
           </div>
         </div>
 
@@ -145,13 +147,83 @@ onMounted(() => {
   margin-top: 0.25rem;
 }
 
-/* ── category cards ── */
-.docs-category-grid{display:flex;flex-wrap:wrap;gap:6px}
-.docs-category-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.5rem;padding:2rem 1rem 1.5rem;background:color-mix(in srgb,var(--bg-primary) 50%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:none;border-left:2px solid transparent;cursor:pointer;font-family:inherit;transition:background .2s,backdrop-filter .2s,border-color .2s;animation:cardIn .5s ease both;animation-delay:calc(var(--i,0)*.06s);flex:1 1 180px;min-height:130px}
-.docs-category-card:hover{background:color-mix(in srgb,var(--bg-secondary) 50%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-left-color:var(--accent)}
+/* ── editorial spread cards ── */
+.edit-grid { display: flex; gap: 0; }
+.edit-card {
+  flex: 1 1 0%; position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 2rem 1.5rem 1rem;
+  margin: 4px;
+  min-height: 160px;
+  background: color-mix(in srgb, var(--bg-primary) 50%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-glass);
+  border-radius: 2px;
+  overflow: hidden; cursor: pointer;
+}
+.edit-card.is-active {
+  background: color-mix(in srgb, var(--bg-secondary) 50%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+/* top accent line — spreads from center on select */
+.edit-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  width: 100%; height: 2px;
+  background: var(--accent);
+  transform: translateX(-50%) scaleX(0);
+  transform-origin: center;
+  transition: transform var(--anim-duration, 0.24s) linear;
+  pointer-events: none;
+}
+.edit-card.is-active::before {
+  transform: translateX(-50%) scaleX(1);
+}
+.edit-card:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -4px; top: 15%;
+  width: 1px; height: 70%;
+  background: var(--border-primary);
+  opacity: 0.35;
+  z-index: 2;
+  pointer-events: none;
+}
+.edit-card.is-active::after { opacity: 0; }
+.edit-icon { display: flex; width: 2rem; height: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+.edit-icon :deep(svg) { width: 100%; height: 100%; display: block; }
+.edit-bignum {
+  display: block;
+  font-size: 1.5rem; font-weight: 700; line-height: 1.3;
+  color: var(--text-primary);
+  text-align: center;
+  user-select: none;
+}
+.edit-card.is-active .edit-bignum {
+  color: var(--accent);
+}
+.edit-body {
+  font-size: 0.8125rem; font-weight: 500;
+  color: var(--text-muted);
+  margin-top: auto;
+  opacity: 0;
+}
+.edit-card.is-active .edit-body {
+  opacity: 1;
+  transition: opacity 0.08s linear;
+}
+
+@media (max-width: 640px) {
+  .edit-grid { flex-wrap: wrap; }
+  .edit-card { min-width: 100%; margin: 2px 0; min-height: 120px; padding: 1.5rem 1rem 0.6rem; }
+  .edit-card:not(:last-child)::after { display: none; }
+  .edit-card.is-active { flex: 0 0 100% !important; }
+}
+
 @keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.cat-icon{display:flex;width:2.25rem;height:2.25rem;color:var(--accent);margin-bottom:.25rem}.cat-icon :deep(svg){width:100%;height:100%;display:block}
-.cat-name{font-size:.9375rem;font-weight:600;color:var(--text-primary)}.cat-count{font-size:.75rem;color:var(--text-muted)}
 
 /* ═══════════ ARTICLE LIST ═══════════ */
 .article-list {

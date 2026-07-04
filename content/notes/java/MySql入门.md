@@ -1,3 +1,10 @@
+---
+date: 2026-07-04
+tags: Mysql
+---
+
+
+
 # 省略安装步骤
 
 太麻烦了。建议直接问AI。
@@ -213,7 +220,7 @@ CREATE DATABASE [IF NOT EXISTS] db_name
 
 
 
-```sql
+```mysql
 # 查看所有的数据库
 SHOW DATABASES ;
 # 查看前面创建的db01 数据库的定义信息
@@ -243,7 +250,7 @@ DOS:
 
 # 创建表
 
-```sql
+```mysql
 # 创建表
 CREATE TABLE table_01
 (
@@ -274,7 +281,7 @@ CREATE TABLE table_01
 
 其中部分词为关键字，所以建议将字段名用` `` ` 括起来
 
-```sql
+```mysql
 CREATE TABLE `user1` (
 	`id` INT,
 	`name` VARCHAR ( 255 ),

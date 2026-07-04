@@ -18,8 +18,8 @@ onMounted(() => {
 
           <!-- simple hero -->
           <section class="page-hero">
-            <h1 class="page-hero-title">记录与分享</h1>
-            <p class="page-hero-sub">学习 · 记录 · 成长</p>
+            <h1 class="page-hero-title">小窝</h1>
+            <p class="page-hero-sub">想做自己喜欢的事</p>
           </section>
 
           <!-- recent notes -->
@@ -135,6 +135,9 @@ onMounted(() => {
 }
 .article-card-meta {
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 .article-date {
   font-size: 0.75rem;

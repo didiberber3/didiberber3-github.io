@@ -30,6 +30,7 @@
   --code-border: #d5e0cb;
   --drawer-overlay: rgba(0, 0, 0, 0.15);
   --drawer-shadow: -4px 0 12px rgba(0, 0, 0, 0.06);
+  --anim-duration: 0.2s;
 }
 
 .dark {
@@ -329,6 +330,15 @@
     border-color: var(--border-primary);
   }
 
+  /* ── Card meta: hidden by default, show on hover ── */
+  .article-card .article-card-meta {
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .article-card:hover .article-card-meta {
+    opacity: 1;
+  }
+
   .article-card > a {
     padding: 1rem 0;
     color: inherit;
@@ -339,13 +349,24 @@
     color: inherit;
   }
 
-  .article-card > a .article-title {
+  .article-card .article-title {
     color: var(--text-primary);
     transition: color 0.2s;
   }
 
-  .article-card > a:hover .article-title {
+  .article-card:hover .article-title {
     color: var(--accent);
+  }
+
+  .cat-svg {
+    display: inline-flex;
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+  .cat-svg svg {
+    width: 100%;
+    height: 100%;
   }
 
   /* ── Global page layout (single column) ── */
@@ -385,8 +406,11 @@
   padding: 0.5rem 0.875rem;
   background: var(--bg-tertiary);
   border-bottom: 1px solid var(--border-primary);
-  box-shadow: var(--shadow-glass);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   user-select: none;
+}
+.dark .code-block-header {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .code-lang {
@@ -417,7 +441,6 @@
 .code-block-body {
   overflow: hidden;
   transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: var(--shadow-glass);
 }
 .code-block-body.collapsed {
   max-height: 0;
@@ -479,10 +502,10 @@
 /* ========== Prose overrides (outside @layer: tailwind/typography 插件生成的非 @layer 样式) ========== */
 .prose {
   --tw-prose-body: var(--text-primary);
-  --tw-prose-headings: var(--text-primary);
+  --tw-prose-headings: var(--accent);
   --tw-prose-links: var(--accent);
-  --tw-prose-bold: var(--text-primary);
-  --tw-prose-code: var(--text-primary);
+  --tw-prose-bold: var(--accent);
+  --tw-prose-code: var(--accent);
   --tw-prose-pre-bg: var(--code-bg);
   --tw-prose-quotes: var(--text-secondary);
   --tw-prose-quote-borders: var(--accent);
@@ -514,7 +537,10 @@
   border-radius: 2px;
 }
 .prose :not(pre) > code:where(.prose code) {
-  box-shadow: var(--shadow-glass);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+.dark .prose :not(pre) > code:where(.prose code) {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 .prose code:where(.prose code)::before,
 .prose code:where(.prose code)::after {
@@ -525,11 +551,18 @@
   background: transparent;
   border: 0;
   padding: 0;
+  color: var(--text-primary);
   font-family: "SF Mono", "Cascadia Code", "Consolas", "PingFang SC", "Microsoft YaHei", monospace;
 }
 
 .prose img:where(.prose img) {
   border-radius: 0;
+}
+
+/* ── list markers (accent) ── */
+.prose ul:where(.prose ul) ::marker,
+.prose ol:where(.prose ol) ::marker {
+  color: var(--accent);
 }
 
 /* ========== Mobile responsive ========== */

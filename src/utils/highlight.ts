@@ -15,6 +15,9 @@ import java from 'highlight.js/lib/languages/java'
 import bash from 'highlight.js/lib/languages/bash'
 import markdown from 'highlight.js/lib/languages/markdown'
 import powershell from 'highlight.js/lib/languages/powershell'
+import ini from 'highlight.js/lib/languages/ini'
+import sql from 'highlight.js/lib/languages/sql'
+import gdscript from '@exercism/highlightjs-gdscript'
 import 'highlight.js/styles/github.css'
 
 hljs.registerLanguage('java', java)
@@ -23,6 +26,12 @@ hljs.registerLanguage('terminal', bash)
 hljs.registerLanguage('markdown', markdown)
 hljs.registerLanguage('md', markdown)
 hljs.registerLanguage('powershell', powershell)
+hljs.registerLanguage('ini', ini)
+hljs.registerLanguage('sql', sql)
+hljs.registerLanguage('mysql', sql)
+hljs.registerLanguage('gdscript', gdscript)
+hljs.registerLanguage('godot', gdscript)
+hljs.registerLanguage('gds', gdscript)
 
 export function highlightBlocks(): void {
   document.querySelectorAll('.article-content pre code').forEach((block) => {
