@@ -4,10 +4,8 @@ import { getNoteList } from '../utils/content'
 import type { NoteMeta } from '../utils/content'
 
 const notes = ref<NoteMeta[]>([])
-const noteTotal = ref(0)
 
 onMounted(() => {
-  noteTotal.value = getNoteList().length
   notes.value = getNoteList().slice(0, 5)
 })
 </script>
@@ -28,7 +26,6 @@ onMounted(() => {
           <section class="home-section">
             <div class="section-head">
               <h2 class="section-heading">最新笔记</h2>
-              <router-link to="/notes" class="interact-fill section-more">全部 {{ noteTotal }} 篇 →</router-link>
             </div>
             <div class="section-divider"></div>
             <div class="article-list">
@@ -89,19 +86,6 @@ onMounted(() => {
   border-left: 3px solid var(--accent);
   padding-left: 0.75rem;
 }
-.section-more {
-  font-size: 0.8125rem;
-  padding: 0.25rem 0.75rem;
-  border-width: 1px;
-  color: var(--text-muted);
-  background: var(--bg-glass);
-  text-decoration: none;
-  white-space: nowrap;
-}
-.section-more:hover {
-  color: var(--accent);
-  background-color: var(--accent-bg);
-}
 .section-divider {
   height: 1px;
   background: var(--accent);
@@ -125,17 +109,17 @@ onMounted(() => {
   gap: 1rem;
   padding: 0.875rem 1rem;
   border-radius: 2px;
-  background: var(--bg-glass);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: color-mix(in srgb, var(--bg-primary) 50%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow: var(--shadow-glass);
   text-decoration: none;
   transition: background 0.2s, backdrop-filter 0.2s, box-shadow 0.2s;
 }
 .article-card:hover {
-  background: var(--bg-secondary);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: color-mix(in srgb, var(--bg-secondary) 50%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 .article-card-main {
   flex: 1;

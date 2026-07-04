@@ -16,7 +16,6 @@ const tocOpen = ref(true)
 const navLinks = [
   { label: '首页', path: '/' },
   { label: '时间轴', path: '/timeline' },
-  { label: '笔记', path: '/notes' },
   { label: '文档', path: '/docs' },
   { label: '关于', path: '/about' },
 ]
@@ -106,9 +105,9 @@ function onSelectNote(slug: string) {
   width: 280px;
   max-width: 80vw;
   height: 100%;
-  background: var(--bg-glass);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: color-mix(in srgb, var(--bg-primary) 50%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-left: 1px solid var(--border-primary);
   box-shadow: var(--shadow-glass-lg);
   display: flex;

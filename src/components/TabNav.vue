@@ -30,14 +30,12 @@ function toggleTheme() {
 const tabs = [
   { label: '首页', path: '/' },
   { label: '时间轴', path: '/timeline' },
-  { label: '笔记', path: '/notes' },
   { label: '文档', path: '/docs' },
   { label: '关于', path: '/about' },
 ]
 
 function isActive(path: string): boolean {
   if (path === '/') return route.path === '/'
-  if (path === '/notes') return route.path === '/notes' || route.path.startsWith('/notes/')
   return route.path.startsWith(path)
 }
 

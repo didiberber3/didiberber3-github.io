@@ -47,7 +47,7 @@ onMounted(() => {
             <button
               v-for="(cat, i) in categories"
               :key="cat"
-              :class="['docs-category-card', 'interact-slide-bg']"
+              class="docs-category-card"
               :style="{ '--i': i }"
               @click="selectCategory(cat)"
             >
@@ -147,11 +147,11 @@ onMounted(() => {
 
 /* ── category cards ── */
 .docs-category-grid{display:flex;flex-wrap:wrap;gap:6px}
-.docs-category-card{display:flex;align-items:center;gap:.625rem;padding:.75rem 1rem;background:var(--bg-glass);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:none;border-left:3px solid transparent;cursor:pointer;font-family:inherit;transition:background .2s,backdrop-filter .2s,border-color .25s,transform .2s;animation:cardIn .5s ease both;animation-delay:calc(var(--i,0)*.06s);flex:1 1 200px}
-.docs-category-card:hover{background:var(--bg-secondary);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-left-color:var(--accent);transform:scale(1.02)}
+.docs-category-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.5rem;padding:2rem 1rem 1.5rem;background:color-mix(in srgb,var(--bg-primary) 50%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:none;border-left:2px solid transparent;cursor:pointer;font-family:inherit;transition:background .2s,backdrop-filter .2s,border-color .2s;animation:cardIn .5s ease both;animation-delay:calc(var(--i,0)*.06s);flex:1 1 180px;min-height:130px}
+.docs-category-card:hover{background:color-mix(in srgb,var(--bg-secondary) 50%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-left-color:var(--accent)}
 @keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.cat-icon{display:flex;width:1.75rem;height:1.75rem;color:var(--accent);flex-shrink:0}.cat-icon :deep(svg){width:100%;height:100%;display:block}
-.cat-name{font-size:.9375rem;font-weight:600;color:var(--text-primary)}.cat-count{font-size:.75rem;color:var(--text-muted);margin-left:auto;flex-shrink:0}
+.cat-icon{display:flex;width:2.25rem;height:2.25rem;color:var(--accent);margin-bottom:.25rem}.cat-icon :deep(svg){width:100%;height:100%;display:block}
+.cat-name{font-size:.9375rem;font-weight:600;color:var(--text-primary)}.cat-count{font-size:.75rem;color:var(--text-muted)}
 
 /* ═══════════ ARTICLE LIST ═══════════ */
 .article-list {
@@ -171,17 +171,17 @@ onMounted(() => {
   gap: 1rem;
   padding: 0.875rem 1rem;
   border-radius: 2px;
-  background: var(--bg-glass);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: color-mix(in srgb, var(--bg-primary) 50%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow: var(--shadow-glass);
   text-decoration: none;
   transition: background 0.2s, backdrop-filter 0.2s, box-shadow 0.2s;
 }
 .article-card:hover {
-  background: var(--bg-secondary);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: color-mix(in srgb, var(--bg-secondary) 50%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .article-card-main {
