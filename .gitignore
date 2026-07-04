@@ -9,3 +9,13 @@ data/
 dist/
 node_modules/
 *.local
+
+# AI / Agent tools
+.sisyphus/
+.agents/
+.playwright-mcp/
+skills-lock.json
+error/
+
+# Misc non-blog files
+header-preview.html
