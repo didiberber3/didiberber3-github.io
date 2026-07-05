@@ -1,0 +1,34 @@
+/* ═══════════ Mobile Responsive ═══════════ */
+
+@media (max-width: 768px) {
+  body { overflow-x: hidden; }
+
+  .page-shell { padding: 0 0.75rem; }
+  .page-content { padding: 1rem 0 3rem; }
+
+  .content-prose {
+    font-size: 0.9375rem;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+  .content-prose pre {
+    max-width: calc(100vw - 2rem);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .content-prose table {
+    display: block;
+    overflow-x: auto;
+    max-width: calc(100vw - 2rem);
+    -webkit-overflow-scrolling: touch;
+  }
+  .content-prose img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .code-block pre {
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+}

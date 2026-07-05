@@ -59,7 +59,7 @@ onUnmounted(() => stopTocObserver())
 
         <div
           ref="contentRef"
-          class="article-content prose prose-sm max-w-none prose-headings:font-semibold"
+          class="article-content content-prose"
           v-html="note.html"
         ></div>
 

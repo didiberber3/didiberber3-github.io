@@ -36,11 +36,11 @@ onMounted(() => {
                 class="article-card-wrapper"
                 :class="{ 'is-active': articleSelected === i }"
                 :style="{ '--i': i }"
-                @mouseenter="articleSelected = i"
               >
                 <router-link
                   :to="`/note/${note.slug}`"
                   class="article-card interact-slide-bg"
+                  @mouseenter="articleSelected = i"
                 >
                   <div class="article-card-main">
                     <h2 class="article-title">{{ note.title }}</h2>
@@ -94,77 +94,5 @@ onMounted(() => {
   background: var(--accent);
   opacity: 0.15;
   margin-bottom: 1.25rem;
-}
-
-/* ── article list (matching DocsPage) ── */
-.article-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.article-card-wrapper {
-  animation: cardIn 0.5s ease both;
-  animation-delay: calc(var(--i, 0) * 0.05s);
-  transition: translate 0.1s;
-}
-.article-card-wrapper.is-active {
-  translate: 16px 0;
-}
-.article-card {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.875rem 1rem;
-  border-radius: 2px;
-  background: color-mix(in srgb, var(--bg-primary) 50%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: var(--shadow-glass);
-  text-decoration: none;
-  transition: background 0.2s, backdrop-filter 0.2s, box-shadow 0.2s;
-}
-.article-card:hover {
-  background: color-mix(in srgb, var(--bg-secondary) 50%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-.article-card-main {
-  flex: 1;
-  min-width: 0;
-}
-.article-title {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.article-card-meta {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.article-date {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-.article-arrow {
-  flex-shrink: 0;
-  color: var(--text-muted);
-  opacity: 0;
-  transform: translateX(-4px);
-  transition: opacity 0.2s, transform 0.2s;
-}
-.article-card:hover .article-arrow {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-@keyframes cardIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
 }
 </style>

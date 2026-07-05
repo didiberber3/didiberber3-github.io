@@ -28,8 +28,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/about',
-    name: 'about',
-    component: () => import('../pages/About.vue'),
+    redirect: '/404',
   },
   {
     path: '/:pathMatch(.*)*',

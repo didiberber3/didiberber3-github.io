@@ -31,7 +31,6 @@ const tabs = [
   { label: '首页', path: '/' },
   { label: '时间轴', path: '/timeline' },
   { label: '文档', path: '/docs' },
-  { label: '关于', path: '/about' },
 ]
 
 function isActive(path: string): boolean {
@@ -61,11 +60,9 @@ function toggleSidebar() {
 </script>
 
 <template>
-  <nav
-    class="nav-bar sticky top-0 z-50 border-b transition-colors"
-  >
-    <div class="flex items-center justify-between max-w-6xl mx-auto px-4">
-      <div class="flex items-center gap-1">
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <div class="nav-tabs">
         <button
           v-for="tab in tabs"
           :key="tab.path"
@@ -77,7 +74,7 @@ function toggleSidebar() {
         </button>
       </div>
 
-      <div class="flex items-center gap-3">
+      <div class="nav-actions">
         <BackToTop />
         <button
           class="sidebar-toggle interact-btn-icon"
@@ -121,11 +118,28 @@ function toggleSidebar() {
 
 <style scoped>
 .nav-bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid var(--border-primary);
   background: var(--bg-glass);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   box-shadow: var(--shadow-glass);
+  transition: background-color 0.2s, border-color 0.2s;
 }
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.nav-tabs { display: flex; align-items: center; gap: 0.25rem; }
+.nav-actions { display: flex; align-items: center; gap: 0.75rem; }
 
 .tab-btn {
   position: relative;

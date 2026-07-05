@@ -13,7 +13,7 @@ watch(input, (val) => {
 </script>
 
 <template>
-  <div class="mb-6">
+  <div class="search-bar">
     <div class="search-wrap">
       <svg class="search-icon" width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
         <circle cx="9" cy="9" r="5.5" stroke="currentColor" stroke-width="1.5"/>
@@ -30,6 +30,7 @@ watch(input, (val) => {
 </template>
 
 <style scoped>
+.search-bar { margin-bottom: 1.5rem; }
 .search-wrap {
   position: relative;
   display: flex;

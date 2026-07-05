@@ -1,0 +1,108 @@
+/* ═══════════ Base Reset & Utilities ═══════════ */
+
+#app {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Reset ── */
+*,
+*::before,
+*::after {
+  border-radius: 0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  background-image: url('../bg1.webp');
+  background-size: cover;
+  background-position: center;
+  background-attachment: scroll;
+  background-repeat: no-repeat;
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.8;
+  letter-spacing: 0.01em;
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-color: var(--bg-overlay);
+  pointer-events: none;
+}
+
+@media (min-width: 769px) {
+  body { background-attachment: fixed; }
+}
+
+::selection {
+  background-color: var(--accent);
+  color: white;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-secondary); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ── Dark code highlight ── */
+.dark .hljs { background: var(--code-bg); color: #e2e8f0; }
+.dark .hljs-keyword, .dark .hljs-literal, .dark .hljs-symbol, .dark .hljs-name { color: #c792ea; }
+.dark .hljs-string, .dark .hljs-addition { color: #c3e88d; }
+.dark .hljs-comment, .dark .hljs-quote { color: #64748b; font-style: italic; }
+.dark .hljs-number, .dark .hljs-deletion { color: #f78c6c; }
+.dark .hljs-title, .dark .hljs-section, .dark .hljs-attr { color: #82aaff; }
+.dark .hljs-type, .dark .hljs-built_in, .dark .hljs-selector-tag { color: #ffcb6b; }
+.dark .hljs-meta { color: #f07178; }
+.dark .hljs-variable, .dark .hljs-template-variable { color: #f07178; }
+
+/* ── Typography helpers ── */
+.text-muted { color: var(--text-muted); }
+.text-secondary { color: var(--text-secondary); }
+.text-center { text-align: center; }
+.text-sm { font-size: 0.875rem; }
+.py-16 { padding-top: 4rem; padding-bottom: 4rem; }
+
+/* ── Page layout ── */
+.page-shell {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  min-height: calc(100vh - 4rem);
+}
+.page-content {
+  min-width: 0;
+  margin: 0 auto;
+  padding: 1.5rem 0 4rem 0;
+}
+
+/* ── Reveal animation ── */
+@keyframes fadeUpEnhanced {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-reveal {
+  animation: fadeUpEnhanced 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
