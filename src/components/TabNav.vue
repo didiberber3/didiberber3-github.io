@@ -136,7 +136,8 @@ function toggleSidebar() {
   border: none;
   cursor: pointer;
   border-radius: 2px;
-  transition: color 0.2s, background-color 0.2s;
+  box-shadow: var(--shadow-glass);
+  transition: color 0.2s, background-color 0.2s, box-shadow 0.2s;
 }
 .tab-btn:focus-visible {
   outline: 2px solid var(--accent);
@@ -152,7 +153,7 @@ function toggleSidebar() {
   height: 2px;
   background-color: var(--accent);
   transform: scaleX(0);
-  transform-origin: left;
+  transform-origin: center;
   transition: transform 0.2s ease;
 }
 

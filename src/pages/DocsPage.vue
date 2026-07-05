@@ -11,6 +11,7 @@ const router = useRouter()
 const allNotes = ref<NoteMeta[]>([])
 const categories = ref<string[]>([])
 const isSelected = ref<number | null>(null)
+const articleSelected = ref<number | null>(null)
 
 const category = computed(() => route.params.category as string | undefined)
 
@@ -83,12 +84,13 @@ onMounted(() => {
             该分类暂无文章
           </div>
 
-          <div v-else class="article-list">
+          <div v-else class="article-list" @mouseleave="articleSelected = null">
             <div
               v-for="(n, i) in categoryNotes"
               :key="n.slug"
-              :class="['article-card-wrapper', { 'in': true }]"
+              :class="['article-card-wrapper', { 'in': true, 'is-active': articleSelected === i }]"
               :style="{ '--i': i }"
+              @mouseenter="articleSelected = i"
             >
               <router-link
                 :to="`/docs/${category}/${n.slug}`"
@@ -161,8 +163,12 @@ onMounted(() => {
   box-shadow: var(--shadow-glass);
   border-radius: 2px;
   overflow: hidden; cursor: pointer;
+  --anim-duration: 0.1s;
+  transition: flex var(--anim-duration), background var(--anim-duration), backdrop-filter var(--anim-duration), transform var(--anim-duration);
 }
 .edit-card.is-active {
+  flex: 1.1 1 0%;
+  transform: translateY(-16px);
   background: color-mix(in srgb, var(--bg-secondary) 50%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -235,6 +241,10 @@ onMounted(() => {
 .article-card-wrapper {
   animation: cardIn 0.5s ease both;
   animation-delay: calc(var(--i, 0) * 0.05s);
+  transition: translate 0.1s;
+}
+.article-card-wrapper.is-active {
+  translate: 16px 0;
 }
 
 .article-card {

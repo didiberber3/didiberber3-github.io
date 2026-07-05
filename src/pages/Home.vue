@@ -4,6 +4,7 @@ import { getNoteList } from '../utils/content'
 import type { NoteMeta } from '../utils/content'
 
 const notes = ref<NoteMeta[]>([])
+const articleSelected = ref<number | null>(null)
 
 onMounted(() => {
   notes.value = getNoteList().slice(0, 5)
@@ -28,12 +29,14 @@ onMounted(() => {
               <h2 class="section-heading">最新笔记</h2>
             </div>
             <div class="section-divider"></div>
-            <div class="article-list">
+            <div class="article-list" @mouseleave="articleSelected = null">
               <div
                 v-for="(note, i) in notes"
                 :key="note.slug"
                 class="article-card-wrapper"
+                :class="{ 'is-active': articleSelected === i }"
                 :style="{ '--i': i }"
+                @mouseenter="articleSelected = i"
               >
                 <router-link
                   :to="`/note/${note.slug}`"
@@ -102,6 +105,10 @@ onMounted(() => {
 .article-card-wrapper {
   animation: cardIn 0.5s ease both;
   animation-delay: calc(var(--i, 0) * 0.05s);
+  transition: translate 0.1s;
+}
+.article-card-wrapper.is-active {
+  translate: 16px 0;
 }
 .article-card {
   display: flex;

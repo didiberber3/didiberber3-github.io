@@ -1587,3 +1587,179 @@ job
 FROM emp;
 ```
 
+
+
+
+
+
+
+# 增强查询
+
+在实际的软件开发中 基本查询远远不够
+
+需要引入 **查询加强**  **多表查询** 
+
+
+
+## WHERE 加强
+
+
+
+- WHERE子句
+  - 如何查找1992.1.1后入职的员工
+- 如何使用LIKE操作符
+  - `%` 表示0到多个字符 `_` 表示单个字符 
+  - 如何显示首字符为S的员工姓名和工资
+  - 如何显示第三个字符为大写O的所有员工的姓名和工资
+- 如何显示没有上级的雇员的情况
+- 如何查询表结构 
+
+
+
+```mysql
+-- 查询加强
+-- WHERE子句
+
+-- 如何查找1992.1.1后入职的员工
+-- 在Mysql中，日期类型可以直接比较
+SELECT * FROM emp
+WHERE hiredate > '1992-01-01'; -- 需要注意格式
+		
+		
+-- 如何使用LIKE操作符 （模糊查询）
+-- `%` 表示0到多个字符 `_` 表示单个字符 
+
+-- 如何显示首字符为S的员工姓名和工资
+SELECT ename ,sal FROM emp
+WHERE ename LIKE 'S%'
+-- 如何显示第三个字符为大写O的所有员工的姓名和工资
+SELECT ename ,sal FROM emp
+WHERE ename LIKE '__O%';
+-- 如何显示没有上级的雇员的情况
+SELECT * FROM emp
+WHERE mgr IS NULL;
+-- 如何查询表结构 
+DESC emp ;
+
+-- ORDER BY 子句
+-- 按照部门工资的从低到高【升序】，显示雇员的信息
+SELECT * FROM emp
+ORDER BY sal;
+-- 按照部门号升序，而员工工资降序排列显示部员信息
+SELECT * FROM emp
+ORDER BY deptno , sal DESC;
+```
+
+
+
+## 分页查询
+
+1. 按雇员的id号升序，每页显示3条记录，分别显示第一页，第二页，第三页
+2. 基本语法：`select ___ limit start,rows` 表示从`start+1`行开始取，取出`rows`
+
+行，`start` 从0开始计算
+
+
+
+
+
+```mysql
+-- 分页查询
+
+-- 按雇员的id号升序取出，每页显示3条记录，分别显示123页
+
+-- 第一页
+SELECT * FROM emp
+ORDER BY empno
+LIMIT 0,3;
+-- 第二页
+SELECT * FROM emp
+ORDER BY empno
+LIMIT 3,3;
+-- 第三页
+SELECT * FROM emp
+ORDER BY empno
+LIMIT 6,3;
+
+-- 推导一个公式
+SELECT * FROM emp
+ORDER BY empno
+LIMIT 每页显示记录数 * （第几页-1） ,每页显示记录数
+```
+
+
+
+练习：按员工号降序排序，分页查询；每页显示5条记录，查询第3页和第5页
+
+```mysql
+-- 练习
+SELECT * FROM emp
+ORDER BY empno DESC
+LIMIT 10,5;
+-- 练习
+SELECT * FROM emp
+ORDER BY empno DESC
+LIMIT 20,5;
+
+```
+
+
+
+## 分组函数和分组子句 `GROUP BY`
+
+1. 显示每种岗位的雇员总数、平均工资
+2. 显示雇员总数、获得补助的员工数
+3. 显示管理者的总人数
+4. 显示雇员工资的最大差额
+
+
+
+```mysql
+## 分组函数和分组子句 `GROUP BY`
+
+-- 1. 显示每种岗位的雇员总数、平均工资
+SELECT count(*) ,job,AVG(sal) FROM emp
+GROUP BY job;
+-- 2. 显示雇员总数、获得补助的员工数
+SELECT count(*) ,count(comm)  FROM emp;
+-- 统计没有获得补助的雇员数
+SELECT count(*) ,count(IF(comm IS NULL,1,NULL))  FROM emp;
+SELECT count(*) ,count(*) - count(comm)  FROM emp;
+-- 3. 显示管理者的总人数 (去重)
+SELECT COUNT(DISTINCT mgr) FROM emp;
+-- 4. 显示雇员工资的最大差额
+SELECT MAX(sal) - MIN(sal) FROM emp;
+
+```
+
+
+
+## 总结/语句顺序
+
+如果`SELECT` 语句同时包含有`GROUP BY` `HAVING` `LIMIT` `ORDER BY` 那么他们的顺序是
+
+```mysql
+SELECT c1,c2,c3 -- 查询
+FROM emp -- 位置
+WHERE condition1 -- 方式
+GROUP BY cM  -- 分组
+HAVING condition2  -- 过滤
+ORDER BY cN  -- 排序
+LIMIT start1 rows1 -- 分页
+```
+
+案例：
+
+统计各个部门的平均工资，并且是大于1000的 并且按照平均工资从高到低排序，取出前两行记录
+
+```mysql
+-- 统计各个部门的平均工资，并且是大于1000的 并且按照平均工资从高到低排序，取出前两行记录
+SELECT deptno , AVG(sal) AS avg_sal FROM emp
+GROUP BY deptno
+HAVING avg_sal > 1000
+ORDER BY avg_sal DESC
+LIMIT 0,2
+```
+
+
+

@@ -4,6 +4,7 @@ import { getNoteList } from '../utils/content'
 import type { NoteMeta } from '../utils/content'
 
 const notes = ref<NoteMeta[]>([])
+const articleSelected = ref<string | null>(null)
 
 onMounted(() => {
   notes.value = getNoteList()
@@ -94,12 +95,14 @@ const yearGroups = computed<YearGroup[]>(() => {
               <div class="tl-month-blocks">
                 <div v-for="mg in yg.months" :key="mg.month || '_'" class="tl-month-group">
                   <div v-if="mg.month" class="tl-month-heading">{{ mg.month }}月</div>
-                  <div class="article-list">
+                  <div class="article-list" @mouseleave="articleSelected = null">
                     <div
                       v-for="(note, ni) in mg.notes"
                       :key="note.slug"
                       class="article-card-wrapper"
+                      :class="{ 'is-active': articleSelected === note.slug }"
                       :style="{ '--i': ni }"
+                      @mouseenter="articleSelected = note.slug"
                     >
                       <router-link
                         :to="`/note/${note.slug}`"
@@ -203,24 +206,28 @@ const yearGroups = computed<YearGroup[]>(() => {
 .article-card-wrapper {
   animation: cardIn 0.5s ease both;
   animation-delay: calc(var(--i, 0) * 0.05s);
+  transition: translate 0.1s;
+}
+.article-card-wrapper.is-active {
+  translate: 16px 0;
 }
 .article-card {
   display: flex;
   align-items: center;
   gap: 1rem;
   padding: 0.875rem 1rem;
-  background: var(--bg-glass);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  box-shadow: var(--shadow-glass);
-  text-decoration: none;
   border-radius: 2px;
-  transition: background 0.2s, backdrop-filter 0.2s, box-shadow 0.2s, border-color 0.2s, padding-left 0.2s, color 0.2s;
-}
-.article-card:hover {
-  background: var(--bg-secondary);
+  background: color-mix(in srgb, var(--bg-primary) 50%, transparent);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-glass);
+  text-decoration: none;
+  transition: background 0.2s, backdrop-filter 0.2s, box-shadow 0.2s;
+}
+.article-card:hover {
+  background: color-mix(in srgb, var(--bg-secondary) 50%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 .article-card-main {
   flex: 1;
