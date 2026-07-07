@@ -5,6 +5,9 @@ import type { TocItem } from '../utils/markdown'
 import { useContentRenderer } from '../utils/useContentRenderer'
 import { activeHeadingId, startTocObserver, stopTocObserver } from '../utils/useTocObserver'
 import { iconForCategory } from '../utils/categoryIcons'
+import { useToast } from '../utils/useToast'
+
+const { show: showToast } = useToast()
 
 const props = defineProps<{
   note: Note
@@ -35,6 +38,15 @@ function setupContent() {
   setupTocObserver()
 }
 
+function onContentClick(e: MouseEvent) {
+  const target = e.target as HTMLElement
+  if (target.tagName === 'CODE' && !target.closest('pre')) {
+    const text = target.textContent ?? ''
+    navigator.clipboard.writeText(text).catch(() => {})
+    showToast('已复制')
+  }
+}
+
 watch(() => props.note, setupContent)
 onMounted(setupContent)
 onUnmounted(() => stopTocObserver())
@@ -61,6 +73,7 @@ onUnmounted(() => stopTocObserver())
           ref="contentRef"
           class="article-content content-prose"
           v-html="note.html"
+          @click="onContentClick"
         ></div>
 
       </div>

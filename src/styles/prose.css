@@ -102,12 +102,14 @@
   padding: 0.15em 0.4em;
   border-radius: 2px;
   border: 1px solid var(--border-primary);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   font-weight: 500;
-  color: var(--accent);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+  user-select: all;
 }
-.dark .content-prose :not(pre) > code {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+.content-prose :not(pre) > code:hover {
+  color: var(--accent);
 }
 
 .content-prose pre code {
@@ -129,6 +131,10 @@
   margin: 2em 0;
   border: 1px solid var(--border-primary);
   background: var(--bg-secondary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+.dark .code-block {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 .code-block pre {
   margin: 0;
@@ -184,7 +190,6 @@
 
 .code-block-body pre {
   padding: 1rem 1.25rem;
-  counter-reset: line;
   overflow-x: auto;
   font-size: 0.8125rem;
   line-height: 1.65;
@@ -199,16 +204,32 @@
   font-family: "SF Mono", "Cascadia Code", "Consolas", "PingFang SC", "Microsoft YaHei", monospace;
 }
 
+.code-line {
+  display: flex;
+}
+.line-num {
+  display: inline-block;
+  min-width: 2.4em;
+  text-align: right;
+  padding-right: 1.25em;
+  color: var(--text-muted);
+  opacity: 0.45;
+  font-size: 0.8125em;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+.line-code {
+  flex: 1;
+}
+
 .copy-btn, .fold-btn {
   padding: 0.125rem 0.625rem;
   font-size: 0.6875rem;
   font-family: inherit;
   color: var(--text-secondary);
   white-space: nowrap;
-}
-.copy-btn.copied {
-  color: var(--accent);
-  border-color: var(--accent);
 }
 
 /* ── Lightbox ── */

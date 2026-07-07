@@ -4,6 +4,8 @@
  * - setupLightbox: 为图片添加点击放大功能
  */
 
+import { showToast } from './useToast'
+
 const FOLD_THRESHOLD = 15
 
 const LANG_MAP: Record<string, string> = {
@@ -67,15 +69,10 @@ export function enhanceCodeBlocks(container: HTMLElement): void {
     copyBtn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(text)
-        copyBtn.textContent = '已复制'
-        copyBtn.classList.add('copied')
+        showToast('已复制')
       } catch {
-        copyBtn.textContent = '复制失败'
+        showToast('复制失败')
       }
-      setTimeout(() => {
-        copyBtn.textContent = '复制'
-        copyBtn.classList.remove('copied')
-      }, 2000)
     })
     headerActions.appendChild(copyBtn)
 
@@ -110,7 +107,43 @@ export function enhanceCodeBlocks(container: HTMLElement): void {
     header.appendChild(headerActions)
     // header 插入到 block 的最前面
     block.insertBefore(header, block.firstChild)
+
+    // ── 添加行号 ──
+    addLineNumbers(code)
   })
+}
+
+function addLineNumbers(codeEl: HTMLElement): void {
+  if (codeEl.querySelector('.code-line')) return
+
+  const html = codeEl.innerHTML
+  const lines = html.split('\n')
+  // 去掉末尾空行（代码结尾 \n 产生的）
+  if (lines.length > 1 && lines[lines.length - 1].trim() === '') {
+    lines.pop()
+  }
+
+  const fragment = document.createDocumentFragment()
+  lines.forEach((lineHtml, i) => {
+    const wrapper = document.createElement('span')
+    wrapper.className = 'code-line'
+
+    const num = document.createElement('span')
+    num.className = 'line-num'
+    num.setAttribute('aria-hidden', 'true')
+    num.textContent = String(i + 1)
+
+    const codeContent = document.createElement('span')
+    codeContent.className = 'line-code'
+    codeContent.innerHTML = lineHtml || '\n'
+
+    wrapper.appendChild(num)
+    wrapper.appendChild(codeContent)
+    fragment.appendChild(wrapper)
+  })
+
+  codeEl.innerHTML = ''
+  codeEl.appendChild(fragment)
 }
 
 function openLightbox(img: HTMLImageElement): void {

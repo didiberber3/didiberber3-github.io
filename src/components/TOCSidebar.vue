@@ -75,13 +75,17 @@ function scrollTo(id: string) {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color 0.2s, border-color 0.2s, padding-left 0.2s;
+  transition: color 0.2s, background 0.2s, backdrop-filter 0.2s, border-color 0.2s, padding-left 0.2s;
   color: var(--text-primary);
+  background: transparent;
 }
 
 .toc-link:hover {
+  background: color-mix(in srgb, var(--bg-secondary) 50%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   border-left-color: var(--accent);
-  color: var(--accent);
+  color: var(--text-primary);
   padding-left: 0.75rem;
 }
 
@@ -104,14 +108,18 @@ function scrollTo(id: string) {
 .toc-h2.active > .toc-link-h2 {
   color: var(--text-primary);
   border-left-color: var(--accent);
-  background-color: var(--bg-tertiary);
+  background: color-mix(in srgb, var(--bg-tertiary) 50%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   padding-left: 0.75rem;
 }
 
 .toc-sub.active > .toc-link-h3 {
   color: var(--text-primary);
   border-left-color: var(--accent);
-  background-color: var(--bg-tertiary);
+  background: color-mix(in srgb, var(--bg-tertiary) 50%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   padding-left: 1.5rem;
 }
 

@@ -1,7 +1,7 @@
 <template>
   <footer class="app-footer">
     <div class="footer-inner">
-      <span>&copy; {{ year }} 记录与分享</span>
+      <span>&copy; {{ year }} 小窝</span>
       <span class="footer-sep">·</span>
       <a href="/about" class="footer-link">关于</a>
       <span class="footer-sep">·</span>

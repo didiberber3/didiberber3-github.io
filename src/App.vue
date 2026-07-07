@@ -8,6 +8,7 @@
     <AppSidebar @select-note="(slug) => { closeSidebar(); router.push('/note/' + slug) }" />
     <AppFooter />
     <LoadingOverlay />
+    <ToastContainer />
   </div>
 </template>
 
@@ -18,6 +19,7 @@ import TabNav from './components/TabNav.vue'
 import AppSidebar from './components/AppSidebar.vue'
 import AppFooter from './components/AppFooter.vue'
 import LoadingOverlay from './components/LoadingOverlay.vue'
+import ToastContainer from './components/ToastContainer.vue'
 import { useGlobalLoading } from './utils/useGlobalLoading'
 import { closeSidebar } from './utils/useSidebar'
 

@@ -29,7 +29,7 @@ function toggleTheme() {
 
 const tabs = [
   { label: '首页', path: '/' },
-  { label: '时间轴', path: '/timeline' },
+  { label: '归档', path: '/timeline' },
   { label: '文档', path: '/docs' },
 ]
 
@@ -173,7 +173,9 @@ function toggleSidebar() {
 
 .tab-btn:hover {
   color: var(--text-secondary);
-  background-color: var(--bg-tertiary);
+  background: color-mix(in srgb, var(--bg-tertiary) 50%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .tab-btn:hover::after {

@@ -74,7 +74,7 @@ const yearGroups = computed<YearGroup[]>(() => {
         <div class="page-timeline-test">
           <!-- hero -->
           <section class="page-hero">
-            <h1 class="page-hero-title">时间轴</h1>
+            <h1 class="page-hero-title">归档</h1>
             <p class="page-hero-sub">按时间线浏览全部笔记</p>
             <div class="page-hero-count"><strong>{{ notes.length }}</strong><span>篇</span></div>
           </section>

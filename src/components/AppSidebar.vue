@@ -105,11 +105,11 @@ function onSelectNote(slug: string) {
   width: 280px;
   max-width: 80vw;
   height: 100%;
-  background: color-mix(in srgb, var(--bg-primary) 50%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--bg-glass);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   border-left: 1px solid var(--border-primary);
-  box-shadow: var(--shadow-glass-lg);
+  box-shadow: var(--shadow-glass);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -196,14 +196,18 @@ function onSelectNote(slug: string) {
   transition: background 0.2s, color 0.2s, border-color 0.2s, padding-left 0.2s;
 }
 .drawer-nav-btn:hover {
-  background: var(--bg-secondary);
+  background: color-mix(in srgb, var(--bg-secondary) 50%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   color: var(--text-primary);
-  border-left-color: var(--border-secondary);
+  border-left-color: var(--accent);
   padding-left: 0.875rem;
 }
 .drawer-nav-btn.active {
   color: var(--text-primary);
-  background: var(--bg-tertiary);
+  background: color-mix(in srgb, var(--bg-tertiary) 50%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   font-weight: 500;
   border-left-color: var(--accent);
   padding-left: 0.875rem;
@@ -266,13 +270,17 @@ function onSelectNote(slug: string) {
 }
 .drawer-list-item:hover {
   color: var(--text-primary);
-  background: var(--bg-secondary);
-  border-left-color: var(--border-secondary);
+  background: color-mix(in srgb, var(--bg-secondary) 50%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-left-color: var(--accent);
   padding-left: 1.75rem;
 }
 .drawer-list-item.active {
   color: var(--text-primary);
-  background: var(--bg-tertiary);
+  background: color-mix(in srgb, var(--bg-tertiary) 50%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   border-left-color: var(--accent);
   font-weight: 500;
 }
