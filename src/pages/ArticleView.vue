@@ -14,14 +14,7 @@ const loading = ref(true)
 const { startPage, stopPage } = useGlobalLoading()
 const adjacent = ref<{ prev: NoteMeta | null; next: NoteMeta | null }>({ prev: null, next: null })
 
-const isDocs = computed(() => route.path.startsWith('/docs/'))
-
-const navPrefix = computed(() => {
-  if (isDocs.value && note.value) {
-    return `/docs/${note.value.category}/`
-  }
-  return '/note/'
-})
+const navPrefix = '/note/'
 
 const slug = computed(() =>
   (route.params.slug as string) || ''

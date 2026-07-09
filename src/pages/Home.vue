@@ -23,6 +23,16 @@ onMounted(() => {
             <p class="page-hero-sub">想做自己喜欢的事</p>
           </section>
 
+          <!-- GitHub contributions -->
+          <section class="gh-section">
+            <img
+              class="gh-chart"
+              src="https://ghchart.rshah.org/didiberber3"
+              alt="GitHub 贡献图"
+              loading="lazy"
+            />
+          </section>
+
           <!-- recent notes -->
           <section class="home-section">
             <div class="section-head">
@@ -94,5 +104,22 @@ onMounted(() => {
   background: var(--accent);
   opacity: 0.15;
   margin-bottom: 1.25rem;
+}
+
+/* ── GitHub contributions ── */
+.gh-section {
+  margin: 1.5rem 0 2.5rem;
+  padding: 1rem 1.25rem;
+  background: color-mix(in srgb, var(--bg-primary) 50%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border-primary);
+  border-radius: 2px;
+  box-shadow: var(--shadow-glass);
+}
+.gh-chart {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 </style>

@@ -48,7 +48,7 @@ function toggleSidebar() {
     return
   }
   // On article pages or docs article pages: sidebar already pre-populated by page
-  if (route.path.startsWith('/note/') || route.path.startsWith('/docs/')) {
+  if (route.path.startsWith('/note/')) {
     if (sidebar.toc.length > 0 || sidebar.notes.length > 0) {
       setSidebarVisible(true)
       return

@@ -113,8 +113,8 @@
 /* ── Editorial spread cards (DocsPage category grid) ── */
 .edit-grid { display: flex; gap: 0; }
 .edit-card {
-  flex: 1 1 0%;
   position: relative;
+  flex: 1 1 0%;
   display: flex;
   flex-direction: column;
   align-items: center;

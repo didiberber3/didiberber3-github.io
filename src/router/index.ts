@@ -18,8 +18,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/docs/:category/:slug',
-    name: 'docs-article',
-    component: () => import('../pages/ArticleView.vue'),
+    redirect: (to) => ({ path: `/note/${to.params.slug}` }),
   },
   {
     path: '/docs/:category?',

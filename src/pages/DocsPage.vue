@@ -92,7 +92,7 @@ onMounted(() => {
               :style="{ '--i': i }"
             >
               <router-link
-                :to="`/docs/${category}/${n.slug}`"
+                :to="`/note/${n.slug}`"
                 class="article-card interact-slide-bg"
                 @mouseenter="articleSelected = i"
               >
