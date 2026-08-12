@@ -99,9 +99,10 @@ function cacheSet(slug: string, note: Note): void {
 
 /* ===== Async: full content loading (fetch static .md) ===== */
 
-/** 由 Vite 插件的静态中间件提供：把 /notes/:category/:slug.md 映射到 content/notes 下的原文件 */
+/** 由 Vite 插件的静态中间件提供：把 /notes/:category/:slug.md 映射到 content/notes 下的原文件。
+ *  必须拼 BASE_URL，否则部署到子路径（如 GitHub Pages 的 /didiberber3-github.io/）时 404。 */
 export function noteFilePath(category: string, slug: string): string {
-  return `/notes/${category}/${encodeURIComponent(slug)}.md`
+  return `${import.meta.env.BASE_URL}notes/${category}/${encodeURIComponent(slug)}.md`
 }
 
 export async function loadNote(slug: string): Promise<Note | undefined> {

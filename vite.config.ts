@@ -1,4 +1,4 @@
-import { defineConfig, type Plugin } from 'vite'
+import { defineConfig, type Plugin, type Connect } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { cpSync, existsSync, readFileSync, statSync } from 'fs'
 import { join, resolve } from 'path'
@@ -16,7 +16,8 @@ import { rssPlugin } from './src/utils/rssPlugin'
  */
 function notesStaticPlugin(): Plugin {
   const contentDir = resolve(process.cwd(), 'content/notes')
-  const base = process.env.BASE_URL || '/'
+  // 真实站点 base（/didiberber3-github.io/），由 configResolved 解析
+  let base = '/'
 
   function matchNote(pathname: string): string | null {
     // /notes/<category>/<slug>.md
@@ -27,30 +28,35 @@ function notesStaticPlugin(): Plugin {
     return join(contentDir, category, `${slug}.md`)
   }
 
+  function serve(
+    req: Connect.IncomingMessage,
+    res: Connect.ServerResponse,
+  ): boolean {
+    const url = new URL(req.url || '/', 'http://localhost')
+    // 剥掉站点 base 前缀后再匹配
+    const stripped = url.pathname.startsWith(base) ? url.pathname.slice(base.length - 1) : url.pathname
+    const file = matchNote(stripped)
+    if (file && existsSync(file) && statSync(file).isFile()) {
+      res.setHeader('Content-Type', 'text/markdown; charset=utf-8')
+      res.end(readFileSync(file))
+      return true
+    }
+    return false
+  }
+
   return {
     name: 'notes-static',
+    configResolved(config) {
+      base = config.base || '/'
+    },
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        const url = new URL(req.url || '/', 'http://localhost')
-        const file = matchNote(url.pathname.replace(base, '/'))
-        if (file && existsSync(file) && statSync(file).isFile()) {
-          res.setHeader('Content-Type', 'text/markdown; charset=utf-8')
-          res.end(readFileSync(file))
-          return
-        }
-        next()
+        if (!serve(req, res)) next()
       })
     },
     configurePreviewServer(server) {
       server.middlewares.use((req, res, next) => {
-        const url = new URL(req.url || '/', 'http://localhost')
-        const file = matchNote(url.pathname.replace(base, '/'))
-        if (file && existsSync(file) && statSync(file).isFile()) {
-          res.setHeader('Content-Type', 'text/markdown; charset=utf-8')
-          res.end(readFileSync(file))
-          return
-        }
-        next()
+        if (!serve(req, res)) next()
       })
     },
     closeBundle() {
