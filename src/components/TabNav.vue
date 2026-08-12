@@ -2,8 +2,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import BackToTop from './BackToTop.vue'
-import { sidebar, openSidebar, closeSidebar, setSidebarVisible } from '../utils/useSidebar'
-import { getNoteList } from '../utils/content'
+import { sidebar, closeSidebar, setSidebarVisible } from '../utils/useSidebar'
 
 const route = useRoute()
 const router = useRouter()
@@ -29,8 +28,8 @@ function toggleTheme() {
 
 const tabs = [
   { label: '首页', path: '/' },
-  { label: '归档', path: '/timeline' },
-  { label: '文档', path: '/docs' },
+  { label: '归档', path: '/archive' },
+  { label: '关于', path: '/about' },
 ]
 
 function isActive(path: string): boolean {
@@ -47,15 +46,8 @@ function toggleSidebar() {
     closeSidebar()
     return
   }
-  // On article pages or docs article pages: sidebar already pre-populated by page
-  if (route.path.startsWith('/note/')) {
-    if (sidebar.toc.length > 0 || sidebar.notes.length > 0) {
-      setSidebarVisible(true)
-      return
-    }
-  }
-  // Fallback: show all notes
-  openSidebar({ notes: getNoteList() })
+  // 文章页侧栏数据已由 ArticleView 填充（目录 + 同类文章），非文章页显示空态
+  setSidebarVisible(true)
 }
 </script>
 
@@ -123,8 +115,6 @@ function toggleSidebar() {
   z-index: 50;
   border-bottom: 1px solid var(--border-primary);
   background: var(--bg-glass);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
   box-shadow: var(--shadow-glass);
   transition: background-color 0.2s, border-color 0.2s;
 }
@@ -150,8 +140,7 @@ function toggleSidebar() {
   border: none;
   cursor: pointer;
   border-radius: 2px;
-  box-shadow: var(--shadow-glass);
-  transition: color 0.2s, background-color 0.2s, box-shadow 0.2s;
+  transition: color 0.2s, background-color 0.2s;
 }
 .tab-btn:focus-visible {
   outline: 2px solid var(--accent);
@@ -173,9 +162,7 @@ function toggleSidebar() {
 
 .tab-btn:hover {
   color: var(--text-secondary);
-  background: color-mix(in srgb, var(--bg-tertiary) 50%, transparent);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: var(--bg-tertiary);
 }
 
 .tab-btn:hover::after {
@@ -194,14 +181,14 @@ function toggleSidebar() {
 
 /* ── Sidebar toggle ── */
 .sidebar-toggle {
-  width: 28px;
-  height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
 }
 
 /* ── Theme toggle ── */
 .theme-toggle {
-  width: 28px;
-  height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
   font-size: 1rem;
   line-height: 1;
   color: var(--text-secondary);

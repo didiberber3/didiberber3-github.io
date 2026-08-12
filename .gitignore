@@ -19,3 +19,6 @@ error/
 
 # Misc non-blog files
 header-preview.html
+
+# ZCode 会话数据
+.zcode/

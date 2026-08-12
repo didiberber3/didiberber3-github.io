@@ -5,9 +5,6 @@ import type { TocItem } from '../utils/markdown'
 import { useContentRenderer } from '../utils/useContentRenderer'
 import { activeHeadingId, startTocObserver, stopTocObserver } from '../utils/useTocObserver'
 import { iconForCategory } from '../utils/categoryIcons'
-import { useToast } from '../utils/useToast'
-
-const { show: showToast } = useToast()
 
 const props = defineProps<{
   note: Note
@@ -19,11 +16,64 @@ const props = defineProps<{
   adjacentLinkTo?: (slug: string) => string
 }>()
 
-const activeTab = ref<'nav' | 'toc'>('nav')
 const { contentRef, renderContent } = useContentRenderer()
 
-function scrollToHeading(id: string) {
+/* ── 快速目录：点击正文标题在点击位置弹出 ──
+ * 关闭策略：全屏透明遮罩（backdrop）接住 popup 外的点击。
+ * 不用 document 全局 click 监听——否则「点击标题打开」的这次点击
+ * 冒泡到 document 时会被误判为点击外部而立即关闭。
+ */
+const quickTocOpen = ref(false)
+const quickTocPos = ref({ x: 0, y: 0 })
+
+function openQuickToc(el: HTMLElement) {
+  const rect = el.getBoundingClientRect()
+  const popupWidth = 260
+  const maxH = Math.min(window.innerHeight * 0.6, 360)
+  // 优先在标题下方，放不下则向上弹
+  let y = rect.bottom + 6
+  if (y + maxH > window.innerHeight - 8) y = rect.top - 6 - maxH
+  const x = Math.min(Math.max(rect.left, 8), window.innerWidth - popupWidth - 8)
+  quickTocPos.value = { x, y: Math.max(y, 8) }
+  quickTocOpen.value = true
+  window.addEventListener('keydown', onDocKeydown)
+}
+
+function closeQuickToc() {
+  quickTocOpen.value = false
+  window.removeEventListener('keydown', onDocKeydown)
+}
+
+function onDocKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape') closeQuickToc()
+}
+
+function onWindowScroll() {
+  if (quickTocOpen.value) closeQuickToc()
+}
+
+function goToHeading(id: string) {
+  closeQuickToc()
+  activeHeadingId.value = id
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+}
+
+/* ── 正文点击：标题 → 快速目录；行内代码 → 复制 ── */
+function onContentClick(e: MouseEvent) {
+  const target = e.target as Element | null
+  if (!target || !(target instanceof Element)) return
+  const heading = target.closest('h1, h2, h3, h4, h5, h6')
+  if (heading) {
+    openQuickToc(heading as HTMLElement)
+    return
+  }
+  if (target.tagName === 'CODE' && !target.closest('pre')) {
+    const text = target.textContent ?? ''
+    navigator.clipboard.writeText(text).catch(() => {})
+    // 短暂高亮作为复制反馈
+    target.classList.add('copied')
+    setTimeout(() => target.classList.remove('copied'), 600)
+  }
 }
 
 function setupTocObserver() {
@@ -38,22 +88,21 @@ function setupContent() {
   setupTocObserver()
 }
 
-function onContentClick(e: MouseEvent) {
-  const target = e.target as HTMLElement
-  if (target.tagName === 'CODE' && !target.closest('pre')) {
-    const text = target.textContent ?? ''
-    navigator.clipboard.writeText(text).catch(() => {})
-    showToast('已复制')
-  }
-}
-
 watch(() => props.note, setupContent)
-onMounted(setupContent)
-onUnmounted(() => stopTocObserver())
+onMounted(() => {
+  setupContent()
+  window.addEventListener('scroll', onWindowScroll, { passive: true })
+})
+onUnmounted(() => {
+  stopTocObserver()
+  window.removeEventListener('scroll', onWindowScroll)
+  window.removeEventListener('keydown', onDocKeydown)
+  quickTocOpen.value = false
+})
 </script>
 
 <template>
-  <article class="article-with-aside">
+  <article class="article-page">
     <header class="article-hd">
       <h1 class="article-hd-title">{{ note.title }}</h1>
       <div class="article-hd-meta">
@@ -66,63 +115,47 @@ onUnmounted(() => stopTocObserver())
       </div>
     </header>
 
-    <div class="article-main">
-      <div class="article-body">
-
-        <div
-          ref="contentRef"
-          class="article-content content-prose"
-          v-html="note.html"
-          @click="onContentClick"
-        ></div>
-
-      </div>
-      <aside class="article-aside">
-        <div class="aside-tabs">
-          <button
-            :class="['aside-tab', { active: activeTab === 'nav' }]"
-            @click="activeTab = 'nav'"
-          >文章导航</button>
-          <button
-            :class="['aside-tab', { active: activeTab === 'toc' }]"
-            @click="activeTab = 'toc'"
-          >文章目录</button>
-        </div>
-
-        <nav v-show="activeTab === 'nav'" class="aside-body aside-nav-list">
-          <router-link
-            v-for="n in navItems"
-            :key="n.slug"
-            :to="navLinkTo(n.slug)"
-            :class="['aside-nav-item', { active: n.slug === currentSlug }]"
-          >
-            <span class="aside-nav-title">{{ n.title }}</span>
-            <span class="aside-nav-date">{{ n.date }}</span>
-          </router-link>
-        </nav>
-
-        <nav v-show="activeTab === 'toc'" class="aside-body aside-toc-list">
-          <a
-            v-for="item in note.toc"
-            :key="item.id"
-            href="#"
-            @click.prevent="scrollToHeading(item.id)"
-            :class="['aside-toc-item', activeHeadingId === item.id ? 'active' : '']"
-            :style="{ paddingLeft: (item.level - 2) * 14 + 12 + 'px' }"
-          >{{ item.text }}</a>
-          <div v-if="!note.toc.length" class="aside-empty text-muted">暂无目录</div>
-        </nav>
-      </aside>
+    <div class="article-body">
+      <div
+        ref="contentRef"
+        class="article-content content-prose"
+        v-html="note.html"
+        @click="onContentClick"
+      ></div>
     </div>
+
+    <!-- 快速目录 popup：全屏遮罩接住外部点击，popup 内部 @click.stop 隔离 -->
+    <Teleport to="body">
+      <Transition name="quick-toc">
+        <div v-if="quickTocOpen" class="quick-toc-backdrop" @click="closeQuickToc">
+          <div
+            class="quick-toc"
+            :style="{ left: quickTocPos.x + 'px', top: quickTocPos.y + 'px' }"
+            @click.stop
+          >
+            <div class="quick-toc-head">快速目录</div>
+            <ul v-if="note.toc.length" class="quick-toc-list">
+              <li v-for="item in note.toc" :key="item.id">
+                <a
+                  href="#"
+                  @click.prevent="goToHeading(item.id)"
+                  :class="['quick-toc-link', activeHeadingId === item.id ? 'active' : '']"
+                  :style="{ paddingLeft: (item.level - 1) * 14 + 10 + 'px' }"
+                >{{ item.text }}</a>
+              </li>
+            </ul>
+            <div v-else class="quick-toc-empty text-muted">暂无目录</div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </article>
 </template>
 
 <style scoped>
 /* ── Article header ── */
 .article-hd {
-  position: relative;
-  padding: 3rem 0 2.5rem;
-  text-align: center;
+  padding: 2.5rem 0 1.5rem;
 }
 .article-hd-title {
   font-size: 2rem;
@@ -131,14 +164,10 @@ onUnmounted(() => stopTocObserver())
   color: var(--text-primary);
   line-height: 1.2;
   margin-bottom: .75rem;
-  position: relative;
-  z-index: 1;
 }
 .article-hd-meta {
   font-size: .8125rem;
   color: var(--text-muted);
-  position: relative;
-  z-index: 1;
 }
 .article-hd-cat {
   display: inline-flex;
@@ -154,196 +183,104 @@ onUnmounted(() => stopTocObserver())
   color: var(--border-secondary);
 }
 
-/* ── Inline article sidebar layout ── */
-.article-with-aside {
+/* ── 单栏版式 ── */
+.article-page {
   width: 100%;
-  max-width: 1024px;
+  max-width: 760px;
   margin: 0 auto;
 }
 
-.article-main {
-  display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
-}
-
 .article-body {
-  flex: 1;
-  min-width: 0;
-  max-width: 720px;
   padding: 2rem;
   background: var(--bg-glass);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
   border: 1px solid var(--border-primary);
   box-shadow: var(--shadow-glass);
   border-radius: 2px;
 }
 
-.article-aside {
+/* ── 快速目录 popup（Teleport 到 body，scoped 样式仍生效）── */
+.quick-toc-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 199;
+}
+.quick-toc {
+  position: fixed;
+  z-index: 200;
   width: 260px;
-  flex-shrink: 0;
-  position: sticky;
-  top: 5rem;
-  align-self: flex-start;
-  max-height: calc(100vh - 7rem);
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--border-primary);
-  background: var(--bg-glass);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  box-shadow: var(--shadow-glass);
-  border-radius: 2px;
-}
-
-.aside-tabs {
-  display: flex;
-  border-bottom: 1px solid var(--border-primary);
-  flex-shrink: 0;
-}
-
-.aside-tab {
-  flex: 1;
-  padding: 0.625rem 0.75rem;
-  font-size: 0.8125rem;
-  cursor: pointer;
-  border: none;
-  background: none;
-  color: var(--text-secondary);
-  transition: color 0.2s, background-color 0.2s;
-  position: relative;
-  border-radius: 2px;
-}
-.aside-tab:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: -2px;
-}
-
-.aside-tab::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0.5rem;
-  right: 0.5rem;
-  height: 2px;
-  background-color: var(--accent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.2s ease;
-}
-
-.aside-tab:hover {
-  background-color: var(--bg-tertiary);
-}
-
-.aside-tab:hover::after {
-  transform: scaleX(1);
-}
-
-.aside-tab.active {
-  color: var(--accent);
-  font-weight: 500;
-  background-color: var(--bg-tertiary);
-}
-
-.aside-tab.active::after {
-  transform: scaleX(1);
-}
-
-.aside-body {
-  flex: 1;
+  max-width: calc(100vw - 16px);
+  max-height: min(60vh, 360px);
   overflow-y: auto;
-  padding: 0.25rem 0;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-primary);
+  border-radius: 2px;
+  box-shadow: var(--shadow-glass-lg);
 }
-
-.aside-nav-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.quick-toc-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   padding: 0.5rem 0.75rem;
-  text-decoration: none;
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
-  border-left: 2px solid transparent;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
-}
-
-.aside-nav-item:hover {
-  background: var(--bg-secondary);
-  border-left-color: var(--border-secondary);
-  color: var(--text-primary);
-}
-
-.aside-nav-item.active,
-.aside-nav-item.active:hover {
-  border-left-color: var(--accent);
-  color: var(--accent);
-  font-weight: 500;
-  background: var(--bg-tertiary);
-}
-
-.aside-nav-title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1;
-  min-width: 0;
-  margin-right: 0.5rem;
-}
-
-.aside-nav-date {
-  flex-shrink: 0;
   font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: var(--text-muted);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-primary);
 }
-
-.aside-toc-item {
+.quick-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.375rem 0;
+}
+.quick-toc-link {
   display: block;
   padding: 0.375rem 0.75rem;
   font-size: 0.8125rem;
   color: var(--text-secondary);
   text-decoration: none;
-  transition: color 0.2s, background 0.2s, border-color 0.2s;
   border-left: 2px solid transparent;
   line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
 }
-
-.aside-toc-item:hover {
+.quick-toc-link:hover {
   color: var(--text-primary);
   background: var(--bg-secondary);
   border-left-color: var(--border-secondary);
 }
-
-.aside-toc-item.active,
-.aside-toc-item.active:hover {
-  color: var(--text-primary);
+.quick-toc-link.active,
+.quick-toc-link.active:hover {
+  color: var(--accent);
   font-weight: 500;
   border-left-color: var(--accent);
-  background: var(--bg-tertiary);
+  background: var(--accent-bg);
 }
-
-.aside-empty {
-  padding: 1.5rem 0.75rem;
+.quick-toc-empty {
+  padding: 1rem;
   font-size: 0.8125rem;
   text-align: center;
-  color: var(--text-muted);
 }
 
-@media (max-width: 896px) {
-  .article-main {
-    flex-direction: column;
-  }
-  .article-aside {
-    display: none;
-  }
+/* ── 快速目录过渡 ── */
+.quick-toc-enter-active,
+.quick-toc-leave-active {
+  transition: opacity 0.15s ease;
+}
+.quick-toc-enter-from,
+.quick-toc-leave-to {
+  opacity: 0;
+}
+
+@media (max-width: 768px) {
   .article-body {
     padding: 1.25rem;
-    max-width: 100%;
-    overflow-x: hidden;
   }
   .article-hd {
-    padding: 2rem 0 1.5rem;
+    padding: 1.5rem 0 1.25rem;
   }
 }
 

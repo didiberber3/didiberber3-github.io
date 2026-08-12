@@ -1,48 +1,48 @@
 /* ═══════════ Theme Variables — Light & Dark ═══════════ */
 
+/*
+ * 配色方案：
+ * 主色（文字/底色）— 带绿色调的中性墨色，与辅助色协调
+ * 辅助色（强调）— 绿色，两套主题统一（暗色用更亮的绿保证可读性）
+ */
+
 :root {
   --bg-primary: #f7f7f5;
   --bg-secondary: #efeeeb;
-  --bg-tertiary: #e5e4e1;
-  --bg-overlay: rgba(247, 247, 245, 0.85);
-  --bg-glass: rgba(247, 247, 245, 0.70);
-  --shadow-glass: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-glass-lg: 0 2px 6px rgba(0, 0, 0, 0.05);
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
-  --text-muted: #9ca3af;
-  --border-primary: #e5e7eb;
-  --border-secondary: #d1d5db;
+  --bg-tertiary: #e4e3e0;
+  --bg-glass: #efeeeb;
+  --shadow-glass: 0 1px 3px rgba(28, 42, 33, 0.10);
+  --shadow-glass-lg: 0 4px 12px rgba(28, 42, 33, 0.10);
+  --text-primary: #1c2a21;
+  --text-secondary: #5a675d;
+  --text-muted: #93a09a;
+  --border-primary: #e3e6e1;
+  --border-secondary: #cfd6d0;
   --accent: #16a34a;
-  --accent-hover: #15803d;
-  --accent-bg: #f0fdf4;
+  --accent-bg: #eef7f0;
   --code-bg: #eef4e8;
   --code-border: #d5e0cb;
-  --drawer-overlay: rgba(0, 0, 0, 0.15);
-  --drawer-shadow: -4px 0 12px rgba(0, 0, 0, 0.06);
+  --drawer-overlay: rgba(28, 42, 33, 0.15);
   --anim-duration: 0.2s;
 }
 
 .dark {
-  --bg-primary: #1a1a1e;
-  --bg-secondary: #25252a;
-  --bg-tertiary: #323238;
-  --bg-overlay: rgba(26, 26, 30, 0.88);
-  --bg-glass: rgba(26, 26, 30, 0.72);
-  --shadow-glass: 0 1px 2px rgba(0, 0, 0, 0.12);
-  --shadow-glass-lg: 0 2px 6px rgba(0, 0, 0, 0.18);
-  --text-primary: #e4e4e7;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
-  --border-primary: #2a2a2e;
-  --border-secondary: #3f3f46;
-  --accent: #f97316;
-  --accent-hover: #fb923c;
-  --accent-bg: #2a1a0e;
-  --code-bg: #25252a;
-  --code-border: #2a2a2e;
+  --bg-primary: #16181a;
+  --bg-secondary: #1f2224;
+  --bg-tertiary: #292d2f;
+  --bg-glass: #1f2224;
+  --shadow-glass: 0 1px 3px rgba(0, 0, 0, 0.30);
+  --shadow-glass-lg: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --text-primary: #e7eae4;
+  --text-secondary: #a6aca2;
+  --text-muted: #6d746d;
+  --border-primary: #2b2f31;
+  --border-secondary: #3c4142;
+  --accent: #4ade80;
+  --accent-bg: #17301f;
+  --code-bg: #1f2224;
+  --code-border: #2b2f31;
   --drawer-overlay: rgba(0, 0, 0, 0.55);
-  --drawer-shadow: -4px 0 12px rgba(0, 0, 0, 0.3);
 }
 
 /* ── GitHub contribution chart dark mode ── */

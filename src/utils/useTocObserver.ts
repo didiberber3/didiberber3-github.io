@@ -1,18 +1,16 @@
 /**
- * 共享 TOC IntersectionObserver
+ * TOC 滚动高亮 IntersectionObserver
  *
- * ArticleContent 和 TOCSidebar 原是各自创建 IntersectionObserver
- * 监听相同元素 — 现合并为一个模块级单例，引用计数管理生命周期。
+ * 目录已统一收敛到 ArticleContent 一处展示，
+ * 观察器由其单独持有，不再需要引用计数。
  */
 import { ref, nextTick } from 'vue'
 
 export const activeHeadingId = ref('')
 
 let observer: IntersectionObserver | null = null
-let activeCount = 0
 
 export function startTocObserver(headingIds: string[]) {
-  activeCount++
   observer?.disconnect()
 
   observer = new IntersectionObserver(
@@ -35,10 +33,6 @@ export function startTocObserver(headingIds: string[]) {
 }
 
 export function stopTocObserver() {
-  activeCount = Math.max(0, activeCount - 1)
-  if (activeCount <= 0) {
-    observer?.disconnect()
-    observer = null
-    activeCount = 0
-  }
+  observer?.disconnect()
+  observer = null
 }

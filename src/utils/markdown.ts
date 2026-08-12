@@ -2,13 +2,28 @@ import { Marked, Renderer } from 'marked'
 import { parseFrontmatterWithContent } from './frontmatter'
 import { stripMarkdown } from './text'
 
+/**
+ * 每次 renderMarkdown 调用独立的已用 id 集合，
+ * 重名标题自动追加序号（第一个用原名，第二个起 `-1`、`-2`…），
+ * 保证 HTML id 与 TOC 跳转唯一。
+ */
+let usedHeadingIds = new Set<string>()
+
 function headingId(text: string): string {
-  return text
+  const base = text
     .toLowerCase()
     .replace(/<[^>]+>/g, '')
     .replace(/[^\w\u4e00-\u9fff]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .replace(/^(\d)/, '_$1') || 'heading'
+
+  let id = base
+  let n = 1
+  while (usedHeadingIds.has(id)) {
+    id = `${base}-${n++}`
+  }
+  usedHeadingIds.add(id)
+  return id
 }
 
 const renderer = new Renderer()
@@ -52,6 +67,7 @@ export function groupTocItems(items: TocItem[]): TocGroup[] {
 }
 
 export function renderMarkdown(content: string): string {
+  usedHeadingIds = new Set()
   return marked.parse(content) as string
 }
 

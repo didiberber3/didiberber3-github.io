@@ -71,6 +71,20 @@ describe('renderMarkdown', () => {
     expect(html).toContain('<table>')
     expect(html).toContain('<td>')
   })
+
+  it('deduplicates heading IDs for repeated titles', () => {
+    const html = renderMarkdown('## 说明\n\n## 说明\n\n### 说明')
+    expect(html).toContain('id="说明"')
+    expect(html).toContain('id="说明-1"')
+    expect(html).toContain('id="说明-2"')
+  })
+
+  it('resets the heading ID dedup state between renders', () => {
+    renderMarkdown('## 重名')
+    const second = renderMarkdown('## 重名')
+    expect(second).toContain('id="重名"')
+    expect(second).not.toContain('id="重名-1"')
+  })
 })
 
 describe('extractTOC', () => {

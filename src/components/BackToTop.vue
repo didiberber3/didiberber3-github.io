@@ -30,8 +30,8 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
 <style scoped>
 .btt-nav {
-  width: 28px;
-  height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
   color: var(--text-secondary);
 }
 @media (max-width: 768px) {

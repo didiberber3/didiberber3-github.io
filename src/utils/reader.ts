@@ -4,9 +4,22 @@
  * - setupLightbox: 为图片添加点击放大功能
  */
 
-import { showToast } from './useToast'
-
 const FOLD_THRESHOLD = 15
+
+/** 复制按钮的临时反馈计时器 */
+let copyFlashTimer: ReturnType<typeof setTimeout> | null = null
+
+/** 按钮短暂显示「已复制 / 复制失败」，1.5s 后还原 */
+function flashCopyState(btn: HTMLButtonElement, ok: boolean) {
+  if (copyFlashTimer) clearTimeout(copyFlashTimer)
+  const original = btn.textContent
+  btn.textContent = ok ? '已复制' : '复制失败'
+  btn.classList.toggle('copied', ok)
+  copyFlashTimer = setTimeout(() => {
+    btn.textContent = original
+    btn.classList.remove('copied')
+  }, 1500)
+}
 
 const LANG_MAP: Record<string, string> = {
   js: 'JavaScript', ts: 'TypeScript', tsx: 'TSX', jsx: 'JSX',
@@ -69,9 +82,9 @@ export function enhanceCodeBlocks(container: HTMLElement): void {
     copyBtn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(text)
-        showToast('已复制')
+        flashCopyState(copyBtn, true)
       } catch {
-        showToast('复制失败')
+        flashCopyState(copyBtn, false)
       }
     })
     headerActions.appendChild(copyBtn)

@@ -1,115 +1,5 @@
 /* ═══════════ Card Components ═══════════ */
 
-/* ── Page hero (shared: DocsPage, Home, Timeline) ── */
-.page-hero {
-  position: relative;
-  padding: 5rem 0 3.5rem;
-  text-align: center;
-}
-.page-hero-title {
-  font-size: 2.75rem;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  color: var(--text-primary);
-  line-height: 1.15;
-  margin-bottom: 1.25rem;
-  position: relative;
-  z-index: 1;
-}
-.page-hero-sub {
-  font-size: 0.9375rem;
-  color: var(--text-secondary);
-  margin-bottom: 1.5rem;
-  position: relative;
-  z-index: 1;
-}
-.page-hero-count {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  z-index: 1;
-}
-.page-hero-count strong {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--accent);
-  line-height: 1.1;
-}
-.page-hero-count span {
-  font-size: 0.6875rem;
-  color: var(--text-muted);
-  margin-top: 0.25rem;
-}
-
-/* ── Category hero (DocsPage) ── */
-.cat-hero {
-  position: relative;
-  padding: 3rem 0 2.5rem;
-  text-align: center;
-}
-.cat-back {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  margin-bottom: 1.5rem;
-  border: 1px solid var(--border-primary);
-  border-radius: 2px;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-family: inherit;
-  line-height: 1;
-  background: none;
-  transition: all 0.25s;
-  position: relative;
-  z-index: 1;
-}
-.cat-back:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent);
-  transform: scale(1.05);
-}
-.cat-hero-title {
-  font-size: 2.75rem;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  color: var(--text-primary);
-  line-height: 1.15;
-  margin-bottom: 1.25rem;
-  text-transform: capitalize;
-  position: relative;
-  z-index: 1;
-}
-.cat-hero-sub {
-  font-size: 0.9375rem;
-  color: var(--text-secondary);
-  margin-bottom: 1.5rem;
-  position: relative;
-  z-index: 1;
-}
-.cat-hero-count {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  z-index: 1;
-}
-.cat-hero-count strong {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--accent);
-  line-height: 1.1;
-}
-.cat-hero-count span {
-  font-size: 0.6875rem;
-  color: var(--text-muted);
-  margin-top: 0.25rem;
-}
-
 /* ── Editorial spread cards (DocsPage category grid) ── */
 .edit-grid { display: flex; gap: 0; }
 .edit-card {
@@ -121,23 +11,19 @@
   padding: 2rem 1.5rem 1rem;
   margin: 4px;
   min-height: 160px;
-  background: color-mix(in srgb, var(--bg-primary) 50%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
   box-shadow: var(--shadow-glass);
   border-radius: 2px;
   overflow: hidden;
   cursor: pointer;
   --anim-duration: 0.1s;
-  transition: flex var(--anim-duration), background var(--anim-duration),
-              backdrop-filter var(--anim-duration), transform var(--anim-duration);
+  transition: flex var(--anim-duration), background var(--anim-duration), transform var(--anim-duration);
 }
 .edit-card.is-active {
   flex: 1.1 1 0%;
   transform: translateY(-16px);
-  background: color-mix(in srgb, var(--bg-secondary) 50%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--bg-secondary);
 }
 .edit-card::before {
   content: '';
@@ -202,7 +88,7 @@
 }
 .edit-card.is-active .edit-body { opacity: 1; }
 
-/* ── Article list cards (shared: DocsPage, Home, Timeline) ── */
+/* ── Article list cards (shared: DocsPage, Home, Archive) ── */
 
 @keyframes cardIn {
   from { opacity: 0; transform: translateY(12px); }
@@ -231,16 +117,13 @@
   padding: 0.875rem 1rem;
   text-decoration: none;
   border-radius: 2px;
-  background: color-mix(in srgb, var(--bg-primary) 50%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
   box-shadow: var(--shadow-glass);
-  transition: background 0.2s, backdrop-filter 0.2s, box-shadow 0.2s;
+  transition: background 0.2s, box-shadow 0.2s;
 }
 .article-card:hover {
-  background: color-mix(in srgb, var(--bg-secondary) 50%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--bg-secondary);
 }
 
 .article-card-main {

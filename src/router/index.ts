@@ -7,9 +7,14 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../pages/Home.vue'),
   },
   {
+    path: '/archive',
+    name: 'archive',
+    component: () => import('../pages/Archive.vue'),
+  },
+  {
+    // 兼容旧链接
     path: '/timeline',
-    name: 'timeline',
-    component: () => import('../pages/Timeline.vue'),
+    redirect: '/archive',
   },
   {
     path: '/note/:slug',
@@ -21,13 +26,18 @@ const routes: RouteRecordRaw[] = [
     redirect: (to) => ({ path: `/note/${to.params.slug}` }),
   },
   {
-    path: '/docs/:category?',
+    path: '/docs',
+    redirect: '/',
+  },
+  {
+    path: '/docs/:category',
     name: 'docs',
     component: () => import('../pages/DocsPage.vue'),
   },
   {
     path: '/about',
-    redirect: '/404',
+    name: 'about',
+    component: () => import('../pages/About.vue'),
   },
   {
     path: '/:pathMatch(.*)*',

@@ -3,10 +3,9 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { loadNote, getAdjacentNotes, getNoteList } from '../utils/content'
 import type { Note, NoteMeta } from '../utils/content'
-import LoadingDots from '../components/LoadingDots.vue'
 import ArticleContent from '../components/ArticleContent.vue'
 import { useGlobalLoading } from '../utils/useGlobalLoading'
-import { setSidebarToc, setSidebarCurrentSlug, setSidebarNotes } from '../utils/useSidebar'
+import { setSidebarCurrentSlug, setSidebarNotes, setSidebarToc } from '../utils/useSidebar'
 
 const route = useRoute()
 const note = ref<Note | undefined>()
@@ -35,11 +34,9 @@ async function load() {
   adjacent.value = getAdjacentNotes(s)
   loading.value = false
   stopPage()
-  if (found?.toc?.length) {
-    setSidebarToc(found.toc)
-  }
   setSidebarCurrentSlug(s)
   setSidebarNotes(sidebarNotes.value)
+  setSidebarToc(found?.toc ?? [])
 }
 
 onMounted(load)
@@ -50,9 +47,8 @@ watch(slug, load)
   <div class="page-shell">
     <main class="page-content">
       <div class="animate-reveal">
-        <div v-if="loading" class="py-16 text-center text-muted">
-          <LoadingDots text="加载中" />
-        </div>
+        <!-- 加载中由全局 LoadingOverlay（全屏模糊 + 转圈）呈现 -->
+        <div v-if="loading" class="py-16" aria-hidden="true"></div>
 
         <div v-else-if="!note" class="py-16 text-center text-muted">
           笔记不存在

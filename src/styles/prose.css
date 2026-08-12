@@ -16,6 +16,35 @@
   margin-top: 2rem;
   margin-bottom: 1rem;
 }
+
+/* 标题可点击：hover 时右侧浮现「目录」标记，点击弹出快速目录 */
+.content-prose h1, .content-prose h2, .content-prose h3,
+.content-prose h4, .content-prose h5, .content-prose h6 {
+  position: relative;
+  cursor: pointer;
+}
+.content-prose h1::after, .content-prose h2::after, .content-prose h3::after,
+.content-prose h4::after, .content-prose h5::after, .content-prose h6::after {
+  content: '☰';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 999px;
+  padding: 0.125rem 0.45rem;
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: none;
+}
+.content-prose h1:hover::after, .content-prose h2:hover::after, .content-prose h3:hover::after,
+.content-prose h4:hover::after, .content-prose h5:hover::after, .content-prose h6:hover::after {
+  opacity: 1;
+}
 .content-prose h1 { font-size: 1.875rem; }
 .content-prose h2 { font-size: 1.5rem; }
 .content-prose h3 { font-size: 1.25rem; }
@@ -109,6 +138,11 @@
   user-select: all;
 }
 .content-prose :not(pre) > code:hover {
+  color: var(--accent);
+}
+.content-prose :not(pre) > code.copied {
+  background: var(--accent-bg);
+  border-color: var(--accent);
   color: var(--accent);
 }
 
@@ -230,6 +264,9 @@
   font-family: inherit;
   color: var(--text-secondary);
   white-space: nowrap;
+}
+.copy-btn.copied {
+  color: var(--accent);
 }
 
 /* ── Lightbox ── */

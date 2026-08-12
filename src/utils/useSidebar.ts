@@ -17,19 +17,6 @@ export const sidebar = reactive({
   currentSlug: '',
 })
 
-export function openSidebar(opts: {
-  category?: string
-  notes?: NoteMeta[]
-  toc?: TocItem[]
-  currentSlug?: string
-}) {
-  sidebar.category = opts.category || ''
-  sidebar.notes = opts.notes || []
-  sidebar.toc = opts.toc || []
-  sidebar.currentSlug = opts.currentSlug || ''
-  sidebar.visible = true
-}
-
 export function closeSidebar() {
   sidebar.visible = false
 }

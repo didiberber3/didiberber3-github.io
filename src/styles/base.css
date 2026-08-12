@@ -12,14 +12,16 @@
   border-radius: 0;
 }
 
+/* 站点默认观感 ≈ 浏览器 110% 缩放：根字号 16px → 17.6px。
+   文字与间距均为 rem/em，随根字号整体放大，不改变视口宽度，
+   不会误触发移动端断点。 */
+html {
+  font-size: 110%;
+}
+
 body {
   margin: 0;
   background-color: var(--bg-primary);
-  background-image: url('../bg1.webp');
-  background-size: cover;
-  background-position: center;
-  background-attachment: scroll;
-  background-repeat: no-repeat;
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -28,19 +30,6 @@ body {
   position: relative;
   min-height: 100vh;
   min-height: 100dvh;
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background-color: var(--bg-overlay);
-  pointer-events: none;
-}
-
-@media (min-width: 769px) {
-  body { background-attachment: fixed; }
 }
 
 ::selection {

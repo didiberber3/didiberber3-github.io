@@ -8,11 +8,7 @@ export function useContentRenderer() {
 
   async function renderContent() {
     await nextTick()
-    const [{ highlightBlocks }, { renderMermaid }] = await Promise.all([
-      import('./highlight'),
-      import('./mermaid'),
-    ])
-    renderMermaid()
+    const { highlightBlocks } = await import('./highlight')
     highlightBlocks()
     if (contentRef.value) {
       enhanceCodeBlocks(contentRef.value)

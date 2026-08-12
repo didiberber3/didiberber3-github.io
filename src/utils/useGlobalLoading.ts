@@ -1,3 +1,9 @@
+/**
+ * 全局加载状态（模块级单例）
+ *
+ * 路由懒加载 chunk 与文章内容渲染共用一套加载动画。
+ * isLoading = 路由加载 或 页面内容加载任一进行中。
+ */
 import { ref, computed } from 'vue'
 
 const routerLoading = ref(false)
