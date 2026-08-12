@@ -178,6 +178,13 @@
   .edit-card { min-width: 100%; margin: 2px 0; min-height: 120px; padding: 1.5rem 1rem 0.6rem; }
   .edit-card:not(:last-child)::after { display: none; }
   .edit-card.is-active { flex: 0 0 100% !important; }
+
+  /* 移动端标题允许换行，避免长标题被省略号截断 */
+  .article-title {
+    white-space: normal;
+    text-overflow: clip;
+    line-height: 1.4;
+  }
 }
 
 /* ── Docs home ── */

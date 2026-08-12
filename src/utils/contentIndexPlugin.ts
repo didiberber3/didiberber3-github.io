@@ -3,7 +3,7 @@ import { join } from 'path'
 import { statSync, readFileSync } from 'fs'
 
 import { parseFrontmatter } from './frontmatter'
-import { walkMdFiles, slugFromFilePath } from './fs'
+import { walkMdFiles, slugFromFilePath, categoryFromFilePath } from './fs'
 import { stripMarkdown } from './text'
 
 export function contentIndexPlugin(): Plugin {
@@ -17,6 +17,8 @@ export function contentIndexPlugin(): Plugin {
 
       const notesDir = join(process.cwd(), 'content/notes')
       const noteMeta: Record<string, { date: string; title: string; slug: string; charCount: number }> = {}
+      // slug → 分类，供正文改为静态 fetch 时组装路径
+      const slugCategory: Record<string, string> = {}
 
       for (const fullPath of walkMdFiles(notesDir)) {
         const slug = slugFromFilePath(fullPath)
@@ -34,16 +36,19 @@ export function contentIndexPlugin(): Plugin {
           .join(' ')
         const plain = stripMarkdown(raw)
         const charCount = plain.replace(/\s/g, '').length
-        noteMeta[slug] = {
+        const metaSlug = fm.slug || slug
+        noteMeta[metaSlug] = {
           date: fm.date || fallbackDate,
           title: fm.title || fallbackTitle,
-          slug: fm.slug || slug,
+          slug: metaSlug,
           charCount,
         }
+        slugCategory[metaSlug] = categoryFromFilePath(fullPath)
       }
 
       return `
 export const noteMeta = ${JSON.stringify(noteMeta)};
+export const slugCategory = ${JSON.stringify(slugCategory)};
 `
     },
   }

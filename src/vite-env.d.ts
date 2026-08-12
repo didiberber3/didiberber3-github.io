@@ -14,4 +14,5 @@ declare module 'virtual:content-index' {
     charCount: number
   }
   export const noteMeta: Record<string, NoteEntry>
+  export const slugCategory: Record<string, string>
 }

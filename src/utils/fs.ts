@@ -31,3 +31,14 @@ export function walkMdFiles(dir: string): string[] {
 export function slugFromFilePath(filepath: string): string {
   return filepath.replace(/\\/g, '/').split('/').pop()!.replace(/\.md$/, '')
 }
+
+/** 从 .md 文件绝对路径中提取分类（notes 目录的下一级） */
+export function categoryFromFilePath(filepath: string): string {
+  const normalized = filepath.replace(/\\/g, '/')
+  const parts = normalized.split('/')
+  const notesIdx = parts.indexOf('notes')
+  if (notesIdx >= 0 && notesIdx + 1 < parts.length) {
+    return parts[notesIdx + 1]
+  }
+  return ''
+}

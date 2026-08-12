@@ -1,6 +1,7 @@
 // Virtual module provided by Vite plugin — types declared in vite-env.d.ts
-import { noteMeta } from 'virtual:content-index'
+import { noteMeta, slugCategory } from 'virtual:content-index'
 import { renderMarkdown, parseFrontmatter, extractTOC, computeReadingStats, type TocItem } from './markdown'
+
 /* ===== Types ===== */
 
 export interface NoteMeta {
@@ -19,29 +20,7 @@ export interface Note extends NoteMeta {
   readingTime: number
 }
 
-/* ===== Lazy globs ===== */
-
-const noteModules = import.meta.glob('/content/notes/**/*.md', {
-  query: '?raw',
-  import: 'default',
-}) as Record<string, () => Promise<string>>
-
 /* ===== Helpers ===== */
-
-function slugFromPath(filepath: string): string {
-  return filepath.replace(/\\/g, '/').split('/').pop()!.replace(/\.md$/, '')
-}
-
-function categoryFromPath(filepath: string): string {
-  const normalized = filepath.replace(/\\/g, '/')
-  const parts = normalized.split('/')
-  // Find 'notes' segment; the next segment is the category
-  const notesIdx = parts.indexOf('notes')
-  if (notesIdx >= 0 && notesIdx + 1 < parts.length) {
-    return parts[notesIdx + 1]
-  }
-  return ''
-}
 
 function titleFromSlug(slug: string): string {
   if (/[^\x00-\x7F]/.test(slug)) return slug
@@ -51,21 +30,20 @@ function titleFromSlug(slug: string): string {
     .join(' ')
 }
 
-/* ===== Sync: metadata only (no .md content loaded) ===== */
+/* ===== Sync: metadata only (no .md content fetched) ===== */
 
 let noteListCache: NoteMeta[] | null = null
 let categoriesCache: string[] | null = null
 
 export function getNoteList(): NoteMeta[] {
   if (noteListCache) return noteListCache
-  const list = Object.keys(noteModules).map((path) => {
-    const slug = slugFromPath(path)
+  const list = Object.keys(noteMeta).map((slug) => {
     const meta = noteMeta[slug]
     return {
-      slug: meta?.slug || slug,
+      slug,
       title: meta?.title || titleFromSlug(slug),
       date: meta?.date || '',
-      category: categoryFromPath(path),
+      category: slugCategory[slug] || '',
       charCount: meta?.charCount || 0,
     }
   })
@@ -77,8 +55,7 @@ export function getNoteList(): NoteMeta[] {
 export function getCategories(): string[] {
   if (categoriesCache) return categoriesCache
   const cats = new Set<string>()
-  for (const path of Object.keys(noteModules)) {
-    const cat = categoryFromPath(path)
+  for (const cat of Object.values(slugCategory)) {
     if (cat) cats.add(cat)
   }
   categoriesCache = Array.from(cats).sort()
@@ -120,28 +97,34 @@ function cacheSet(slug: string, note: Note): void {
   noteCache.set(slug, note)
 }
 
-/* ===== Async: full content loading  ===== */
+/* ===== Async: full content loading (fetch static .md) ===== */
+
+/** 由 Vite 插件的静态中间件提供：把 /notes/:category/:slug.md 映射到 content/notes 下的原文件 */
+export function noteFilePath(category: string, slug: string): string {
+  return `/notes/${category}/${encodeURIComponent(slug)}.md`
+}
 
 export async function loadNote(slug: string): Promise<Note | undefined> {
   const cached = cacheGet(slug)
   if (cached) return cached
 
-  const entry = Object.entries(noteModules).find(
-    ([path]) => slugFromPath(path) === slug
-  )
-  if (!entry) return undefined
+  const meta = noteMeta[slug]
+  if (!meta) return undefined
+  const category = slugCategory[slug] || ''
 
-  const raw = await entry[1]()
+  const res = await fetch(noteFilePath(category, slug))
+  if (!res.ok) return undefined
+  const raw = await res.text()
+
   const { content } = parseFrontmatter(raw)
   const { charCount, readingTime } = computeReadingStats(content)
   const html = renderMarkdown(content)
   const toc = extractTOC(html)
-  const meta = noteMeta[slug]
   const note: Note = {
     slug,
-    title: meta?.title || titleFromSlug(slug),
-    date: meta?.date || '',
-    category: categoryFromPath(entry[0]),
+    title: meta.title || titleFromSlug(slug),
+    date: meta.date || '',
+    category,
     content: raw,
     html,
     toc,
@@ -151,5 +134,3 @@ export async function loadNote(slug: string): Promise<Note | undefined> {
   cacheSet(slug, note)
   return note
 }
-
-

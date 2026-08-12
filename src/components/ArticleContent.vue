@@ -191,11 +191,7 @@ onUnmounted(() => {
 }
 
 .article-body {
-  padding: 2rem;
-  background: var(--bg-glass);
-  border: 1px solid var(--border-primary);
-  box-shadow: var(--shadow-glass);
-  border-radius: 2px;
+  padding: 2rem 0;
 }
 
 /* ── 快速目录 popup（Teleport 到 body，scoped 样式仍生效）── */
@@ -277,7 +273,7 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .article-body {
-    padding: 1.25rem;
+    padding: 1.25rem 0;
   }
   .article-hd {
     padding: 1.5rem 0 1.25rem;
@@ -286,7 +282,7 @@ onUnmounted(() => {
 
 @media (max-width: 480px) {
   .article-body {
-    padding: 0.875rem;
+    padding: 0.875rem 0;
   }
   .article-hd-title {
     font-size: 1.5rem;
