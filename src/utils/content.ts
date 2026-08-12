@@ -113,7 +113,8 @@ export async function loadNote(slug: string): Promise<Note | undefined> {
   if (!meta) return undefined
   const category = slugCategory[slug] || ''
 
-  const res = await fetch(noteFilePath(category, slug))
+  // no-cache：每次都向服务器验证，文件变了就取新内容（更新笔记后不用等缓存过期）
+  const res = await fetch(noteFilePath(category, slug), { cache: 'no-cache' })
   if (!res.ok) return undefined
   const raw = await res.text()
 

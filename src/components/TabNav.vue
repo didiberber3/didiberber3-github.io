@@ -11,8 +11,9 @@ const isDark = ref(false)
 const isAnimating = ref(false)
 
 onMounted(() => {
+  // 默认暗色：仅在用户明确选择过亮色（'light'）时使用亮色
   const stored = localStorage.getItem('theme')
-  if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+  if (stored !== 'light') {
     isDark.value = true
     document.documentElement.classList.add('dark')
   }
