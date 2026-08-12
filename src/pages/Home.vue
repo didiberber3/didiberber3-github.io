@@ -32,11 +32,8 @@ onMounted(() => {
       <div class="animate-reveal">
         <div class="page-home">
 
-          <!-- 站点标题 -->
-          <header class="site-head">
-            <h1 class="site-name">小窝</h1>
-            <p class="site-tagline">记录学习笔记与技术分享</p>
-          </header>
+          <!-- 顶部留白（占位保持高度不变） -->
+          <header class="site-head" aria-hidden="true"></header>
 
           <!-- 分类网格（原文档页内容，无 header） -->
           <div v-if="categories.length" class="home-cats">
@@ -83,37 +80,15 @@ onMounted(() => {
   padding: 2rem 1rem 6rem;
 }
 
-/* ── 站点标题 ── */
+/* ── 顶部留白占位（高度保持原站点标题区，不显示内容）── */
 .site-head {
+  height: 6.3rem;
   margin-bottom: 2rem;
-}
-.site-name {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.75rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--text-primary);
-  margin-bottom: 0.375rem;
-}
-.site-name::before {
-  content: '';
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  opacity: 0.8;
-}
-.site-tagline {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  margin: 0;
 }
 
 /* ── 分类网格区 ── */
 .home-cats {
-  margin-bottom: 3rem;
+  margin-bottom: 5rem;
 }
 
 /* ── section ── */
