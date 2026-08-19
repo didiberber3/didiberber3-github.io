@@ -140,7 +140,6 @@ function toggleSidebar() {
   background: none;
   border: none;
   cursor: pointer;
-  border-radius: 2px;
   transition: color 0.2s, background-color 0.2s;
 }
 .tab-btn:focus-visible {

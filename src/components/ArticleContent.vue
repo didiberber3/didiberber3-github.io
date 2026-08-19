@@ -209,7 +209,6 @@ onUnmounted(() => {
   overflow-y: auto;
   background: var(--bg-glass);
   border: 1px solid var(--border-primary);
-  border-radius: 2px;
   box-shadow: var(--shadow-glass-lg);
 }
 .quick-toc-head {

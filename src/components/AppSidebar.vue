@@ -167,7 +167,6 @@ function scrollToHeading(id: string) {
   border: none;
   cursor: pointer;
   font-family: inherit;
-  border-radius: 2px;
   transition: color 0.2s, background 0.2s;
 }
 .drawer-section-btn:hover {
@@ -197,7 +196,6 @@ function scrollToHeading(id: string) {
   color: var(--text-secondary);
   text-decoration: none;
   border-left: 2px solid transparent;
-  border-radius: 2px;
   line-height: 1.4;
   transition: color 0.2s, background 0.2s, border-color 0.2s;
 }
@@ -228,7 +226,6 @@ function scrollToHeading(id: string) {
   color: var(--text-secondary);
   text-decoration: none;
   border-left: 2px solid transparent;
-  border-radius: 2px;
   transition: color 0.2s, background 0.2s, border-color 0.2s;
   overflow: hidden;
   text-overflow: ellipsis;

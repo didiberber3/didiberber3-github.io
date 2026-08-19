@@ -66,7 +66,6 @@ const emit = defineEmits<{
   width: 1.75rem;
   height: 1.75rem;
   border: 1px solid var(--border-primary);
-  border-radius: 2px;
   color: var(--text-muted);
   cursor: pointer;
   font-size: 0.875rem;

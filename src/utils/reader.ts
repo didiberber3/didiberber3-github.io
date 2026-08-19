@@ -1,10 +1,13 @@
 /**
  * 文章阅读增强工具
- * - enhanceCodeBlocks: 统一处理代码块（header 导航栏 + 抽屉式展开/折叠 + 复制）
+ * - enhanceCodeBlocks: 统一处理代码块（header 导航栏 + 折叠/展开 + 复制 + 行号）
  * - setupLightbox: 为图片添加点击放大功能
  */
 
-const FOLD_THRESHOLD = 15
+/** 超过此行数才显示「折叠/展开」按钮 */
+const FOLD_BTN_MIN = 20
+/** 超过此行数才默认折叠（其余默认展开） */
+const FOLD_DEFAULT = 60
 
 /** 复制按钮的临时反馈计时器 */
 let copyFlashTimer: ReturnType<typeof setTimeout> | null = null
@@ -45,6 +48,13 @@ function detectLang(codeEl: HTMLElement): string {
   return ''
 }
 
+/** 统计代码行数（剔除结尾换行产生的空行） */
+function countLines(text: string): number {
+  let n = text.split('\n').length
+  if (n > 1 && text.endsWith('\n')) n--
+  return n
+}
+
 export function enhanceCodeBlocks(container: HTMLElement): void {
   container.querySelectorAll('pre').forEach((pre) => {
     if (pre.closest('.code-block')) return
@@ -53,8 +63,9 @@ export function enhanceCodeBlocks(container: HTMLElement): void {
     if (!code) return
 
     const text = code.textContent || ''
-    const lineCount = text.split('\n').length
-    const isFoldable = lineCount > FOLD_THRESHOLD
+    const lineCount = countLines(text)
+    const showFoldBtn = lineCount > FOLD_BTN_MIN
+    const defaultCollapsed = lineCount > FOLD_DEFAULT
     const lang = detectLang(code as HTMLElement)
 
     // 1. .code-block 包裹
@@ -63,7 +74,7 @@ export function enhanceCodeBlocks(container: HTMLElement): void {
     pre.parentNode?.insertBefore(block, pre)
     block.appendChild(pre)
 
-    // 2. stiky header 导航栏
+    // 2. header 导航栏
     const header = document.createElement('div')
     header.className = 'code-block-header'
 
@@ -89,70 +100,98 @@ export function enhanceCodeBlocks(container: HTMLElement): void {
     })
     headerActions.appendChild(copyBtn)
 
-    // 折叠/展开按钮（仅大块有，小块不需要）
-    if (isFoldable) {
+    // 3. body（行号列 + pre）
+    const body = document.createElement('div')
+    body.className = 'code-block-body'
+    pre.parentNode?.insertBefore(body, pre)
+    body.appendChild(pre)
+
+    // 折叠/展开按钮（仅超长块有）
+    if (showFoldBtn) {
       const foldBtn = document.createElement('button')
       foldBtn.className = 'fold-btn interact-btn-icon'
-      foldBtn.textContent = '展开'
-      const rowLabel = `展开全部 ${lineCount} 行`
+      const collapsedLabel = `展开全部 ${lineCount} 行`
 
-      const body = document.createElement('div')
-      body.className = 'code-block-body collapsed'
-      pre.parentNode?.insertBefore(body, pre)
-      body.appendChild(pre)
+      let isExpanded = !defaultCollapsed
+      if (defaultCollapsed) {
+        body.classList.add('collapsed')
+        foldBtn.textContent = collapsedLabel
+      } else {
+        foldBtn.textContent = '折叠'
+      }
 
-      let isExpanded = false
       foldBtn.addEventListener('click', () => {
         isExpanded = !isExpanded
         body.classList.toggle('collapsed', !isExpanded)
-        foldBtn.textContent = isExpanded ? '折叠' : rowLabel
+        foldBtn.textContent = isExpanded ? '折叠' : collapsedLabel
       })
 
       headerActions.prepend(foldBtn)
-    } else {
-      // 小块直接放进 body（不折叠）
-      const body = document.createElement('div')
-      body.className = 'code-block-body'
-      pre.parentNode?.insertBefore(body, pre)
-      body.appendChild(pre)
     }
 
     header.appendChild(headerActions)
     // header 插入到 block 的最前面
     block.insertBefore(header, block.firstChild)
 
-    // ── 添加行号 ──
+    // 4. 行内行号（不破坏高亮 span，行号与代码同行，行高天然对齐）
     addLineNumbers(code)
   })
 }
 
+/**
+ * 行内行号：把 code 内的节点按换行分组，每行包一层 .code-line（行号 + 代码）。
+ * 用 DOM 遍历而非 innerHTML 字符串切分，保留高亮 span；
+ * 跨行 token（多行字符串/块注释）的 class 继承到其所在每一行，颜色不错乱。
+ */
 function addLineNumbers(codeEl: HTMLElement): void {
   if (codeEl.querySelector('.code-line')) return
 
-  const html = codeEl.innerHTML
-  const lines = html.split('\n')
-  // 去掉末尾空行（代码结尾 \n 产生的）
-  if (lines.length > 1 && lines[lines.length - 1].trim() === '') {
-    lines.pop()
+  type Line = { classes: string[]; nodes: Node[] }
+  const lines: Line[] = []
+  let current: Line = { classes: [], nodes: [] }
+
+  function walk(node: Node, inherited: string[]): void {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const parts = (node.nodeValue || '').split('\n')
+      parts.forEach((part, i) => {
+        if (i > 0) {
+          lines.push(current)
+          current = { classes: [...inherited], nodes: [] }
+        }
+        if (part) current.nodes.push(document.createTextNode(part))
+      })
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      const el = node as HTMLElement
+      const classes = [...inherited, ...Array.from(el.classList)]
+      if (el.textContent?.includes('\n')) {
+        Array.from(el.childNodes).forEach((child) => walk(child, classes))
+      } else {
+        current.nodes.push(el.cloneNode(true))
+      }
+    }
   }
 
+  Array.from(codeEl.childNodes).forEach((child) => walk(child, []))
+  // 末尾换行产生的空行（current.nodes 为空）不 push，等价于 trim 末尾换行
+  if (current.nodes.length) lines.push(current)
+
   const fragment = document.createDocumentFragment()
-  lines.forEach((lineHtml, i) => {
-    const wrapper = document.createElement('span')
-    wrapper.className = 'code-line'
+  lines.forEach((line, i) => {
+    const row = document.createElement('span')
+    row.className = 'code-line'
 
     const num = document.createElement('span')
     num.className = 'line-num'
     num.setAttribute('aria-hidden', 'true')
     num.textContent = String(i + 1)
+    row.appendChild(num)
 
-    const codeContent = document.createElement('span')
-    codeContent.className = 'line-code'
-    codeContent.innerHTML = lineHtml || '\n'
+    const code = document.createElement('span')
+    code.className = line.classes.length ? `line-code ${line.classes.join(' ')}` : 'line-code'
+    line.nodes.forEach((n) => code.appendChild(n))
+    row.appendChild(code)
 
-    wrapper.appendChild(num)
-    wrapper.appendChild(codeContent)
-    fragment.appendChild(wrapper)
+    fragment.appendChild(row)
   })
 
   codeEl.innerHTML = ''

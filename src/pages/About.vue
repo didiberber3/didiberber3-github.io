@@ -74,7 +74,6 @@ import PageHead from '../components/PageHead.vue'
   padding: 1rem 1.25rem;
   background: var(--bg-glass);
   border: 1px solid var(--border-primary);
-  border-radius: 2px;
   box-shadow: var(--shadow-glass);
 }
 .gh-chart {
