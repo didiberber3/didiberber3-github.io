@@ -5,7 +5,7 @@
  * 消除两份重复的 walkNotes 实现。
  */
 
-import { readdirSync, statSync } from 'fs'
+import { readdirSync } from 'fs'
 import { join } from 'path'
 
 /** 递归遍历目录，返回所有 .md 文件的绝对路径 */

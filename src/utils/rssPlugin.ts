@@ -11,7 +11,7 @@ export function rssPlugin(): Plugin {
     name: 'rss-feed',
     closeBundle() {
       const notesDir = join(process.cwd(), 'content/notes')
-      const siteUrl = 'https://flyhunterl.github.io/didiberber3-github.io'
+      const siteUrl = 'https://didiberber3.github.io/didiberber3-github.io'
 
       interface NoteEntry {
         slug: string
@@ -65,8 +65,8 @@ export function rssPlugin(): Plugin {
           (note) => `
     <item>
       <title>${escapeXml(note.title)}</title>
-      <link>${siteUrl}/note/${note.slug}</link>
-      <guid>${siteUrl}/note/${note.slug}</guid>
+      <link>${siteUrl}/note/${encodeURIComponent(note.slug)}</link>
+      <guid>${siteUrl}/note/${encodeURIComponent(note.slug)}</guid>
       <pubDate>${new Date(note.date).toUTCString()}</pubDate>
       <description>${escapeXml(note.description)}</description>
     </item>`,
@@ -76,9 +76,9 @@ export function rssPlugin(): Plugin {
       const rss = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>记录与分享</title>
+    <title>小窝 · 学习笔记</title>
     <link>${siteUrl}</link>
-    <description>个人学习笔记与技术分享 — Java、前端、开发工具</description>
+    <description>个人学习笔记与技术分享 — Java、Godot、开发工具</description>
     <language>zh-CN</language>
     <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>${items}

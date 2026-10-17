@@ -1,6 +1,6 @@
 import { defineConfig, type Plugin, type Connect } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { cpSync, existsSync, readFileSync, statSync } from 'fs'
+import { copyFileSync, cpSync, existsSync, readFileSync, statSync } from 'fs'
 import { join, relative, resolve } from 'path'
 import { contentIndexPlugin } from './src/utils/contentIndexPlugin'
 import { rssPlugin } from './src/utils/rssPlugin'
@@ -81,8 +81,26 @@ function notesStaticPlugin(): Plugin {
   }
 }
 
+/**
+ * GitHub Pages SPA 回退：把 index.html 复制为 404.html。
+ * history 路由的深链接会由 Pages 返回 404.html，再由前端路由接管。
+ * 放在构建阶段生成，保证手工上传 dist 时也有回退文件。
+ */
+function ghPages404Plugin(): Plugin {
+  return {
+    name: 'gh-pages-404',
+    closeBundle() {
+      const dist = resolve(process.cwd(), 'dist')
+      const index = resolve(dist, 'index.html')
+      if (!existsSync(index)) return
+      copyFileSync(index, resolve(dist, '404.html'))
+      console.log('[gh-pages-404] Generated dist/404.html')
+    },
+  }
+}
+
 export default defineConfig({
-  plugins: [vue(), contentIndexPlugin(), rssPlugin(), notesStaticPlugin()],
+  plugins: [vue(), contentIndexPlugin(), rssPlugin(), notesStaticPlugin(), ghPages404Plugin()],
   base: '/didiberber3-github.io/',
   build: {
     outDir: 'dist',

@@ -56,7 +56,8 @@ function close() {
 }
 
 function toggle() {
-  open.value ? close() : openSheet()
+  if (open.value) close()
+  else openSheet()
 }
 
 function goTo(id: string) {

@@ -88,6 +88,7 @@ onUnmounted(() => stopTocObserver())
     </header>
 
     <div class="article-body">
+      <!-- eslint-disable-next-line vue/no-v-html -->
       <div
         ref="contentRef"
         class="article-content content-prose"

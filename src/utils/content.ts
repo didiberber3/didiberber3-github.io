@@ -30,7 +30,8 @@ export interface Note extends NoteMeta {
 /* ===== Helpers ===== */
 
 function titleFromSlug(slug: string): string {
-  if (/[^\x00-\x7F]/.test(slug)) return slug
+  // 中文等非 ASCII 文件名直接作为标题；ASCII slug 做标题化处理
+  if ([...slug].some((ch) => ch.charCodeAt(0) > 127)) return slug
   return slug
     .split('-')
     .map((s) => (s.length > 0 ? s[0].toUpperCase() + s.slice(1) : s))
