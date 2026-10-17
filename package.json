@@ -10,7 +10,9 @@
     "lint": "eslint .",
     "format": "prettier --write src/",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "notes:normalize": "node scripts/normalize-frontmatter.ts",
+    "notes:normalize:write": "node scripts/normalize-frontmatter.ts --write"
   },
   "dependencies": {
     "@exercism/highlightjs-gdscript": "^0.0.1",

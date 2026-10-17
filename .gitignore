@@ -22,3 +22,12 @@ header-preview.html
 
 # ZCode 会话数据
 .zcode/
+
+# Obsidian vault metadata
+content/notes/.obsidian/
+content/notes/.trash/
+
+# 本地临时产物
+.frontmatter-backup/
+.ui-review/
+.acl-recovery/

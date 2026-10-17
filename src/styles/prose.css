@@ -1,131 +1,144 @@
-/* ═══════════ Content Typography & Code Blocks ═══════════ */
+/* ════════════════════════════════════════════════════════════
+   Prose：文章正文排版（.content-prose）、代码块、图片 lightbox
+   颜色 / 字号 / 间距一律取自 theme.css token。
+   reader.ts 注入的 .code-block 系列类名在本文件适配，勿删。
+   ════════════════════════════════════════════════════════════ */
 
-/* ── Article body typography (.content-prose) ── */
+/* ── 正文基准 ── */
 .content-prose {
   max-width: none;
-  font-size: 0.9375rem;
-  line-height: 1.8;
+  font-size: var(--text-md);
+  line-height: 1.85;
   letter-spacing: 0.01em;
   color: var(--text-primary);
 }
 
-.content-prose h1, .content-prose h2, .content-prose h3,
-.content-prose h4, .content-prose h5, .content-prose h6 {
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-  /* 目录/锚点跳转时预留吸顶导航高度，避免标题被遮挡 */
-  scroll-margin-top: 4.5rem;
+.content-prose > :first-child {
+  margin-top: 0;
+}
+.content-prose > :last-child {
+  margin-bottom: 0;
 }
 
-/* 标题可点击：hover 时右侧浮现「目录」标记，点击弹出快速目录 */
-.content-prose h1, .content-prose h2, .content-prose h3,
-.content-prose h4, .content-prose h5, .content-prose h6 {
-  position: relative;
-  cursor: pointer;
+/* ── 段落与行内元素 ── */
+.content-prose p {
+  margin-bottom: var(--space-5);
+  text-wrap: pretty;
 }
-.content-prose h1::after, .content-prose h2::after, .content-prose h3::after,
-.content-prose h4::after, .content-prose h5::after, .content-prose h6::after {
-  content: '☰';
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 0.75rem;
-  font-weight: 400;
-  color: var(--text-muted);
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: 999px;
-  padding: 0.125rem 0.45rem;
-  opacity: 0;
-  transition: opacity 0.15s;
-  pointer-events: none;
-}
-.content-prose h1:hover::after, .content-prose h2:hover::after, .content-prose h3:hover::after,
-.content-prose h4:hover::after, .content-prose h5:hover::after, .content-prose h6:hover::after {
-  opacity: 1;
-}
-.content-prose h1 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--border-primary);
-}
-.content-prose h2 {
-  font-size: 1.375rem;
-  font-weight: 700;
-  padding-bottom: 0.375rem;
-  border-bottom: 1px solid var(--border-primary);
-}
-.content-prose h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-}
-.content-prose h4 {
-  font-size: 1rem;
-  font-weight: 600;
-}
-.content-prose h5,
-.content-prose h6 {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-.content-prose p { margin-bottom: 1.25rem; }
 
 .content-prose a {
   color: var(--accent);
-  text-decoration: none;
-  border-bottom: 1px solid var(--accent);
-  transition: opacity 0.2s;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }
-.content-prose a:hover { opacity: 0.7; }
+.content-prose a:hover {
+  color: var(--accent);
+  text-decoration-thickness: 2px;
+}
 
 .content-prose strong {
   font-weight: 600;
   color: var(--text-primary);
 }
 
-.content-prose blockquote {
-  border-left: 3px solid var(--accent);
-  padding: 0.75rem 1rem;
-  margin: 1.5rem 0;
+/* ── 标题（无衬线；目录统一由右侧栏 / 底部抽屉呈现，点击标题不再弹层）── */
+.content-prose h1,
+.content-prose h2,
+.content-prose h3,
+.content-prose h4,
+.content-prose h5,
+.content-prose h6 {
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text-primary);
+  text-wrap: balance;
+  scroll-margin-top: calc(var(--nav-h) + var(--space-4));
+}
+
+.content-prose h1 {
+  margin-top: var(--space-7);
+  margin-bottom: var(--space-4);
+  font-size: var(--text-xl);
+}
+.content-prose h2 {
+  margin-top: var(--space-7);
+  margin-bottom: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-primary);
+  font-size: var(--text-xl);
+}
+.content-prose h3 {
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-3);
+  font-size: var(--text-lg);
+}
+.content-prose h4 {
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-3);
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+.content-prose h5,
+.content-prose h6 {
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
   color: var(--text-secondary);
-  font-style: italic;
+}
+
+/* ── 引用块：2px accent 左线 + --bg-secondary 底，不用斜体 ── */
+.content-prose blockquote {
+  margin: var(--space-5) 0;
+  padding: var(--space-3) var(--space-4);
+  border-left: 2px solid var(--accent);
   background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-style: normal;
 }
 .content-prose blockquote > :last-child {
   margin-bottom: 0;
 }
 
-.content-prose ul, .content-prose ol {
-  padding-left: 1.5rem;
-  margin-bottom: 1.25rem;
+/* ── 列表 ── */
+.content-prose ul,
+.content-prose ol {
+  margin-bottom: var(--space-4);
+  padding-left: var(--space-5);
 }
-.content-prose ul ::marker,
-.content-prose ol ::marker {
+.content-prose ul {
+  list-style: disc;
+}
+.content-prose ol {
+  list-style: decimal;
+}
+.content-prose li {
+  margin-bottom: var(--space-2);
+}
+.content-prose li::marker {
   color: var(--accent);
 }
-.content-prose li { margin-bottom: 0.5rem; }
-
-.content-prose img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 0;
+.content-prose li > ul,
+.content-prose li > ol {
+  margin-top: var(--space-2);
+  margin-bottom: 0;
 }
 
+/* ── 表格：1px 细线，表头 --bg-secondary，移动端横向滚动 ── */
 .content-prose table {
   width: 100%;
-  border-collapse: collapse;
-  margin: 1.5rem 0;
-}
-.content-prose th, .content-prose td {
+  margin: var(--space-5) 0;
   border: 1px solid var(--border-primary);
-  padding: 0.5rem 0.75rem;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+.content-prose th,
+.content-prose td {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-primary);
   text-align: left;
+  vertical-align: top;
 }
 .content-prose th {
   background: var(--bg-secondary);
@@ -133,187 +146,328 @@
 }
 
 .content-prose hr {
+  margin: var(--space-6) 0;
   border: 0;
   border-top: 1px solid var(--border-primary);
-  margin: 2rem 0;
 }
 
-/* Code inside content */
-.content-prose pre {
-  background: var(--code-bg);
-  border: 1px solid var(--code-border);
-  padding: 1rem 1.25rem;
-  overflow-x: auto;
-  font-size: 0.875rem;
-  line-height: 1.6;
-  margin: 1.25rem 0;
-}
-
-.content-prose code {
-  font-family: "Cascadia Code", "Fira Code", "JetBrains Mono", "SF Mono", Consolas, monospace;
-  font-size: 0.875em;
-}
-
-.content-prose :not(pre) > code {
-  background: var(--bg-secondary);
-  padding: 0.15em 0.4em;
+/* ── 图片：无圆角，1px 细边，点击放大由 reader.ts lightbox 接管 ── */
+.content-prose img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: var(--space-5) auto;
   border: 1px solid var(--border-primary);
-  font-weight: 500;
+}
+.content-prose img.lightbox-trigger {
+  cursor: zoom-in;
+}
+
+/* ═══════════ 代码 ═══════════ */
+
+/* 行内代码：mono + --code-inline-bg + 1px 细边，点击复制由组件接管 */
+.content-prose :not(pre) > code {
+  padding: 0 var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
   color: var(--text-primary);
+  background: var(--code-inline-bg);
+  border: 1px solid var(--code-border);
   cursor: pointer;
-  transition: color 0.2s, background 0.2s;
   user-select: all;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
 }
 .content-prose :not(pre) > code:hover {
   color: var(--accent);
 }
 .content-prose :not(pre) > code.copied {
+  color: var(--accent);
   background: var(--accent-bg);
   border-color: var(--accent);
-  color: var(--accent);
+}
+
+/* 裸 pre 兜底（reader.ts 未增强时） */
+.content-prose pre {
+  margin: var(--space-5) 0;
+  padding: var(--space-4);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  color: var(--text-primary);
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
 }
 
 .content-prose pre code {
-  background: transparent;
-  border: 0;
+  display: block;
   padding: 0;
+  font-family: var(--font-mono);
+  font-size: inherit;
   color: var(--text-primary);
-  font-family: "Cascadia Code", "Fira Code", "JetBrains Mono", "SF Mono", Consolas, monospace;
+  background: none;
+  border: 0;
 }
 
-.content-prose .mermaid {
-  display: flex;
-  justify-content: center;
-  margin: 1.5rem 0;
+/* ── 代码块（reader.ts 注入结构）── */
+/* ── 代码块（reader.ts 注入结构）── 收敛版：无重底色标题栏，语言/复制融入块内 */
+.content-prose .code-block {
+  margin: var(--space-5) 0;
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
 }
 
-/* ── Code block component ── */
-.code-block {
-  margin: 2em 0;
-  border: 1px solid var(--border-primary);
-  background: var(--bg-secondary);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-.dark .code-block {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-}
-.code-block pre {
-  margin: 0;
-  background: transparent;
-}
-
-.code-block-header {
-  position: sticky;
-  top: 2.75rem;
-  z-index: 2;
+.content-prose .code-block-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem 0.875rem;
-  background: var(--bg-tertiary);
-  border-bottom: 1px solid var(--border-primary);
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4) 0;
+  background: transparent;
+  border: 0;
   user-select: none;
 }
 
-.code-lang {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+/* 语言标签：mono 小号，弱化处理 */
+.content-prose .code-lang {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--text-muted);
+}
+
+.content-prose .code-header-actions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-}
-.code-lang::before {
-  content: '';
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  opacity: 0.5;
+  gap: var(--space-2);
 }
 
-.code-header-actions {
-  display: flex;
-  gap: 0.375rem;
-}
-
-.code-block-body {
-  overflow: hidden;
-  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.code-block-body.collapsed { max-height: 0; }
-
-.code-block-body pre {
-  padding: 1rem 1.25rem;
-  overflow-x: auto;
-  font-size: 0.8125rem;
-  line-height: 1.65;
-  margin: 0;
-  border: none;
-}
-.code-block-body pre code {
-  display: block;
-  background: none;
+/* 复制 / 折叠：文字按钮，无边框，hover 才出现 accent */
+.content-prose .copy-btn,
+.content-prose .fold-btn {
+  width: auto;
+  min-width: 0;
+  height: auto;
   padding: 0;
-  font-size: inherit;
-  font-family: "SF Mono", "Cascadia Code", "Consolas", "PingFang SC", "Microsoft YaHei", monospace;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--text-muted);
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.content-prose .copy-btn::after,
+.content-prose .fold-btn::after {
+  display: none;
+}
+.content-prose .copy-btn:hover,
+.content-prose .fold-btn:hover {
+  color: var(--accent);
 }
 
-/* 行内行号：每行 = 行号 + 代码，同一 flex 行内，行高天然对齐 */
-.code-line {
-  display: flex;
-  min-height: 1.65em;
+/* 复制按钮：纯图标，成功后切换为对勾 */
+.content-prose .copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
 }
-.line-num {
-  flex-shrink: 0;
-  min-width: 2.4em;
-  text-align: right;
-  padding-right: 1.25em;
+.content-prose .copy-btn svg {
+  width: 14px;
+  height: 14px;
+}
+.content-prose .copy-btn .icon-check {
+  display: none;
+}
+.content-prose .copy-btn.copied {
+  color: var(--accent);
+}
+.content-prose .copy-btn.copied .icon-copy {
+  display: none;
+}
+.content-prose .copy-btn.copied .icon-check {
+  display: block;
+}
+.content-prose .copy-btn.copy-failed {
+  color: var(--text-secondary);
+}
+
+.content-prose .code-block-body {
+  overflow: hidden;
+  transition: max-height var(--dur-slow) var(--ease-in-out);
+}
+.content-prose .code-block-body.collapsed {
+  max-height: 0;
+}
+
+.content-prose .code-block-body pre {
+  margin: 0;
+  padding: var(--space-2) var(--space-4) var(--space-4);
+  overflow-x: auto;
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  tab-size: 4;
+  background: transparent;
+  border: 0;
+}
+.content-prose .code-block-body pre code {
+  display: block;
+  min-width: max-content;
+  font-size: inherit;
+}
+
+/* 行号与代码同一 flex 行，行高天然对齐 */
+.content-prose .code-line {
+  display: flex;
+  min-height: 1.7em;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+.content-prose .code-line:hover {
+  background: var(--code-hover);
+}
+.content-prose .line-num {
+  flex: 0 0 auto;
+  min-width: 2em;
+  padding-right: var(--space-3);
+  font-variant-numeric: tabular-nums;
   color: var(--text-muted);
   opacity: 0.45;
-  font-size: 0.8125em;
+  text-align: right;
   user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
 }
-.line-code {
-  flex: 1;
+.content-prose .code-block:hover .line-num {
+  opacity: 0.65;
+}
+.content-prose .line-code {
+  flex: 1 1 auto;
   white-space: pre;
 }
 
-.copy-btn, .fold-btn {
-  padding: 0.125rem 0.625rem;
-  font-size: 0.6875rem;
-  font-family: inherit;
-  color: var(--text-secondary);
-  white-space: nowrap;
+/* ── highlight.js 配色：用 token 覆盖动态加载的 github.css，两种主题统一 ── */
+.content-prose .hljs {
+  padding: 0;
+  color: var(--text-primary);
+  background: transparent;
 }
-.copy-btn.copied {
-  color: var(--accent);
+.content-prose .hljs-comment,
+.content-prose .hljs-quote {
+  color: var(--code-comment);
+  font-style: normal;
+}
+.content-prose .hljs-keyword,
+.content-prose .hljs-literal,
+.content-prose .hljs-symbol,
+.content-prose .hljs-name {
+  color: var(--code-keyword);
+}
+.content-prose .hljs-string,
+.content-prose .hljs-addition {
+  color: var(--code-string);
+}
+.content-prose .hljs-number,
+.content-prose .hljs-deletion {
+  color: var(--code-number);
+}
+.content-prose .hljs-title,
+.content-prose .hljs-section,
+.content-prose .hljs-attr {
+  color: var(--code-title);
+}
+.content-prose .hljs-type,
+.content-prose .hljs-built_in,
+.content-prose .hljs-selector-tag {
+  color: var(--code-type);
+}
+.content-prose .hljs-meta {
+  color: var(--code-meta);
+}
+.content-prose .hljs-variable,
+.content-prose .hljs-template-variable {
+  color: var(--code-meta);
+}
+.content-prose .hljs-punctuation,
+.content-prose .hljs-operator {
+  color: var(--text-secondary);
 }
 
-/* ── Lightbox ── */
+/* ── Lightbox（遮罩色取自 --lightbox-mask token）── */
 .lightbox-overlay {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: var(--z-lightbox);
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.85);
+  background-color: var(--lightbox-mask);
   cursor: zoom-out;
-  animation: lightboxFadeIn 0.2s ease;
+  animation: lightbox-fade-in var(--dur) var(--ease-out);
 }
 .lightbox-image {
   max-width: 90vw;
   max-height: 90vh;
   object-fit: contain;
-  border-radius: 0;
+  border: 0;
 }
-@keyframes lightboxFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+
+@keyframes lightbox-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ═══════════ 响应式 ═══════════ */
+@media (max-width: 768px) {
+  .content-prose {
+    font-size: var(--text-base);
+    line-height: 1.8;
+  }
+
+  /* 表格横向滚动 */
+  .content-prose table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  /* pre 保持横向滚动，不强制换行，避免代码错位 */
+  .content-prose .code-block-body pre {
+    padding: var(--space-3);
+  }
+}
+
+@media (max-width: 480px) {
+  .content-prose p {
+    margin-bottom: var(--space-4);
+  }
+
+  .content-prose .code-block-header {
+    padding: var(--space-2);
+    gap: var(--space-2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content-prose :not(pre) > code,
+  .content-prose .code-block-body,
+  .content-prose .code-line {
+    transition: none;
+  }
+
+  .lightbox-overlay {
+    animation: none;
+  }
 }

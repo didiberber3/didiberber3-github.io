@@ -1,43 +1,51 @@
+<script setup lang="ts">
+const year = new Date().getFullYear()
+const rssHref = `${import.meta.env.BASE_URL}rss.xml`
+</script>
+
 <template>
   <footer class="app-footer">
-    <div class="footer-inner">
-      <span>&copy; {{ year }} 小窝</span>
-      <span class="footer-sep">·</span>
-      <a href="/about" class="footer-link">关于</a>
-      <span class="footer-sep">·</span>
-      <span>Vue + Vite</span>
+    <div class="page-shell footer-inner">
+      <span class="meta">© {{ year }} 小窝</span>
+      <a class="meta footer-link" :href="rssHref">RSS</a>
+      <RouterLink class="meta footer-link" to="/about">关于</RouterLink>
     </div>
   </footer>
 </template>
 
-<script setup lang="ts">
-const year = new Date().getFullYear()
-</script>
-
 <style scoped>
 .app-footer {
+  margin-top: auto;
   border-top: 1px solid var(--border-primary);
-  padding: 1.25rem 1rem;
 }
+
 .footer-inner {
-  max-width: 1152px;
-  margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.375rem;
-  font-size: 0.75rem;
-  color: var(--text-muted);
+  gap: var(--space-4);
+  padding-block: var(--space-4);
 }
-.footer-sep {
-  color: var(--border-secondary);
-}
+
 .footer-link {
   color: var(--text-muted);
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color var(--dur-fast) var(--ease-out);
 }
 .footer-link:hover {
   color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  .footer-inner {
+    gap: var(--space-3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-link {
+    transition: none;
+  }
 }
 </style>

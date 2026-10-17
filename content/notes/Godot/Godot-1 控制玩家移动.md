@@ -1,6 +1,6 @@
 ---
-date: 2026-6-6
-tag: Godot
+date: 2026-06-06
+tags: [godot]
 ---
 
 

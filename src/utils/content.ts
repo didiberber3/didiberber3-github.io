@@ -1,6 +1,12 @@
 // Virtual module provided by Vite plugin — types declared in vite-env.d.ts
 import { noteMeta, slugCategory } from 'virtual:content-index'
-import { renderMarkdown, parseFrontmatter, extractTOC, computeReadingStats, type TocItem } from './markdown'
+import {
+  renderMarkdown,
+  parseFrontmatter,
+  extractTOC,
+  computeReadingStats,
+  type TocItem,
+} from './markdown'
 
 /* ===== Types ===== */
 
@@ -10,6 +16,7 @@ export interface NoteMeta {
   date: string
   category: string
   charCount: number
+  tags: string[]
 }
 
 export interface Note extends NoteMeta {
@@ -45,6 +52,7 @@ export function getNoteList(): NoteMeta[] {
       date: meta?.date || '',
       category: slugCategory[slug] || '',
       charCount: meta?.charCount || 0,
+      tags: meta?.tags ?? [],
     }
   })
   list.sort((a, b) => b.date.localeCompare(a.date))
@@ -127,11 +135,12 @@ export async function loadNote(slug: string): Promise<Note | undefined> {
     title: meta.title || titleFromSlug(slug),
     date: meta.date || '',
     category,
+    charCount,
+    readingTime,
+    tags: meta.tags ?? [],
     content: raw,
     html,
     toc,
-    charCount,
-    readingTime,
   }
   cacheSet(slug, note)
   return note

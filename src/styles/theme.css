@@ -1,51 +1,147 @@
-/* ═══════════ Theme Variables — Light & Dark ═══════════ */
-
-/*
- * 配色方案：
- * 主色（文字/底色）— 带绿色调的中性墨色，与辅助色协调
- * 辅助色（强调）— 绿色，两套主题统一（暗色用更亮的绿保证可读性）
- */
+/* ════════════════════════════════════════════════════════════
+   Design Tokens — 「极简技术笔记」
+   全站唯一色彩 / 字号 / 间距 / 动效来源。
+   组件只能消费这些变量，禁止在组件内硬编码颜色。
+   ════════════════════════════════════════════════════════════ */
 
 :root {
-  --bg-primary: #f7f7f5;
-  --bg-secondary: #efeeeb;
-  --bg-tertiary: #e4e3e0;
-  --bg-glass: #efeeeb;
-  --shadow-glass: 0 1px 3px rgba(28, 42, 33, 0.10);
-  --shadow-glass-lg: 0 4px 12px rgba(28, 42, 33, 0.10);
-  --text-primary: #1c2a21;
-  --text-secondary: #5a675d;
-  --text-muted: #93a09a;
-  --border-primary: #e3e6e1;
-  --border-secondary: #cfd6d0;
-  --accent: #16a34a;
-  --accent-bg: #eef7f0;
-  --code-bg: #eef4e8;
-  --code-border: #d5e0cb;
-  --drawer-overlay: rgba(28, 42, 33, 0.15);
-  --anim-duration: 0.2s;
+  color-scheme: light;
+
+  /* ── Surfaces ── */
+  --bg-primary: #f4f5f4;
+  --bg-secondary: #eaedeb;
+  --bg-tertiary: #e0e3e1;
+  --bg-raised: #fbfbfa;
+  --bg-overlay: rgba(21, 25, 23, 0.34);
+
+  /* ── Text ── */
+  --text-primary: #151917;
+  --text-secondary: #4d5751;
+  --text-muted: #67716b;
+  --text-inverse: #f4f5f4;
+
+  /* ── Lines ── */
+  --border-primary: #dcdfdc;
+  --border-secondary: #c6cbc7;
+  --border-strong: #9aa29c;
+
+  /* ── Accent · 松绿（全站唯一强调色）── */
+  --accent: #0e7a4a;
+  --accent-hover: #0a5f39;
+  --accent-bg: #e6efe9;
+  --accent-border: #b7d2c3;
+  --accent-line: rgba(14, 122, 74, 0.28);
+
+  /* ── Code ── */
+  --code-bg: #edf0eb;
+  --code-border: #d9ded6;
+  --code-inline-bg: #e8ece7;
+  --code-hover: rgba(21, 25, 23, 0.05);
+
+  /* ── Code syntax ── */
+  --code-comment: #77817b;
+  --code-keyword: #0e7a4a;
+  --code-string: #2c6a86;
+  --code-number: #8a5a2b;
+  --code-title: #4a5a7a;
+  --code-type: #7a5a1f;
+  --code-meta: #8a4f4f;
+
+  /* ── Typography ── */
+  --font-sans:
+    'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI Variable', 'Segoe UI',
+    'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --font-mono:
+    'SF Mono', 'JetBrains Mono', 'Cascadia Code', 'Cascadia Mono', 'Consolas',
+    'Noto Sans Mono CJK SC', monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 1.875rem;
+  --text-3xl: clamp(2.25rem, 1.6rem + 2.6vw, 3.25rem);
+
+  /* ── Spacing（8px 节奏）── */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+
+  /* ── Layout ── */
+  --container: 74rem;
+  --reading: 44rem;
+  --toc-width: 13rem;
+  --nav-h: 3.5rem;
+
+  /* ── Motion ── */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 0.15s;
+  --dur: 0.22s;
+  --dur-slow: 0.45s;
+
+  /* ── Shadow（仅抽屉与弹层允许）── */
+  --shadow-pop: 0 8px 28px rgba(21, 25, 23, 0.12);
+
+  /* ── Lightbox 遮罩 ── */
+  --lightbox-mask: rgba(8, 12, 10, 0.92);
+
+  /* ── Z-index scale ── */
+  --z-nav: 40;
+  --z-progress: 50;
+  --z-drawer: 100;
+  --z-popup: 110;
+  --z-skip: 200;
+  --z-lightbox: 300;
 }
 
+/* ═══════════ Dark Mode（站点默认主题）═══════════ */
 .dark {
-  --bg-primary: #16181a;
-  --bg-secondary: #1f2224;
-  --bg-tertiary: #292d2f;
-  --bg-glass: #1f2224;
-  --shadow-glass: 0 1px 3px rgba(0, 0, 0, 0.30);
-  --shadow-glass-lg: 0 4px 12px rgba(0, 0, 0, 0.45);
-  --text-primary: #e7eae4;
-  --text-secondary: #a6aca2;
-  --text-muted: #6d746d;
-  --border-primary: #2b2f31;
-  --border-secondary: #3c4142;
-  --accent: #4ade80;
-  --accent-bg: #17301f;
-  --code-bg: #1f2224;
-  --code-border: #2b2f31;
-  --drawer-overlay: rgba(0, 0, 0, 0.55);
-}
+  color-scheme: dark;
 
-/* ── GitHub contribution chart dark mode ── */
-.dark .gh-chart {
-  filter: invert(0.88) hue-rotate(180deg);
+  --bg-primary: #0f1211;
+  --bg-secondary: #151918;
+  --bg-tertiary: #1d2220;
+  --bg-raised: #121615;
+  --bg-overlay: rgba(0, 0, 0, 0.58);
+
+  --text-primary: #e7eae7;
+  --text-secondary: #a4aba6;
+  --text-muted: #7a837d;
+  --text-inverse: #0f1211;
+
+  --border-primary: #232826;
+  --border-secondary: #333936;
+  --border-strong: #4a524d;
+
+  --accent: #4fd18b;
+  --accent-hover: #6fe0a3;
+  --accent-bg: #14261d;
+  --accent-border: #245239;
+  --accent-line: rgba(79, 209, 139, 0.3);
+
+  --code-bg: #131817;
+  --code-border: #232826;
+  --code-inline-bg: #1c211f;
+  --code-hover: rgba(231, 234, 231, 0.055);
+
+  --code-comment: #6f7d76;
+  --code-keyword: #7fd3a2;
+  --code-string: #b9d98f;
+  --code-number: #e0b07a;
+  --code-title: #93b8d8;
+  --code-type: #d9c26f;
+  --code-meta: #d99a9a;
+
+  --shadow-pop: 0 8px 28px rgba(0, 0, 0, 0.5);
+
+  --lightbox-mask: rgba(0, 0, 0, 0.94);
 }

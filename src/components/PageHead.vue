@@ -1,12 +1,10 @@
 <script setup lang="ts">
 /**
- * 页面统一页头：左侧绿线标题 + 右侧计数 + 底部分割线
- * 首页 / 归档 / 文档 / 关于 / 分类页共用，保证风格一致。
+ * 页面统一页头：可选「← 返回」文字按钮 + 标题 + 底部 1px 分隔线。
+ * 首页 / 归档 / 文档 / 关于 / 分类页共用。
  */
 defineProps<{
   title: string
-  /** 右侧灰色计数文本，如「27 篇」「3 个分类」，省略则不显示 */
-  count?: string
   /** 是否显示返回按钮（分类页用） */
   back?: boolean
 }>()
@@ -19,66 +17,64 @@ const emit = defineEmits<{
 <template>
   <div class="page-head">
     <div class="ph-row">
-      <button v-if="back" class="ph-back" aria-label="返回" @click="emit('back')">←</button>
+      <button v-if="back" type="button" class="ph-back" @click="emit('back')">
+        <span class="ph-back-arrow" aria-hidden="true">←</span>
+        <span>返回</span>
+      </button>
       <h1 class="ph-title">{{ title }}</h1>
-      <span v-if="count" class="ph-count">{{ count }}</span>
     </div>
-    <div class="ph-divider"></div>
   </div>
 </template>
 
 <style scoped>
 .page-head {
-  margin-bottom: 1.5rem;
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-5);
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .ph-row {
   display: flex;
   align-items: baseline;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
 .ph-title {
-  font-size: 1.5rem;
-  font-weight: 800;
-  letter-spacing: -0.01em;
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--text-primary);
-  border-left: 3px solid var(--accent);
-  padding-left: 0.75rem;
-}
-
-.ph-count {
-  font-size: 0.875rem;
-  color: var(--text-muted);
-}
-
-.ph-divider {
-  height: 1px;
-  background: var(--accent);
-  opacity: 0.15;
-  margin-top: 0.875rem;
 }
 
 .ph-back {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 1.75rem;
-  height: 1.75rem;
-  border: 1px solid var(--border-primary);
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-family: inherit;
-  line-height: 1;
+  gap: var(--space-1);
+  flex-shrink: 0;
+  padding: 0;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
   background: none;
-  transition: all 0.25s;
-  align-self: center;
+  border: 0;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out);
 }
 .ph-back:hover {
   color: var(--accent);
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent);
-  transform: scale(1.05);
+}
+.ph-back-arrow {
+  line-height: 1;
+}
+
+@media (max-width: 480px) {
+  .ph-title {
+    font-size: var(--text-lg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ph-back {
+    transition: none;
+  }
 }
 </style>

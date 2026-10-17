@@ -1,6 +1,6 @@
 ---
 date: 2026-07-04
-tags: Mysql
+tags: [mysql]
 ---
 
 

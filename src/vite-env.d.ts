@@ -12,6 +12,7 @@ declare module 'virtual:content-index' {
     title: string
     slug: string
     charCount: number
+    tags: string[]
   }
   export const noteMeta: Record<string, NoteEntry>
   export const slugCategory: Record<string, string>

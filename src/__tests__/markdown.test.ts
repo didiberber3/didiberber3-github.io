@@ -16,14 +16,14 @@ tags: test
 ---
 # Content body`
     const result = parseFrontmatter(raw)
-    expect(result.frontmatter).toEqual({ date: '2026-01-15', title: 'Hello', tags: 'test' })
+    expect(result.frontmatter).toEqual({ date: '2026-01-15', title: 'Hello', tags: ['test'] })
     expect(result.content).toBe('# Content body')
   })
 
   it('extracts frontmatter and content with CRLF endings', () => {
     const raw = '---\r\ndate: 2026-05-31\r\ntags: Java\r\n---\r\n\r\n# Test\r\n\r\nThis is test...'
     const result = parseFrontmatter(raw)
-    expect(result.frontmatter).toEqual({ date: '2026-05-31', tags: 'Java' })
+    expect(result.frontmatter).toEqual({ date: '2026-05-31', tags: ['java'] })
     expect(result.content).toContain('# Test')
     expect(result.content).toContain('This is test...')
   })

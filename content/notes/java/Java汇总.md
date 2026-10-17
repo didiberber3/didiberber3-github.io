@@ -1,11 +1,9 @@
 ---
 title: Java汇总
 date: 2025-08-29
-tags:
-  - Java
-  - Coding
+tags: [java, coding]
 category: Note
-info: Java的学习笔记,包含一些代码块
+info: "Java的学习笔记,包含一些代码块"
 ---
 
 

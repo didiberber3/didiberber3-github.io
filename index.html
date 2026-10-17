@@ -1,14 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="个人学习笔记与技术分享 — Java、前端、开发工具" />
-    <meta property="og:title" content="小窝" />
-    <meta property="og:description" content="个人学习笔记与技术分享 — Java、前端、开发工具" />
+    <meta name="description" content="个人学习笔记与技术分享：Java、前端、开发工具" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f5f4" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1211" />
+    <meta property="og:title" content="小窝 · 学习笔记" />
+    <meta property="og:description" content="个人学习笔记与技术分享：Java、前端、开发工具" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary" />
-    <title>小窝</title>
+    <title>小窝 · 学习笔记</title>
+
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230f1211'/%3E%3Crect x='7' y='7' width='3' height='18' fill='%234fd18b'/%3E%3Crect x='14' y='8' width='11' height='2' fill='%23e7eae7'/%3E%3Crect x='14' y='15' width='11' height='2' fill='%23e7eae7'/%3E%3Crect x='14' y='22' width='7' height='2' fill='%23e7eae7'/%3E%3C/svg%3E"
+    />
+
+    <!-- 首屏前同步应用主题，避免闪白。站点默认暗色；仅当用户明确选择亮色时使用亮色。 -->
+    <script>
+      ;(function () {
+        try {
+          if (localStorage.getItem('theme') !== 'light') {
+            document.documentElement.classList.add('dark')
+          }
+        } catch (e) {
+          document.documentElement.classList.add('dark')
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>

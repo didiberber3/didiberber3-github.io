@@ -1,10 +1,10 @@
-/* ════════════════════════════════════
-   Global Styles — import manifest
-   ════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════
+   Global styles — import manifest
+   由 `src/main.ts` 引入；所有 token 定义在 theme.css。
+   ════════════════════════════════════════════════════════════ */
 
 @import './styles/theme.css';
 @import './styles/base.css';
 @import './styles/cards.css';
 @import './styles/interact.css';
 @import './styles/prose.css';
-@import './styles/mobile.css';

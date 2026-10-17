@@ -1,7 +1,7 @@
 import { defineConfig, type Plugin, type Connect } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { cpSync, existsSync, readFileSync, statSync } from 'fs'
-import { join, resolve } from 'path'
+import { join, relative, resolve } from 'path'
 import { contentIndexPlugin } from './src/utils/contentIndexPlugin'
 import { rssPlugin } from './src/utils/rssPlugin'
 
@@ -28,13 +28,12 @@ function notesStaticPlugin(): Plugin {
     return join(contentDir, category, `${slug}.md`)
   }
 
-  function serve(
-    req: Connect.IncomingMessage,
-    res: Connect.ServerResponse,
-  ): boolean {
+  function serve(req: Connect.IncomingMessage, res: Connect.ServerResponse): boolean {
     const url = new URL(req.url || '/', 'http://localhost')
     // 剥掉站点 base 前缀后再匹配
-    const stripped = url.pathname.startsWith(base) ? url.pathname.slice(base.length - 1) : url.pathname
+    const stripped = url.pathname.startsWith(base)
+      ? url.pathname.slice(base.length - 1)
+      : url.pathname
     const file = matchNote(stripped)
     if (file && existsSync(file) && statSync(file).isFile()) {
       res.setHeader('Content-Type', 'text/markdown; charset=utf-8')
@@ -60,10 +59,22 @@ function notesStaticPlugin(): Plugin {
       })
     },
     closeBundle() {
-      // 构建时把正文复制到 dist/notes
+      // 构建时把正文复制到 dist/notes（只复制分类子目录，跳过 .obsidian/.trash 和根目录日记）
       const out = resolve(process.cwd(), 'dist/notes')
       if (existsSync(contentDir)) {
-        cpSync(contentDir, out, { recursive: true, force: true })
+        cpSync(contentDir, out, {
+          recursive: true,
+          force: true,
+          filter: (src) => {
+            const rel = relative(contentDir, src).replace(/\\/g, '/')
+            if (!rel) return true
+            const parts = rel.split('/')
+            if (parts[0].startsWith('.')) return false
+            // 根级文件（如 Obsidian 日记 2025-08-30.md）不发布
+            if (parts.length === 1) return statSync(src).isDirectory()
+            return true
+          },
+        })
         console.log('[notes-static] Copied content/notes → dist/notes')
       }
     },
@@ -75,5 +86,11 @@ export default defineConfig({
   base: '/didiberber3-github.io/',
   build: {
     outDir: 'dist',
+  },
+  server: {
+    // 编辑器/工具写入目录时产生的临时文件会让 fs.watch 报 EBUSY 并打挂 dev server
+    watch: {
+      ignored: ['**/.ui-review/**', '**/.*.tmpdir/**', '**/*.tmp'],
+    },
   },
 })

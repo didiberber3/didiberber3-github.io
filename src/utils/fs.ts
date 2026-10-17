@@ -32,12 +32,13 @@ export function slugFromFilePath(filepath: string): string {
   return filepath.replace(/\\/g, '/').split('/').pop()!.replace(/\.md$/, '')
 }
 
-/** 从 .md 文件绝对路径中提取分类（notes 目录的下一级） */
+/** 从 .md 文件绝对路径中提取分类（notes 目录的下一级目录；根目录文件返回空） */
 export function categoryFromFilePath(filepath: string): string {
   const normalized = filepath.replace(/\\/g, '/')
   const parts = normalized.split('/')
   const notesIdx = parts.indexOf('notes')
-  if (notesIdx >= 0 && notesIdx + 1 < parts.length) {
+  // 需要 notes/<category>/<file>.md 至少三段，根目录 notes/<file>.md 不算分类
+  if (notesIdx >= 0 && notesIdx + 2 < parts.length) {
     return parts[notesIdx + 1]
   }
   return ''

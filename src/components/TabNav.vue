@@ -1,107 +1,119 @@
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
-import { ref, onMounted } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
 import BackToTop from './BackToTop.vue'
-import { sidebar, closeSidebar, setSidebarVisible } from '../utils/useSidebar'
 
 const route = useRoute()
-const router = useRouter()
-
-const isDark = ref(false)
-const isAnimating = ref(false)
-
-onMounted(() => {
-  // 默认暗色：仅在用户明确选择过亮色（'light'）时使用亮色
-  const stored = localStorage.getItem('theme')
-  if (stored !== 'light') {
-    isDark.value = true
-    document.documentElement.classList.add('dark')
-  }
-})
-
-function toggleTheme() {
-  isAnimating.value = true
-  isDark.value = !isDark.value
-  document.documentElement.classList.toggle('dark', isDark.value)
-  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
-  setTimeout(() => { isAnimating.value = false }, 300)
-}
 
 const tabs = [
   { label: '首页', path: '/' },
-  { label: '归档', path: '/archive' },
   { label: '关于', path: '/about' },
 ]
+
+/** 站点默认暗色：仅当用户明确选择过亮色（localStorage 'theme' = 'light'）时用亮色 */
+function readDarkPreference(): boolean {
+  try {
+    return localStorage.getItem('theme') !== 'light'
+  } catch {
+    return true
+  }
+}
+
+const isDark = ref(readDarkPreference())
+const rotating = ref(false)
+let rotateTimer: number | undefined
+
+onMounted(() => {
+  document.documentElement.classList.toggle('dark', isDark.value)
+})
+
+onBeforeUnmount(() => {
+  if (rotateTimer) window.clearTimeout(rotateTimer)
+})
+
+function toggleTheme() {
+  isDark.value = !isDark.value
+  document.documentElement.classList.toggle('dark', isDark.value)
+  try {
+    localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+  } catch {
+    /* 隐私模式下无法持久化，仅本次会话生效 */
+  }
+  // 点击旋转 300ms，单次播放
+  rotating.value = true
+  if (rotateTimer) window.clearTimeout(rotateTimer)
+  rotateTimer = window.setTimeout(() => {
+    rotating.value = false
+  }, 300)
+}
 
 function isActive(path: string): boolean {
   if (path === '/') return route.path === '/'
   return route.path.startsWith(path)
 }
-
-function go(path: string) {
-  router.push(path)
-}
-
-function toggleSidebar() {
-  if (sidebar.visible) {
-    closeSidebar()
-    return
-  }
-  // 文章页侧栏数据已由 ArticleView 填充（目录 + 同类文章），非文章页显示空态
-  setSidebarVisible(true)
-}
 </script>
 
 <template>
-  <nav class="nav-bar">
-    <div class="nav-inner">
-      <div class="nav-tabs">
-        <button
-          v-for="tab in tabs"
-          :key="tab.path"
-          @click="go(tab.path)"
-          class="tab-btn"
-          :class="{ active: isActive(tab.path) }"
-        >
-          {{ tab.label }}
-        </button>
-      </div>
+  <nav class="nav-bar" aria-label="主导航">
+    <div class="nav-inner page-shell">
+      <RouterLink to="/" class="brand" aria-label="小窝，返回首页">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">小窝</span>
+      </RouterLink>
+
+      <ul class="nav-tabs">
+        <li v-for="tab in tabs" :key="tab.path" class="nav-tab">
+          <RouterLink
+            :to="tab.path"
+            class="tab-link"
+            :class="{ active: isActive(tab.path) }"
+            :aria-current="isActive(tab.path) ? 'page' : undefined"
+          >
+            {{ tab.label }}
+          </RouterLink>
+        </li>
+      </ul>
 
       <div class="nav-actions">
         <BackToTop />
         <button
-          class="sidebar-toggle interact-btn-icon"
-          @click="toggleSidebar"
-          aria-label="打开侧栏"
-          title="打开侧栏"
-        >
-          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <rect x="3" y="4" width="14" height="2" rx="1" fill="currentColor" />
-            <rect x="3" y="9" width="14" height="2" rx="1" fill="currentColor" />
-            <rect x="3" y="14" width="14" height="2" rx="1" fill="currentColor" />
-          </svg>
-        </button>
-        <button
+          type="button"
+          class="interact-btn-icon theme-toggle"
+          :class="{ rotating }"
+          :aria-label="isDark ? '切换到亮色主题' : '切换到暗色主题'"
+          :title="isDark ? '切换到亮色主题' : '切换到暗色主题'"
           @click="toggleTheme"
-          class="theme-toggle interact-btn-icon"
-          :class="{ rotating: isAnimating }"
-          :title="isDark ? '切换亮色' : '切换暗色'"
         >
-          <svg v-if="isDark" class="theme-icon" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
-            <circle cx="10" cy="10" r="4" fill="currentColor" />
-            <g stroke="currentColor" stroke-width="1.5">
-              <line x1="10" y1="1" x2="10" y2="3.5" />
-              <line x1="10" y1="16.5" x2="10" y2="19" />
-              <line x1="1" y1="10" x2="3.5" y2="10" />
-              <line x1="16.5" y1="10" x2="19" y2="10" />
-              <line x1="3.8" y1="3.8" x2="5.3" y2="5.3" />
-              <line x1="14.7" y1="14.7" x2="16.2" y2="16.2" />
-              <line x1="3.8" y1="16.2" x2="5.3" y2="14.7" />
-              <line x1="14.7" y1="5.3" x2="16.2" y2="3.8" />
-            </g>
+          <svg
+            v-if="isDark"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+            />
           </svg>
-          <svg v-else class="theme-icon" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
-            <path d="M17 12.5A8 8 0 0 1 7.5 3a8 8 0 1 0 9.5 9.5z" fill="currentColor" />
+          <svg
+            v-else
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
           </svg>
         </button>
       </div>
@@ -113,119 +125,138 @@ function toggleSidebar() {
 .nav-bar {
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: var(--z-nav);
+  height: var(--nav-h);
+  background-color: var(--bg-primary);
   border-bottom: 1px solid var(--border-primary);
-  background: var(--bg-glass);
-  box-shadow: var(--shadow-glass);
-  transition: background-color 0.2s, border-color 0.2s;
 }
 
 .nav-inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  max-width: 72rem;
-  margin: 0 auto;
-  padding: 0 1rem;
+  gap: var(--space-4);
+  height: 100%;
+  white-space: nowrap;
 }
 
-.nav-tabs { display: flex; align-items: center; gap: 0.25rem; }
-.nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+/* ── 品牌 ── */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.brand:hover {
+  color: var(--accent);
+}
+.brand-mark {
+  width: var(--space-2);
+  height: var(--space-2);
+  flex-shrink: 0;
+  background-color: var(--accent);
+}
 
-.tab-btn {
+/* ── 导航项：hover 只滑入下划线，不换底色 ── */
+.nav-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-1);
+  height: 100%;
+  margin-right: auto;
+}
+
+.nav-tab {
+  display: flex;
+}
+
+.tab-link {
   position: relative;
-  padding: 0.75rem 1.25rem;
-  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  padding-inline: var(--space-3);
   color: var(--text-secondary);
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: color 0.2s, background-color 0.2s;
+  font-size: var(--text-sm);
+  line-height: 1;
 }
-.tab-btn:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: -2px;
-}
-
-.tab-btn::after {
+.tab-link::after {
   content: '';
   position: absolute;
-  bottom: 0;
+  right: 0;
+  bottom: -1px;
   left: 0;
-  width: 100%;
   height: 2px;
   background-color: var(--accent);
   transform: scaleX(0);
-  transform-origin: center;
-  transition: transform 0.2s ease;
+  transform-origin: left;
+  transition: transform var(--dur-fast) var(--ease-out);
 }
-
-.tab-btn:hover {
-  color: var(--text-secondary);
-  background: var(--bg-tertiary);
-}
-
-.tab-btn:hover::after {
+.tab-link:hover::after,
+.tab-link.active::after {
   transform: scaleX(1);
 }
-
-.tab-btn.active {
+.tab-link.active {
   color: var(--accent);
-  font-weight: 500;
-  background-color: var(--bg-tertiary);
 }
 
-.tab-btn.active::after {
-  transform: scaleX(1);
+/* ── 右侧动作 ── */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
 }
 
-/* ── Sidebar toggle ── */
-.sidebar-toggle {
-  width: 1.75rem;
-  height: 1.75rem;
-}
-
-/* ── Theme toggle ── */
-.theme-toggle {
-  width: 1.75rem;
-  height: 1.75rem;
-  font-size: 1rem;
-  line-height: 1;
-  color: var(--text-secondary);
-}
-
-/* ── Theme icon rotation (kept) ── */
-
-/* Click rotation */
+/* 主题切换：点击旋转 300ms，单次播放 */
 .theme-toggle.rotating {
-  animation: rotateOnce 0.3s ease;
+  animation: theme-rotate 300ms var(--ease-out);
 }
-
-/* Hover rotation */
-.theme-toggle:hover .theme-icon {
-  animation: rotateOnce 0.6s ease;
-}
-
-.theme-icon {
-  display: block;
-  line-height: 1;
-}
-
-@keyframes rotateOnce {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@media (max-width: 640px) {
-  .tab-btn {
-    padding: 0.625rem 0.75rem;
-    font-size: 0.8125rem;
+@keyframes theme-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
-@media (max-width: 420px) {
-  .tab-btn {
-    padding: 0.5rem 0.5rem;
-    font-size: 0.75rem;
+
+/* ── 响应式：始终单行 ── */
+@media (max-width: 640px) {
+  .nav-inner {
+    gap: var(--space-2);
+  }
+  .brand {
+    font-size: 0.8125rem;
+  }
+  .tab-link {
+    padding-inline: var(--space-2);
+    font-size: 0.8125rem;
+  }
+  .nav-actions {
+    gap: var(--space-1);
+  }
+}
+
+@media (max-width: 480px) {
+  .tab-link {
+    padding-inline: var(--space-1);
+  }
+  .brand {
+    gap: var(--space-1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand,
+  .tab-link::after,
+  .theme-toggle.rotating {
+    transition: none;
+    animation: none;
   }
 }
 </style>

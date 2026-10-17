@@ -1,45 +1,67 @@
 <template>
   <div class="page-shell">
-    <main class="page-content">
+    <div class="page-content">
       <div class="animate-reveal">
         <div class="not-found">
-          <h1 class="nf-code">404</h1>
+          <h1 class="nf-code mono">404</h1>
           <p class="nf-text text-secondary">页面不存在</p>
-          <router-link to="/" class="nf-link">← 返回首页</router-link>
+          <router-link to="/" class="nf-link">返回首页</router-link>
         </div>
       </div>
-    </main>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { usePageTitle } from '../utils/usePageTitle'
+
+usePageTitle('页面不存在')
 </script>
 
 <style scoped>
 .not-found {
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 6rem 1rem;
-  text-align: center;
+  width: 100%;
+  max-width: var(--reading);
+  margin-inline: auto;
+  padding-block: var(--space-8);
+  text-align: left;
 }
+
 .nf-code {
-  font-size: 4rem;
+  font-size: var(--text-3xl);
   font-weight: 700;
-  color: var(--accent);
-  margin-bottom: 0.5rem;
   line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
 }
+
 .nf-text {
-  font-size: 1rem;
-  margin-bottom: 2rem;
+  margin-top: var(--space-3);
+  font-size: var(--text-md);
 }
+
 .nf-link {
-  font-size: 0.875rem;
+  display: inline-block;
+  margin-top: var(--space-5);
+  font-size: var(--text-sm);
   color: var(--accent);
-  text-decoration: none;
-  transition: opacity 0.2s;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }
 .nf-link:hover {
-  opacity: 0.7;
+  text-decoration-thickness: 2px;
+}
+
+@media (max-width: 768px) {
+  .not-found {
+    padding-block: var(--space-7);
+  }
+}
+
+@media (max-width: 480px) {
+  .nf-text {
+    font-size: var(--text-base);
+  }
 }
 </style>

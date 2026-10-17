@@ -2,9 +2,9 @@ import { type Plugin } from 'vite'
 import { join } from 'path'
 import { statSync, readFileSync, writeFileSync } from 'fs'
 
-import { parseFrontmatter } from './frontmatter'
+import { parseFrontmatterWithContent } from './frontmatter'
 import { stripMarkdown } from './text'
-import { walkMdFiles, slugFromFilePath } from './fs'
+import { walkMdFiles, slugFromFilePath, categoryFromFilePath } from './fs'
 
 export function rssPlugin(): Plugin {
   return {
@@ -23,26 +23,34 @@ export function rssPlugin(): Plugin {
       const notes: NoteEntry[] = []
 
       for (const fullPath of walkMdFiles(notesDir)) {
+        // 与 contentIndexPlugin 保持一致：忽略根目录文件与空笔记
+        const category = categoryFromFilePath(fullPath)
+        if (!category) continue
+
         const slug = slugFromFilePath(fullPath)
         const raw = readFileSync(fullPath, 'utf-8')
-        const fm = parseFrontmatter(raw)
+        const { frontmatter: fm, content } = parseFrontmatterWithContent(raw)
+        const plain = stripMarkdown(content)
+          .replace(/\s+/g, ' ') // collapse whitespace (RSS-specific)
+          .trim()
+        if (!plain) continue
+
         const mtime = statSync(fullPath).mtime
         const fallbackDate = [
           mtime.getFullYear(),
           String(mtime.getMonth() + 1).padStart(2, '0'),
           String(mtime.getDate()).padStart(2, '0'),
         ].join('-')
-        const title = fm.title || slug
-        const date = fm.date || fallbackDate
-        // Strip frontmatter + markdown for the description
-        const content = raw.replace(/^---[\s\S]*?---\r?\n?/m, '')
-        const plain = stripMarkdown(content)
-          .replace(/\s+/g, ' ')  // collapse whitespace (RSS-specific)
-          .trim()
+
+        const fmTitle = typeof fm.title === 'string' ? fm.title : ''
+        const fmDate = typeof fm.date === 'string' ? fm.date : ''
+        const fmSlug = typeof fm.slug === 'string' ? fm.slug : ''
+        const title = fmTitle || slug
+        const date = fmDate || fallbackDate
         const description = plain.slice(0, 200) + (plain.length > 200 ? '…' : '')
 
         notes.push({
-          slug: fm.slug || slug,
+          slug: fmSlug || slug,
           title,
           date,
           description,
@@ -61,7 +69,7 @@ export function rssPlugin(): Plugin {
       <guid>${siteUrl}/note/${note.slug}</guid>
       <pubDate>${new Date(note.date).toUTCString()}</pubDate>
       <description>${escapeXml(note.description)}</description>
-    </item>`
+    </item>`,
         )
         .join('')
 

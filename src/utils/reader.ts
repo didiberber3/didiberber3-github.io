@@ -9,33 +9,66 @@ const FOLD_BTN_MIN = 20
 /** 超过此行数才默认折叠（其余默认展开） */
 const FOLD_DEFAULT = 60
 
+/** 复制按钮图标：默认复制，成功后切换为对勾（无文字，交给 aria-label 说明） */
+const COPY_ICON =
+  '<svg class="icon-copy" viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7.5" y="7.5" width="8" height="9"/><path d="M13 4H5.5A1.5 1.5 0 0 0 4 5.5V13"/></svg>'
+const CHECK_ICON =
+  '<svg class="icon-check" viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-8"/></svg>'
+
 /** 复制按钮的临时反馈计时器 */
 let copyFlashTimer: ReturnType<typeof setTimeout> | null = null
 
-/** 按钮短暂显示「已复制 / 复制失败」，1.5s 后还原 */
+/** 复制成功/失败：切换图标与 aria-label，1.5s 后还原 */
 function flashCopyState(btn: HTMLButtonElement, ok: boolean) {
   if (copyFlashTimer) clearTimeout(copyFlashTimer)
-  const original = btn.textContent
-  btn.textContent = ok ? '已复制' : '复制失败'
   btn.classList.toggle('copied', ok)
+  btn.classList.toggle('copy-failed', !ok)
+  const label = ok ? '已复制' : '复制失败'
+  btn.setAttribute('aria-label', label)
+  btn.setAttribute('title', label)
   copyFlashTimer = setTimeout(() => {
-    btn.textContent = original
-    btn.classList.remove('copied')
+    btn.classList.remove('copied', 'copy-failed')
+    btn.setAttribute('aria-label', '复制代码')
+    btn.setAttribute('title', '复制代码')
   }, 1500)
 }
 
 const LANG_MAP: Record<string, string> = {
-  js: 'JavaScript', ts: 'TypeScript', tsx: 'TSX', jsx: 'JSX',
-  java: 'Java', python: 'Python', py: 'Python',
-  bash: 'Bash', shell: 'Shell', powershell: 'PowerShell', ps: 'PowerShell',
-  markdown: 'Markdown', md: 'Markdown',
-  json: 'JSON', yaml: 'YAML', yml: 'YAML',
-  css: 'CSS', scss: 'SCSS', html: 'HTML', xml: 'XML',
-  sql: 'SQL', go: 'Go', rust: 'Rust',
-  c: 'C', cpp: 'C++', cs: 'C#',
-  php: 'PHP', ruby: 'Ruby', r: 'R',
-  kotlin: 'Kotlin', swift: 'Swift', scala: 'Scala',
-  dart: 'Dart', lua: 'Lua', haskell: 'Haskell',
+  js: 'JavaScript',
+  ts: 'TypeScript',
+  tsx: 'TSX',
+  jsx: 'JSX',
+  java: 'Java',
+  python: 'Python',
+  py: 'Python',
+  bash: 'Bash',
+  shell: 'Shell',
+  powershell: 'PowerShell',
+  ps: 'PowerShell',
+  markdown: 'Markdown',
+  md: 'Markdown',
+  json: 'JSON',
+  yaml: 'YAML',
+  yml: 'YAML',
+  css: 'CSS',
+  scss: 'SCSS',
+  html: 'HTML',
+  xml: 'XML',
+  sql: 'SQL',
+  go: 'Go',
+  rust: 'Rust',
+  c: 'C',
+  cpp: 'C++',
+  cs: 'C#',
+  php: 'PHP',
+  ruby: 'Ruby',
+  r: 'R',
+  kotlin: 'Kotlin',
+  swift: 'Swift',
+  scala: 'Scala',
+  dart: 'Dart',
+  lua: 'Lua',
+  haskell: 'Haskell',
 }
 
 function detectLang(codeEl: HTMLElement): string {
@@ -86,10 +119,13 @@ export function enhanceCodeBlocks(container: HTMLElement): void {
     const headerActions = document.createElement('div')
     headerActions.className = 'code-header-actions'
 
-    // 复制按钮
+    // 复制按钮（图标）
     const copyBtn = document.createElement('button')
+    copyBtn.type = 'button'
     copyBtn.className = 'copy-btn interact-btn-icon'
-    copyBtn.textContent = '复制'
+    copyBtn.setAttribute('aria-label', '复制代码')
+    copyBtn.setAttribute('title', '复制代码')
+    copyBtn.innerHTML = COPY_ICON + CHECK_ICON
     copyBtn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(text)
