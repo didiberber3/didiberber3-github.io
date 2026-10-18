@@ -162,7 +162,7 @@
 ### 5.9 文章列表行 `ArticleCard.vue` + `cards.css`（owner: B）
 
 - 行式列表，不是卡片：上下 1px `--border-primary`（首行只留底边，末行只留顶边也可），无背景块、无阴影、无圆角。
-- 结构：`分类(mono 小号, muted, 默认 opacity 0，hover / focus-within 时显示)` + `标题 / 一句话简介（简介在标题后同一行，hover 时显示）` + `日期(mono 小号, 同样默认 opacity 0，hover / focus-within 时显示)`。**不再有行尾箭头**。移动端隐藏日期和分类，标题允许换行。
+- 结构：`分类(mono 小号, muted, 默认 opacity 0，hover / focus-within 时显示)` + `标题 / 一句话简介（简介在标题后同一行，hover 时显示，无额外符号）` + `日期(mono 小号, 同样默认 opacity 0，hover / focus-within 时显示)`。**不再有行尾箭头**。移动端隐藏日期和分类，标题允许换行。
 - hover：分类淡入，标题变 `--accent`，整行右移 4px，左侧 2px accent 竖线淡入；`transition` 0.15s。键盘 focus-visible 同样高亮。
 - 保留 `select` 事件（父组件高亮）语义；删除 `--i` stagger 动画或改为极轻的 0.03s 延迟，不得影响可读性。
 - `.edit-card` 大分类卡方案废弃；`cards.css` 只保留列表行，分类/标签的样式在各页面组件内。
@@ -181,7 +181,7 @@
 
 - 布局：`.article-layout` 在 >=1100px 时为「正文 `--reading` + 目录 `--toc-width`」两列，整体居中；<1100px 单列居中。正文 `min-width: 0`，目录用 5.6。
 - 注意：目录触发按钮是 `position: fixed`，**不能**放进带 `transform` 的入场动画容器里（会变成局部定位）。
-- 文章头：`h1`（`--text-2xl`，中文标题可到 2 行）+ 元信息行（数字用 mono，中文单位用正文字体，避免中文走等宽字体回退；日期 / 阅读分钟 / 字数用间距分列，整行最多 1 个中点）+ **分类链接在前、标签在后**的一行：分类用 accent 方块前缀 + 文字，右侧 1px 分隔线分组（无标签时不显示分隔线），指向首页 `?category=...`；标签用小号 mono `#tag`，指向首页 `?tag=...`。分类/标签下方显示 frontmatter 的 `description`（一句话简介，accent 小方块 + 正文字体），再进入正文。
+- 文章头：`h1`（`--text-2xl`，中文标题可到 2 行）+ 元信息行（数字用 mono，中文单位用正文字体，避免中文走等宽字体回退；日期 / 阅读分钟 / 字数用间距分列，整行最多 1 个中点）+ **分类链接在前、标签在后**的一行：分类用 accent 方块前缀 + 文字，右侧 1px 分隔线分组（无标签时不显示分隔线），指向首页 `?category=...`；标签用小号 mono `#tag`，指向首页 `?tag=...`。分类/标签下方显示 frontmatter 的 `description`（一句话简介，作为正文前的 dek：正文字体、`--text-md`、secondary、无符号），再进入正文。
 - 骨架屏：加载时渲染 1 行标题条 + 1 行元信息 + 4~6 行正文灰条（`--bg-secondary`，轻微 pulse，reduced-motion 取消），不要全屏转圈。
 - 正文 `.content-prose`（`prose.css`）：见 5.14。
 - **文末「相关文章」**：同分类其它笔记（排除当前篇），最多 6 条，行式列表（标题 + 日期），样式与文章列表行同源。

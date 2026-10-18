@@ -219,21 +219,12 @@ onUnmounted(() => stopTocObserver())
 }
 
 .article-lead {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-2);
   margin-top: var(--space-4);
-  font-size: var(--text-sm);
-  line-height: 1.85;
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: 1.8;
   color: var(--text-secondary);
-}
-.article-lead::before {
-  content: '';
-  flex-shrink: 0;
-  width: 6px;
-  height: 6px;
-  margin-top: 0.65em;
-  background: var(--accent);
+  text-wrap: pretty;
 }
 
 .article-tags {
