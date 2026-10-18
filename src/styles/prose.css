@@ -212,32 +212,30 @@
   border: 0;
 }
 
-/* ── 代码块（reader.ts 注入结构）── */
-/* ── 代码块（reader.ts 注入结构）── 收敛版：无重底色标题栏，语言/复制融入块内 */
+/* ── 代码块：上方操作行 + 下方纯底色代码面，无边框/无内部线 ── */
 .content-prose .code-block {
   margin: var(--space-5) 0;
-  background: var(--code-bg);
-  border: 1px solid var(--code-border);
+  background: transparent;
+  border: 0;
 }
 
+/* 语言 / 操作：在代码面上方独立一行 */
 .content-prose .code-block-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4) 0;
-  background: transparent;
-  border: 0;
+  gap: var(--space-2);
+  padding: 0;
+  margin-bottom: var(--space-2);
   user-select: none;
 }
 
-/* 语言标签：mono 小号，弱化处理 */
+/* 语言标签：mono 小写低对比 */
 .content-prose .code-lang {
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
   color: var(--text-muted);
 }
 
@@ -245,6 +243,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  margin-left: auto;
 }
 
 /* 复制 / 折叠：文字按钮，无边框，hover 才出现 accent */
@@ -256,7 +255,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 0.6875rem;
   letter-spacing: 0.02em;
   line-height: 1;
@@ -305,6 +304,7 @@
 
 .content-prose .code-block-body {
   overflow: hidden;
+  background: var(--code-bg);
   transition: max-height var(--dur-slow) var(--ease-in-out);
 }
 .content-prose .code-block-body.collapsed {
@@ -313,7 +313,7 @@
 
 .content-prose .code-block-body pre {
   margin: 0;
-  padding: var(--space-2) var(--space-4) var(--space-4);
+  padding: var(--space-2) 0 var(--space-3);
   overflow-x: auto;
   font-size: var(--text-sm);
   line-height: 1.7;
@@ -327,7 +327,7 @@
   font-size: inherit;
 }
 
-/* 行号与代码同一 flex 行，行高天然对齐 */
+/* 行号 / 代码两列，行号与每行代码基线对齐；无 gutter 分隔线 */
 .content-prose .code-line {
   display: flex;
   min-height: 1.7em;
@@ -338,8 +338,8 @@
 }
 .content-prose .line-num {
   flex: 0 0 auto;
-  min-width: 2em;
-  padding-right: var(--space-3);
+  width: 3.25rem;
+  padding: 0 var(--space-3) 0 var(--space-4);
   font-variant-numeric: tabular-nums;
   color: var(--text-muted);
   opacity: 0.45;
@@ -351,6 +351,7 @@
 }
 .content-prose .line-code {
   flex: 1 1 auto;
+  padding-right: var(--space-4);
   white-space: pre;
 }
 
@@ -445,7 +446,14 @@
 
   /* pre 保持横向滚动，不强制换行，避免代码错位 */
   .content-prose .code-block-body pre {
-    padding: var(--space-3);
+    padding: var(--space-1) 0 var(--space-2);
+  }
+  .content-prose .line-num {
+    width: 2.75rem;
+    padding-left: var(--space-3);
+  }
+  .content-prose .line-code {
+    padding-inline: var(--space-3);
   }
 }
 
@@ -455,7 +463,7 @@
   }
 
   .content-prose .code-block-header {
-    padding: var(--space-2);
+    padding: var(--space-2) var(--space-3) 0;
     gap: var(--space-2);
   }
 }

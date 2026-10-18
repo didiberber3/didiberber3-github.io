@@ -146,20 +146,18 @@ export function enhanceCodeBlocks(container: HTMLElement): void {
     if (showFoldBtn) {
       const foldBtn = document.createElement('button')
       foldBtn.className = 'fold-btn interact-btn-icon'
-      const collapsedLabel = `展开全部 ${lineCount} 行`
+      foldBtn.type = 'button'
 
       let isExpanded = !defaultCollapsed
-      if (defaultCollapsed) {
-        body.classList.add('collapsed')
-        foldBtn.textContent = collapsedLabel
-      } else {
-        foldBtn.textContent = '折叠'
-      }
+      foldBtn.textContent = isExpanded ? '折叠' : '展开'
+      foldBtn.setAttribute('aria-expanded', String(isExpanded))
+      if (defaultCollapsed) body.classList.add('collapsed')
 
       foldBtn.addEventListener('click', () => {
         isExpanded = !isExpanded
         body.classList.toggle('collapsed', !isExpanded)
-        foldBtn.textContent = isExpanded ? '折叠' : collapsedLabel
+        foldBtn.textContent = isExpanded ? '折叠' : '展开'
+        foldBtn.setAttribute('aria-expanded', String(isExpanded))
       })
 
       headerActions.prepend(foldBtn)

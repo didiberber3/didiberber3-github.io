@@ -200,11 +200,12 @@
 - 标题：全部无衬线；H1 内文 `--text-xl`；H2 顶部 1px 线 + `padding-top`；H3 `--text-lg`。滚动锚点 `scroll-margin-top: calc(var(--nav-h) + 1rem)`。**标题无 hover 标记、无 pointer 光标**（目录见 5.6）。
 - 引用块：2px accent 左边框，`--bg-secondary` 底，不用斜体。
 - 表格：1px 细线，表头 `--bg-secondary`；移动端横向滚动。
-- 代码块（收敛版 A）：
-  - `.code-block` 无阴影，1px `--code-border`，`--code-bg` 底。
-  - 题头**不是一条重底色工具栏**：透明背景、无下边框，语言标签 mono 小号 weak（`--text-muted`）；复制为**纯图标按钮**（复制图标 → 成功切换对勾 + accent，失败 `copy-failed`），折叠仍是文字按钮；两者都无边框，hover 才变 accent。
-  - 行号 2em 右对齐、`opacity` 0.45，代码块 hover 时升到 0.65；行 hover 用 `--code-hover` 高亮整行。
-  - 语法配色全部走 `--code-*` token（亮/暗各自一套），覆盖动态加载的 highlight.js 主题；注释**不用斜体**。
+- 代码块（重做版）：
+  - `.code-block` **不画边框、不套底色盒子**；语言/操作行独立在代码面上方，代码面 `.code-block-body` 只有 `--code-bg` 底色。
+  - 操作行只有：语言（mono 小写、muted）、复制（纯图标，成功切对勾 + accent）、折叠（文字 `展开 / 折叠`）；全部无边框、无底色，hover 才变 accent。
+  - 行号 3.25rem 右对齐、无 gutter 分隔线，`opacity` 0.45，代码块 hover 升到 0.65；行号与每行代码同基线。
+  - 行 hover 用 `--code-hover` 高亮整行（含行号）。
+  - 语法配色全部走 `--code-*` token（亮/暗各自一套），覆盖动态加载的 highlight.js 主题；注释不用斜体，颜色克制。
   - 长代码保留折叠/展开；`pre` 横向滚动、`tab-size: 4`，移动端不强制换行。
 - 图片：`max-width: 100%`，1px 边框或无边框，无圆角；lightbox 用 `--lightbox-mask` 遮罩。
 
