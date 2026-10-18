@@ -86,6 +86,7 @@ onUnmounted(() => stopTocObserver())
           </router-link>
         </span>
       </div>
+      <p v-if="note.description" class="article-lead">{{ note.description }}</p>
     </header>
 
     <div class="article-body">
@@ -203,6 +204,13 @@ onUnmounted(() => stopTocObserver())
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
+}
+
+.article-lead {
+  margin-top: var(--space-4);
+  font-size: var(--text-base);
+  line-height: 1.8;
+  color: var(--text-secondary);
 }
 
 .article-tags {

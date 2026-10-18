@@ -2,10 +2,8 @@
 title: Java汇总
 date: 2025-08-29
 tags: [java, coding]
-category: Note
-info: "Java的学习笔记,包含一些代码块"
+description: 把 Java 基础语法到集合、多线程、IO 等学习笔记汇总成一篇长文。
 ---
-
 
 # 目录
 

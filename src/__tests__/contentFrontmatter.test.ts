@@ -51,6 +51,14 @@ describe('content/notes frontmatter 规范', () => {
           expect(tag).toBe(tag.toLowerCase())
         }
       }
+
+      const descLine = fmText.match(/^description\s*:\s*(.+?)\s*$/m)
+      expect(descLine, '缺少 description 一句话简介').toBeTruthy()
+      const description = descLine![1]
+      expect(description.length, 'description 不能为空').toBeGreaterThan(0)
+      expect(description, 'description 必须以。结尾').toMatch(/。$/)
+      expect((description.match(/。/g) ?? []).length, 'description 只能有一句话').toBe(1)
+      expect(typeof fm.description).toBe('string')
     })
   }
 })

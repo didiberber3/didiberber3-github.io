@@ -17,16 +17,18 @@ npm run build   # vue-tsc + vite build
 ## 内容
 
 - 笔记放在 `content/notes/<分类>/<标题>.md`，**文件夹名就是分类**。
-- frontmatter 只需要 `date`（`yyyy-mm-dd`）和 `tags`（数组或逗号分隔，统一小写）：
+- frontmatter 需要 `date`（`yyyy-mm-dd`）、`tags`（数组或逗号分隔，统一小写）和 `description`（一句话，解释标题是干嘛的）：
 
 ```yaml
 ---
 date: 2026-08-24
 tags: [godot, tutorial]
+description: 跟着 Godot 官方 2D 入门教程做一个可玩的小游戏。
 ---
 ```
 
-- `content/notes` 可以直接用 Obsidian 打开当 vault 用。
+- 分类由文件夹决定（`content/notes/<分类>/`），不要再额外写 `category` 字段。
+- `description` 在首页卡片 hover 时显示在标题后面，也会显示在文章页标题区。
 - `npm run notes:normalize` 检查并规范化 frontmatter（只预览）；加 `:write` 才写入，写入前会备份。
   需要 Node 22+（直接执行 TypeScript）。
 

@@ -1,12 +1,7 @@
 ---
 date: 2026-08-24
+description: 跟着 Godot 官方 2D 入门教程做一个可玩的 Dodge the Creeps 小游戏。
 ---
-
-
-
-
-
-
 
 # GettingStarted
 

@@ -1,9 +1,8 @@
 ---
 date: 2026-06-05
 tags: [java]
+description: 梳理 Java IO 流体系，包括文件、字节流、字符流和缓冲流。
 ---
-
-
 
 # 文件
 

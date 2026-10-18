@@ -18,7 +18,14 @@ export function contentIndexPlugin(): Plugin {
       const notesDir = join(process.cwd(), 'content/notes')
       const noteMeta: Record<
         string,
-        { date: string; title: string; slug: string; charCount: number; tags: string[] }
+        {
+          date: string
+          title: string
+          slug: string
+          charCount: number
+          tags: string[]
+          description: string
+        }
       > = {}
       // slug → 分类，供正文改为静态 fetch 时组装路径
       const slugCategory: Record<string, string> = {}
@@ -51,6 +58,7 @@ export function contentIndexPlugin(): Plugin {
         const fmTitle = typeof fm.title === 'string' ? fm.title : ''
         const fmDate = typeof fm.date === 'string' ? fm.date : ''
         const fmSlug = typeof fm.slug === 'string' ? fm.slug : ''
+        const fmDescription = typeof fm.description === 'string' ? fm.description.trim() : ''
         const metaSlug = fmSlug || slug
 
         noteMeta[metaSlug] = {
@@ -59,6 +67,7 @@ export function contentIndexPlugin(): Plugin {
           slug: metaSlug,
           charCount,
           tags: Array.isArray(fm.tags) ? fm.tags : [],
+          description: fmDescription,
         }
         slugCategory[metaSlug] = category
       }

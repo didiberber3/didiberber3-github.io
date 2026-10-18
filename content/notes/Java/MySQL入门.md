@@ -1,9 +1,8 @@
 ---
 date: 2026-07-04
 tags: [mysql]
+description: 记录 MySQL 的安装、服务配置、建库建表和基础 SQL 操作。
 ---
-
-
 
 # 省略安装步骤
 

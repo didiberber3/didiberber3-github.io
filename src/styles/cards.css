@@ -59,9 +59,13 @@
   opacity: 1;
 }
 
-.article-title {
+.article-main {
   flex: 1 1 auto;
   min-width: 0;
+}
+
+.article-title {
+  display: inline;
   font-size: var(--text-base);
   font-weight: 500;
   line-height: 1.55;
@@ -74,6 +78,25 @@
 .article-card-wrapper:focus-within .article-title,
 .article-card-wrapper.is-active .article-title {
   color: var(--accent);
+}
+
+/* 简介在同一行的标题后面，hover 才出现 */
+.article-desc {
+  display: none;
+  margin-left: var(--space-2);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+.article-desc::before {
+  content: '·';
+  margin-right: var(--space-2);
+  color: var(--border-secondary);
+}
+.article-card-wrapper:hover .article-desc,
+.article-card-wrapper:focus-within .article-desc,
+.article-card-wrapper.is-active .article-desc {
+  display: inline;
 }
 
 .article-date {

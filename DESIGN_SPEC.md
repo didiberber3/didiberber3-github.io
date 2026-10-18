@@ -162,7 +162,7 @@
 ### 5.9 文章列表行 `ArticleCard.vue` + `cards.css`（owner: B）
 
 - 行式列表，不是卡片：上下 1px `--border-primary`（首行只留底边，末行只留顶边也可），无背景块、无阴影、无圆角。
-- 结构：`分类(mono 小号, muted, 默认 opacity 0，hover / focus-within 时显示)` + `标题(flex:1)` + `日期(mono 小号, 同样默认 opacity 0，hover / focus-within 时显示)`。**不再有行尾箭头**。移动端隐藏日期和分类，标题允许换行。
+- 结构：`分类(mono 小号, muted, 默认 opacity 0，hover / focus-within 时显示)` + `标题 / 一句话简介（简介在标题后同一行，hover 时显示）` + `日期(mono 小号, 同样默认 opacity 0，hover / focus-within 时显示)`。**不再有行尾箭头**。移动端隐藏日期和分类，标题允许换行。
 - hover：分类淡入，标题变 `--accent`，整行右移 4px，左侧 2px accent 竖线淡入；`transition` 0.15s。键盘 focus-visible 同样高亮。
 - 保留 `select` 事件（父组件高亮）语义；删除 `--i` stagger 动画或改为极轻的 0.03s 延迟，不得影响可读性。
 - `.edit-card` 大分类卡方案废弃；`cards.css` 只保留列表行，分类/标签的样式在各页面组件内。
@@ -181,7 +181,7 @@
 
 - 布局：`.article-layout` 在 >=1100px 时为「正文 `--reading` + 目录 `--toc-width`」两列，整体居中；<1100px 单列居中。正文 `min-width: 0`，目录用 5.6。
 - 注意：目录触发按钮是 `position: fixed`，**不能**放进带 `transform` 的入场动画容器里（会变成局部定位）。
-- 文章头：`h1`（`--text-2xl`，中文标题可到 2 行）+ 元信息行（mono：日期 / 阅读分钟 / 字数，用间距分列，整行最多 1 个中点）+ **分类链接在前、标签在后**的一行：分类用 accent 方块前缀 + 文字，右侧 1px 分隔线分组（无标签时不显示分隔线），指向首页 `?category=...`；标签用小号 mono `#tag`，指向首页 `?tag=...`。
+- 文章头：`h1`（`--text-2xl`，中文标题可到 2 行）+ 元信息行（mono：日期 / 阅读分钟 / 字数，用间距分列，整行最多 1 个中点）+ **分类链接在前、标签在后**的一行：分类用 accent 方块前缀 + 文字，右侧 1px 分隔线分组（无标签时不显示分隔线），指向首页 `?category=...`；标签用小号 mono `#tag`，指向首页 `?tag=...`。分类/标签下方显示 frontmatter 的 `description`（一句话简介），再进入正文。
 - 骨架屏：加载时渲染 1 行标题条 + 1 行元信息 + 4~6 行正文灰条（`--bg-secondary`，轻微 pulse，reduced-motion 取消），不要全屏转圈。
 - 正文 `.content-prose`（`prose.css`）：见 5.14。
 - **文末「相关文章」**：同分类其它笔记（排除当前篇），最多 6 条，行式列表（标题 + 日期），样式与文章列表行同源。
@@ -212,7 +212,7 @@
 
 - `/tags` 页面与字阶云已删除；首页标签行（紧凑 mono，按最近更新排序）点击直接筛选。
 - 旧 `/tags/:tag` 重定向到 `/?tag=:tag`；`/tags` 重定向 `/`。
-- 数据：`NoteMeta.tags: string[]` 由 `contentIndexPlugin` 注入虚拟模块；`buildTagIndex`（按最近更新排序，`count` 仅作展示/权重）、`filterNotesByTag`（大小写不敏感）。
+- 数据：`NoteMeta.tags: string[]` 由 `contentIndexPlugin` 注入虚拟模块；`buildTagIndex`（按最近更新排序，`count` 仅作展示/权重）。
 - 边界：无标签的笔记不显示标签行；标签名统一小写（由 frontmatter 守卫保证）。
 
 ### 5.16 浏览器标签页标题
@@ -304,14 +304,17 @@ Lead 最终验收：`npm test` + `npm run build` + 无头 Chrome 截图检查亮
 title: 可选，仅当需要覆盖文件名标题时
 date: 2026-06-06          # 必填，yyyy-mm-dd
 tags: [java, coding]      # 可选，数组形式，全部小写
+description: 一句话说明这篇文章是干嘛的。  # 必填，只能一句话，以。结尾
 ---
 ```
 
 - `date` 必须是 `yyyy-mm-dd`；旧格式（`2026-6-6`、`2026/6/6`、`20260606`）解析器可兜底，但文件本身必须是 ISO。
-- `tags` 统一小写数组；兼容旧 `tag` 字段、块列表、行内数组、逗号/空格字符串；`title` / `category` / `info` 等旧字段保留原值。
+- `tags` 统一小写数组；兼容旧 `tag` 字段、块列表、行内数组、逗号/空格字符串。
+- `description` 必填：一句话解释标题，只允许一个 `。` 结尾；会显示在首页卡片 hover 和文章页标题区。
+- **分类由文件夹决定**（`content/notes/<分类>/<文件>.md`），不再写 `category` 字段；`info` 字段已迁移为 `description`。
 - 只有 `content/notes/<分类>/<文件>.md` 才算博客笔记；根目录 `.md`（Obsidian 日记）不进博客、不进 RSS、不复制到 `dist/notes`；`.obsidian/`、`.trash/` 被忽略且不发布。
 - 空笔记（0 字节或只有 frontmatter）不进索引。
 - 规范化命令：`npm run notes:normalize`（预览）/ `npm run notes:normalize:write`（写入，先备份到 `.frontmatter-backup/`）；脚本 `scripts/normalize-frontmatter.ts`，幂等。
 - 缺失日期的推断顺序：文件名日期 → git 最后提交日期 → 文件 mtime。
 - 解析器 `src/utils/frontmatter.ts` 由站点与迁移脚本共用，支持引号、注释、行内/块列表与 `key:value` 无空格写法。
-- 守卫测试 `src/__tests__/contentFrontmatter.test.ts` 逐篇校验 date/tags/旧字段，`npm test` 会拦住写错的 frontmatter。
+- 守卫测试 `src/__tests__/contentFrontmatter.test.ts` 逐篇校验 date / tags / description，`npm test` 会拦住写错的 frontmatter。

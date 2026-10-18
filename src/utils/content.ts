@@ -17,6 +17,8 @@ export interface NoteMeta {
   category: string
   charCount: number
   tags: string[]
+  /** 一句话简介，解释标题是干嘛的 */
+  description?: string
 }
 
 export interface Note extends NoteMeta {
@@ -54,6 +56,7 @@ export function getNoteList(): NoteMeta[] {
       category: slugCategory[slug] || '',
       charCount: meta?.charCount || 0,
       tags: meta?.tags ?? [],
+      description: meta?.description ?? '',
     }
   })
   list.sort((a, b) => b.date.localeCompare(a.date))
@@ -139,6 +142,7 @@ export async function loadNote(slug: string): Promise<Note | undefined> {
     charCount,
     readingTime,
     tags: meta.tags ?? [],
+    description: meta.description ?? '',
     content: raw,
     html,
     toc,

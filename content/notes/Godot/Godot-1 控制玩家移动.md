@@ -1,9 +1,8 @@
 ---
 date: 2026-06-06
 tags: [godot]
+description: 讲 Godot 中如何用脚本和输入控制玩家角色移动，并处理碰撞与速度。
 ---
-
-
 
 > 此文章全程学习自[从零开始的Godot游戏开发](https://www.bilibili.com/video/BV1UQRwBoEiy) by [Voidmatrix](https://space.bilibili.com/25864506) 
 >

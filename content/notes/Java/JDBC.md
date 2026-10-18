@@ -1,9 +1,8 @@
 ---
 date: 2026-08-19
 tags: [java]
+description: 介绍 Java 通过 JDBC 连接数据库、执行 SQL 和处理结果集的方式。
 ---
-
-
 
 # JDBC
 
