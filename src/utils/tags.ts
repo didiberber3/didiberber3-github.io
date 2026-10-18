@@ -34,10 +34,3 @@ export function buildTagIndex(notes: NoteMeta[]): TagStat[] {
       b.latestDate.localeCompare(a.latestDate) || b.count - a.count || a.name.localeCompare(b.name),
   )
 }
-
-/** 按标签筛选笔记（大小写不敏感） */
-export function filterNotesByTag(notes: NoteMeta[], tag: string | undefined): NoteMeta[] {
-  const key = (tag ?? '').trim().toLowerCase()
-  if (!key) return []
-  return notes.filter((note) => note.tags.some((t) => t.toLowerCase() === key))
-}

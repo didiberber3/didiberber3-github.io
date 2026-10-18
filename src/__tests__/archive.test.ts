@@ -1,32 +1,28 @@
 import { describe, expect, it } from 'vitest'
 import type { NoteMeta } from '../utils/content'
-import { buildArchiveIndex } from '../utils/archive'
+import { buildArchiveYears } from '../utils/archive'
 
 function note(slug: string, date: string): NoteMeta {
   return { slug, title: slug, date, category: 'Java', charCount: 100, tags: [] }
 }
 
-describe('buildArchiveIndex', () => {
-  it('groups notes by year and month', () => {
-    const groups = buildArchiveIndex([
-      note('a', '2026-08-24'),
-      note('b', '2026-08-20'),
-      note('c', '2026-07-01'),
-      note('d', '2025-09-10'),
-    ])
-    expect(groups.map((g) => g.year)).toEqual(['2026', '2025'])
-    expect(groups[0].count).toBe(3)
-    expect(groups[0].months.map((m) => m.month)).toEqual(['08', '07'])
-    expect(groups[0].months[0].notes.map((n) => n.slug)).toEqual(['a', 'b'])
+describe('buildArchiveYears', () => {
+  it('returns unique years sorted descending', () => {
+    expect(
+      buildArchiveYears([
+        note('a', '2026-08-24'),
+        note('b', '2026-07-01'),
+        note('c', '2025-09-10'),
+        note('d', '2025-01-01'),
+      ]),
+    ).toEqual(['2026', '2025'])
   })
 
-  it('puts notes without date into 其他', () => {
-    const groups = buildArchiveIndex([note('x', ''), note('a', '2026-01-01')])
-    expect(groups.map((g) => g.year)).toEqual(['其他', '2026'])
-    expect(groups[0].months[0].notes.map((n) => n.slug)).toEqual(['x'])
+  it('puts notes without date into 其他 at the end', () => {
+    expect(buildArchiveYears([note('a', '2026-01-01'), note('x', '')])).toEqual(['2026', '其他'])
   })
 
   it('returns empty array for no notes', () => {
-    expect(buildArchiveIndex([])).toEqual([])
+    expect(buildArchiveYears([])).toEqual([])
   })
 })

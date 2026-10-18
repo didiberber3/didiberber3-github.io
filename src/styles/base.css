@@ -17,6 +17,8 @@ html {
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--border-secondary) transparent;
+  /* 始终为页面滚动条预留空间，避免出现/消失时内容宽度跳动 */
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -157,6 +159,30 @@ a {
 
 .page-content {
   padding-block: clamp(1.5rem, 4vw, 2.5rem) var(--space-9);
+}
+
+/* ── 首页：整页不滚动，只有列表区域内部滚动 ── */
+html.home-fixed,
+html.home-fixed body,
+html.home-fixed #app {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+html.home-fixed .app-shell {
+  height: 100dvh;
+  min-height: 0;
+}
+
+html.home-fixed .app-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+html.home-fixed .app-footer {
+  flex-shrink: 0;
 }
 
 /* ── Typography / utilities ── */

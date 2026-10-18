@@ -1,12 +1,19 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getNoteList, getCategories } from '../utils/content'
 import type { NoteMeta } from '../utils/content'
 import ArticleCard from '../components/ArticleCard.vue'
 import { buildTagIndex } from '../utils/tags'
-import { buildArchiveIndex } from '../utils/archive'
-import { filterNotes, homeQueryFor, parseHomeFilter, type HomeFilter } from '../utils/homeFilter'
+import { buildArchiveYears } from '../utils/archive'
+import {
+  filterLabels as buildFilterLabels,
+  filterNotes,
+  hasFilters,
+  homeQueryFor,
+  parseHomeFilters,
+  toggleFilter,
+} from '../utils/homeFilter'
 import { usePageTitle } from '../utils/usePageTitle'
 
 usePageTitle('学习笔记')
@@ -19,64 +26,77 @@ const categories = ref<string[]>([])
 const articleSelected = ref<string | null>(null)
 
 const tagIndex = computed(() => buildTagIndex(allNotes.value))
-const archiveGroups = computed(() => buildArchiveIndex(allNotes.value))
-const activeFilter = computed(() => parseHomeFilter(route.query))
+const archiveYears = computed(() => buildArchiveYears(allNotes.value))
+const filters = computed(() => parseHomeFilters(route.query))
+const filtersActive = computed(() => hasFilters(filters.value))
 const visibleNotes = computed(() =>
-  activeFilter.value ? filterNotes(allNotes.value, activeFilter.value) : allNotes.value.slice(0, 6),
+  filtersActive.value ? filterNotes(allNotes.value, filters.value) : allNotes.value.slice(0, 6),
+)
+
+const announcement = computed(() =>
+  filtersActive.value
+    ? `已筛选 ${buildFilterLabels(filters.value).join('、')}，共 ${visibleNotes.value.length} 篇`
+    : '',
 )
 
 function countFor(cat: string): number {
   return allNotes.value.filter((n) => n.category === cat).length
 }
 
-function sameFilter(filter: HomeFilter): boolean {
-  const current = activeFilter.value
-  if (!current || !filter) return false
-  return current.type === filter.type && current.value.toLowerCase() === filter.value.toLowerCase()
+function updateFilters(next: typeof filters.value) {
+  articleSelected.value = null
+  router.replace({ path: '/', query: homeQueryFor(next) })
 }
 
-/** 点击索引：在首页原地筛选；再次点击同一项则清除 */
-function applyFilter(filter: HomeFilter) {
-  articleSelected.value = null
-  if (sameFilter(filter)) {
-    clearFilter()
-    return
-  }
-  router.push({ path: '/', query: homeQueryFor(filter) })
+/** 分类 / 标签：切换该维度，可与其它维度叠加 */
+function applyFilter(type: 'category' | 'tag', value: string) {
+  void updateFilters(toggleFilter(filters.value, type, value))
 }
 
-function clearFilter() {
+/** 年：点当前年取消；点其它年切到该年 */
+function toggleArchiveYear(year: string) {
+  const archive = filters.value.archive === year ? '' : year
+  void updateFilters({ ...filters.value, archive })
+}
+
+function clearFilters() {
   articleSelected.value = null
-  router.push({ path: '/', query: {} })
+  router.replace({ path: '/', query: {} })
 }
 
 function isCategoryActive(name: string): boolean {
-  const filter = activeFilter.value
-  return filter?.type === 'category' && filter.value.toLowerCase() === name.toLowerCase()
+  return filters.value.category.toLowerCase() === name.toLowerCase()
 }
 function isTagActive(name: string): boolean {
-  const filter = activeFilter.value
-  return filter?.type === 'tag' && filter.value.toLowerCase() === name.toLowerCase()
+  return filters.value.tag.toLowerCase() === name.toLowerCase()
 }
-function isArchiveActive(value: string): boolean {
-  const filter = activeFilter.value
-  return filter?.type === 'archive' && filter.value === value
+function isArchiveYearActive(year: string): boolean {
+  return filters.value.archive === year
+}
+
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape' && filtersActive.value) {
+    event.preventDefault()
+    clearFilters()
+  }
 }
 
 onMounted(() => {
   allNotes.value = getNoteList()
   categories.value = getCategories()
+  document.addEventListener('keydown', onKeydown)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('keydown', onKeydown)
 })
 </script>
 
 <template>
-  <div class="page-shell">
-    <div class="page-content">
-      <div class="animate-reveal">
-        <header class="masthead">
-          <h1 class="masthead-title">小窝</h1>
-          <p class="masthead-desc">记录 Java、Godot 与开发工具的学习笔记。</p>
-        </header>
+  <div class="page-shell home-shell">
+    <div class="page-content home-content">
+      <div class="animate-reveal home-reveal">
+        <h1 class="visually-hidden">小窝 · 学习笔记</h1>
 
         <!-- 分类：点击后在首页原地筛选 -->
         <section v-if="categories.length" class="home-cats" aria-label="分类">
@@ -88,7 +108,7 @@ onMounted(() => {
               class="cat-link"
               :class="{ active: isCategoryActive(cat) }"
               :aria-pressed="isCategoryActive(cat)"
-              @click="applyFilter({ type: 'category', value: cat })"
+              @click="applyFilter('category', cat)"
             >
               <span class="cat-name">{{ cat }}</span>
               <span class="cat-count mono">{{ countFor(cat) }}</span>
@@ -106,7 +126,7 @@ onMounted(() => {
               class="tag-link"
               :class="{ active: isTagActive(tag.name) }"
               :aria-pressed="isTagActive(tag.name)"
-              @click="applyFilter({ type: 'tag', value: tag.name })"
+              @click="applyFilter('tag', tag.name)"
             >
               <span>{{ tag.name }}</span>
               <span class="tag-count">{{ tag.count }}</span>
@@ -114,54 +134,37 @@ onMounted(() => {
           </div>
         </section>
 
-        <!-- 归档：年 / 月点击后在首页原地筛选 -->
-        <section v-if="archiveGroups.length" class="home-archive" aria-label="归档">
-          <div class="archive-rows">
-            <div v-for="yg in archiveGroups" :key="yg.year" class="archive-row">
-              <button
-                type="button"
-                class="archive-year"
-                :class="{ active: isArchiveActive(yg.year) }"
-                :aria-pressed="isArchiveActive(yg.year)"
-                @click="applyFilter({ type: 'archive', value: yg.year })"
-              >
-                {{ yg.year }}
-              </button>
-              <div v-if="yg.months.some((m) => m.month)" class="archive-months">
-                <button
-                  v-for="mg in yg.months.filter((m) => m.month)"
-                  :key="mg.month"
-                  type="button"
-                  class="archive-month"
-                  :class="{ active: isArchiveActive(`${yg.year}-${mg.month}`) }"
-                  :aria-pressed="isArchiveActive(`${yg.year}-${mg.month}`)"
-                  :aria-label="`${yg.year} 年 ${Number(mg.month)} 月`"
-                  @click="applyFilter({ type: 'archive', value: `${yg.year}-${mg.month}` })"
-                >
-                  {{ mg.month }}
-                </button>
-              </div>
-            </div>
+        <!-- 归档：只按年份筛选 -->
+        <section v-if="archiveYears.length" class="home-archive" aria-label="归档">
+          <div class="archive-years">
+            <button
+              v-for="year in archiveYears"
+              :key="year"
+              type="button"
+              class="archive-year"
+              :class="{ active: isArchiveYearActive(year) }"
+              :aria-pressed="isArchiveYearActive(year)"
+              @click="toggleArchiveYear(year)"
+            >
+              {{ year }}
+            </button>
           </div>
         </section>
 
         <section class="note-section" aria-label="笔记列表">
-          <div v-if="activeFilter" class="filter-bar">
-            <button type="button" class="filter-clear" @click="clearFilter">清除筛选</button>
-          </div>
+          <p class="visually-hidden" role="status" aria-live="polite">{{ announcement }}</p>
 
           <div v-if="visibleNotes.length" class="article-list" @mouseleave="articleSelected = null">
             <ArticleCard
-              v-for="(note, i) in visibleNotes"
+              v-for="note in visibleNotes"
               :key="note.slug"
               :note="note"
-              :index="i"
               :active="articleSelected === note.slug"
               @select="(slug) => (articleSelected = slug)"
             />
           </div>
           <p v-else class="meta empty-state">
-            {{ activeFilter ? '没有匹配的笔记' : '暂无笔记' }}
+            {{ filtersActive ? '没有匹配的笔记' : '暂无笔记' }}
           </p>
         </section>
       </div>
@@ -170,31 +173,34 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* ── 刊头 ── */
-.masthead {
-  padding-block: var(--space-4) var(--space-5);
+/* ── 首页固定一屏：筛选区在文档流，列表内部滚动 ── */
+.home-shell {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
-.masthead-title {
-  font-size: var(--text-3xl);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: var(--text-primary);
+.home-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding-block: clamp(1rem, 3vw, 1.5rem) var(--space-3);
 }
 
-.masthead-desc {
-  margin-top: var(--space-3);
-  font-size: var(--text-md);
-  line-height: 1.75;
-  color: var(--text-secondary);
+.home-reveal {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ── 索引通用 active 状态 ── */
 .cat-link.active,
 .tag-link.active,
-.archive-year.active,
-.archive-month.active {
+.archive-year.active {
   color: var(--accent);
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -294,23 +300,17 @@ onMounted(() => {
   color: var(--accent);
 }
 
-/* ── 归档：年 + 月索引 ── */
+/* ── 归档：两级索引，年 → 月 ── */
 .home-archive {
   margin-top: var(--space-6);
 }
 
-.archive-rows {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  font-family: var(--font-mono);
-}
-
-.archive-row {
+.archive-years {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   gap: var(--space-2) var(--space-4);
+  font-family: var(--font-mono);
 }
 
 .archive-year {
@@ -330,54 +330,17 @@ onMounted(() => {
   text-underline-offset: 3px;
 }
 
-.archive-months {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1) var(--space-3);
-  font-size: var(--text-xs);
-}
-
-.archive-month {
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: inherit;
-  color: var(--text-muted);
-  transition: color var(--dur-fast) var(--ease-out);
-}
-.archive-month:hover {
-  color: var(--accent);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-/* ── 笔记列表 ── */
+/* ── 笔记列表：首页固定一屏，只有列表内部滚动 ── */
 .note-section {
+  flex: 1;
+  min-height: 0;
   margin-top: var(--space-8);
-}
-
-.filter-bar {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: var(--space-3);
-}
-
-.filter-clear {
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: var(--text-muted);
-  transition: color var(--dur-fast) var(--ease-out);
-}
-.filter-clear:hover {
-  color: var(--accent);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  /* 列表内部滚动条也始终占位，筛选前后内容宽度不变 */
+  scrollbar-gutter: stable;
 }
 
 .empty-state {
@@ -387,9 +350,6 @@ onMounted(() => {
 
 /* ── < 768px ── */
 @media (max-width: 767px) {
-  .masthead {
-    padding-block: var(--space-3) var(--space-4);
-  }
   .home-cats {
     margin-top: var(--space-6);
   }
@@ -401,14 +361,8 @@ onMounted(() => {
   }
 }
 
-/* ── < 480px：刊头降到 --text-2xl ── */
+/* ── < 480px：字号再降一档 ── */
 @media (max-width: 479px) {
-  .masthead-title {
-    font-size: var(--text-2xl);
-  }
-  .masthead-desc {
-    font-size: var(--text-base);
-  }
   .cat-inline {
     gap: var(--space-2) var(--space-4);
   }
@@ -420,14 +374,20 @@ onMounted(() => {
   }
 }
 
+/* ── 触屏：扩大标签 / 年份的点按高度 ── */
+@media (hover: none), (max-width: 767px) {
+  .tag-link,
+  .archive-year {
+    padding-block: 10px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cat-link,
   .cat-count,
   .tag-link,
   .tag-count,
-  .archive-year,
-  .archive-month,
-  .filter-clear {
+  .archive-year {
     transition: none;
   }
 }

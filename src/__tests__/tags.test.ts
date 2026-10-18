@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { NoteMeta } from '../utils/content'
-import { buildTagIndex, filterNotesByTag } from '../utils/tags'
+import { buildTagIndex } from '../utils/tags'
 
 function note(slug: string, tags: string[], date = '2026-01-01'): NoteMeta {
   return {
@@ -51,17 +51,5 @@ describe('buildTagIndex', () => {
 
   it('returns empty array for no notes', () => {
     expect(buildTagIndex([])).toEqual([])
-  })
-})
-
-describe('filterNotesByTag', () => {
-  it('filters case-insensitively', () => {
-    expect(filterNotesByTag(notes, 'JAVA').map((n) => n.slug)).toEqual(['a', 'b', 'c'])
-  })
-
-  it('returns empty for unknown or empty tag', () => {
-    expect(filterNotesByTag(notes, 'vue')).toEqual([])
-    expect(filterNotesByTag(notes, '')).toEqual([])
-    expect(filterNotesByTag(notes, undefined)).toEqual([])
   })
 })

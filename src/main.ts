@@ -26,4 +26,9 @@ const router = createRouter({
   },
 })
 
+// 首页固定一屏（页面不滚动，列表内部滚动）；离开首页恢复普通文档滚动
+router.afterEach((to) => {
+  document.documentElement.classList.toggle('home-fixed', to.name === 'home')
+})
+
 createApp(App).use(router).mount('#app')

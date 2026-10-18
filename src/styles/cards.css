@@ -31,8 +31,9 @@
 .article-card {
   display: flex;
   align-items: baseline;
-  gap: var(--space-3);
+  gap: var(--space-4);
   padding-block: var(--space-4);
+  padding-inline: var(--space-3);
   border-bottom: 1px solid var(--border-primary);
   transition: translate var(--dur-fast) var(--ease-out);
 }
@@ -49,6 +50,13 @@
   font-size: var(--text-xs);
   letter-spacing: 0.02em;
   color: var(--text-muted);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+.article-card-wrapper:hover .article-cat,
+.article-card-wrapper:focus-within .article-cat,
+.article-card-wrapper.is-active .article-cat {
+  opacity: 1;
 }
 
 .article-title {
@@ -76,44 +84,34 @@
   color: var(--text-muted);
 }
 
-.article-arrow {
-  flex: 0 0 auto;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-  transition: color var(--dur-fast) var(--ease-out);
-}
-.article-card-wrapper:hover .article-arrow,
-.article-card-wrapper:focus-within .article-arrow,
-.article-card-wrapper.is-active .article-arrow {
-  color: var(--accent);
-}
-
-/* ── < 768px：隐藏日期与箭头，标题可换行 ── */
+/* ── < 768px：隐藏日期与分类，标题可换行 ── */
 @media (max-width: 767px) {
   .article-card {
     gap: var(--space-2);
     padding-block: var(--space-3);
   }
-  .article-date,
-  .article-arrow {
+  .article-date {
+    display: none;
+  }
+  .article-cat {
     display: none;
   }
   .article-title {
     line-height: 1.5;
   }
-  .cat-index {
-    gap: var(--space-2) var(--space-4);
+}
+
+/* 触屏没有 hover，分类不显示 */
+@media (hover: none) {
+  .article-cat {
+    display: none;
   }
 }
 
-/* ── < 480px：再收紧一档，标题占满整行宽度 ── */
+/* ── < 480px：再收紧一档 ── */
 @media (max-width: 479px) {
   .article-card {
     gap: var(--space-2);
     padding-block: var(--space-3);
-  }
-  .article-cat {
-    min-width: 0;
   }
 }
