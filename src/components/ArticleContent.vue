@@ -191,7 +191,7 @@ onUnmounted(() => stopTocObserver())
 
 .article-cat-link {
   font-weight: 500;
-  color: var(--accent);
+  color: var(--text-secondary);
   text-decoration: none;
   transition: color var(--dur-fast) var(--ease-out);
 }
@@ -202,10 +202,7 @@ onUnmounted(() => stopTocObserver())
   font-weight: 400;
 }
 .article-cat-link:hover {
-  color: var(--accent-hover);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
+  color: var(--accent);
 }
 
 .article-lead {
