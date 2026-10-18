@@ -62,10 +62,14 @@ onUnmounted(() => stopTocObserver())
   <article class="article-page">
     <header class="article-hd">
       <h1 class="article-hd-title">{{ note.title }}</h1>
-      <p class="article-hd-meta mono">
-        <span>{{ note.date }}</span>
-        <span>{{ note.readingTime }} 分钟</span>
-        <span>约 {{ note.charCount }} 字</span>
+      <p class="article-hd-meta">
+        <span class="meta-date">{{ note.date }}</span>
+        <span
+          ><span class="meta-num">{{ note.readingTime }}</span> 分钟</span
+        >
+        <span
+          >约 <span class="meta-num">{{ note.charCount }}</span> 字</span
+        >
       </p>
       <div v-if="note.category || note.tags.length" class="article-taxonomy">
         <router-link
@@ -162,8 +166,16 @@ onUnmounted(() => stopTocObserver())
   align-items: baseline;
   gap: var(--space-2) var(--space-4);
   margin-top: var(--space-3);
-  font-size: var(--text-xs);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
   color: var(--text-muted);
+}
+
+/* 数字保留 mono，中文标签用正文字体，避免中文走等宽字体的回退字形 */
+.meta-date,
+.meta-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ── 分类 + 标签：方块前缀 + 细分隔线，同一套等宽小字 ── */
@@ -207,10 +219,21 @@ onUnmounted(() => stopTocObserver())
 }
 
 .article-lead {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
   margin-top: var(--space-4);
-  font-size: var(--text-base);
-  line-height: 1.8;
+  font-size: var(--text-sm);
+  line-height: 1.85;
   color: var(--text-secondary);
+}
+.article-lead::before {
+  content: '';
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  margin-top: 0.65em;
+  background: var(--accent);
 }
 
 .article-tags {
