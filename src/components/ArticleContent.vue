@@ -238,7 +238,7 @@ onUnmounted(() => stopTocObserver())
 }
 
 .article-body {
-  padding-block: var(--space-6) var(--space-6);
+  padding-block: var(--space-8) var(--space-6);
   border-top: 1px solid var(--border-primary);
 }
 
@@ -341,7 +341,7 @@ onUnmounted(() => stopTocObserver())
     padding-block: var(--space-1) var(--space-3);
   }
   .article-body {
-    padding-block: var(--space-4) var(--space-5);
+    padding-block: var(--space-6) var(--space-5);
   }
   .related,
   .pager {
