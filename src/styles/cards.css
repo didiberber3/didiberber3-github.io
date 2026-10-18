@@ -82,6 +82,13 @@
   font-size: var(--text-xs);
   font-variant-numeric: tabular-nums;
   color: var(--text-muted);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+.article-card-wrapper:hover .article-date,
+.article-card-wrapper:focus-within .article-date,
+.article-card-wrapper.is-active .article-date {
+  opacity: 1;
 }
 
 /* ── < 768px：隐藏日期与分类，标题可换行 ── */

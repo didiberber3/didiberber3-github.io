@@ -72,6 +72,7 @@ onUnmounted(() => stopTocObserver())
           v-if="note.category"
           :to="{ path: '/', query: { category: note.category } }"
           class="article-cat-link"
+          :class="{ 'has-tags': note.tags.length }"
           >{{ note.category }}</router-link
         >
         <span v-if="note.tags.length" class="article-tags mono">
@@ -164,12 +165,12 @@ onUnmounted(() => stopTocObserver())
   color: var(--text-muted);
 }
 
-/* ── 分类 + 标签：同一套等宽小字，分类只靠颜色区分 ── */
+/* ── 分类 + 标签：方块前缀 + 细分隔线，同一套等宽小字 ── */
 .article-taxonomy {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: var(--space-2) var(--space-4);
+  gap: var(--space-2) var(--space-3);
   margin-top: var(--space-3);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -177,10 +178,25 @@ onUnmounted(() => stopTocObserver())
 }
 
 .article-cat-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   font-weight: 500;
   color: var(--accent);
   text-decoration: none;
   transition: color var(--dur-fast) var(--ease-out);
+}
+.article-cat-link::before {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  background: var(--accent);
+}
+.article-cat-link.has-tags {
+  padding-right: var(--space-3);
+  border-right: 1px solid var(--border-secondary);
 }
 .article-cat-link:hover {
   color: var(--accent-hover);
