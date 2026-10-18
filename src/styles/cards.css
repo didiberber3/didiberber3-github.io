@@ -83,10 +83,10 @@
 /* 简介在同一行的标题后面，hover 才出现；不抢分类/标签的元信息符号 */
 .article-desc {
   display: none;
-  margin-left: var(--space-3);
-  font-size: var(--text-sm);
+  margin-left: var(--space-2);
+  font-size: var(--text-xs);
   line-height: 1.6;
-  color: var(--text-secondary);
+  color: var(--text-muted);
 }
 .article-card-wrapper:hover .article-desc,
 .article-card-wrapper:focus-within .article-desc,

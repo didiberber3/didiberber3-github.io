@@ -48,16 +48,16 @@
 
 ### 3.2 字号阶梯
 
-| Token | 值 | 用途 |
-|---|---|---|
-| `--text-xs` | 0.75rem | 元数据、标签、代码题头 |
-| `--text-sm` | 0.875rem | 次级正文、导航、按钮 |
-| `--text-base` | 1rem | 基础正文 |
-| `--text-md` | 1.0625rem | 文章正文 |
-| `--text-lg` | 1.25rem | 区块标题、页面标题小号 |
-| `--text-xl` | 1.5rem | 页面标题、文章 H2 |
-| `--text-2xl` | 1.875rem | 文章大标题 |
-| `--text-3xl` | clamp(2.25rem, 1.6rem + 2.6vw, 3.25rem) | 首页刊头、404 |
+| Token         | 值                                      | 用途                   |
+| ------------- | --------------------------------------- | ---------------------- |
+| `--text-xs`   | 0.75rem                                 | 元数据、标签、代码题头 |
+| `--text-sm`   | 0.875rem                                | 次级正文、导航、按钮   |
+| `--text-base` | 1rem                                    | 基础正文               |
+| `--text-md`   | 1.0625rem                               | 文章正文               |
+| `--text-lg`   | 1.25rem                                 | 区块标题、页面标题小号 |
+| `--text-xl`   | 1.5rem                                  | 页面标题、文章 H2      |
+| `--text-2xl`  | 1.875rem                                | 文章大标题             |
+| `--text-3xl`  | clamp(2.25rem, 1.6rem + 2.6vw, 3.25rem) | 首页刊头、404          |
 
 ### 3.3 颜色（单强调色：松绿）
 
@@ -78,16 +78,16 @@
 
 ## 4. 全局类契约（`src/styles/base.css`，已由 Lead 落地）
 
-| 类 | 作用 |
-|---|---|
-| `.page-shell` | 页面外壳：`max-width: var(--container)` + 左右 `clamp(1rem, 4vw, 2rem)` 内边距 + 居中 |
-| `.page-content` | 内容竖向节奏：上 `clamp(1.5rem,4vw,2.5rem)`，下 `6rem` |
-| `.mono` | 等宽 + tabular-nums |
-| `.meta` | 元数据：mono + `--text-xs` + `--text-muted` |
-| `.text-muted` `.text-secondary` `.text-center` `.text-sm` `.py-16` | 保留的旧工具类，语义不变 |
-| `.animate-reveal` | 页面入场（透明度 + 10px 上移，单次） |
-| `.skip-link` | 键盘跳过导航，`focus-visible` 时出现在左上角 |
-| `:focus-visible` | 2px accent 描边，offset 2px（全局） |
+| 类                                                                 | 作用                                                                                  |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| `.page-shell`                                                      | 页面外壳：`max-width: var(--container)` + 左右 `clamp(1rem, 4vw, 2rem)` 内边距 + 居中 |
+| `.page-content`                                                    | 内容竖向节奏：上 `clamp(1.5rem,4vw,2.5rem)`，下 `6rem`                                |
+| `.mono`                                                            | 等宽 + tabular-nums                                                                   |
+| `.meta`                                                            | 元数据：mono + `--text-xs` + `--text-muted`                                           |
+| `.text-muted` `.text-secondary` `.text-center` `.text-sm` `.py-16` | 保留的旧工具类，语义不变                                                              |
+| `.animate-reveal`                                                  | 页面入场（透明度 + 10px 上移，单次）                                                  |
+| `.skip-link`                                                       | 键盘跳过导航，`focus-visible` 时出现在左上角                                          |
+| `:focus-visible`                                                   | 2px accent 描边，offset 2px（全局）                                                   |
 
 已有页面大量使用旧工具类，**不要删除**这些类，只允许扩充。
 
@@ -100,7 +100,7 @@
 ### 5.1 导航 `TabNav.vue`（owner: A）
 
 - 单行、高度 `var(--nav-h)`（56px），`position: sticky; top: 0`，`z-index: var(--z-nav)`，底部 1px `--border-primary`。
-- 结构：`品牌(小窝) + 方形 accent 小标记` | `首页 / 关于` | `回到顶部 / 主题切换`。分类、标签、归档不再占导航位，全部从首页进入。
+- 结构：`品牌(小窝，纯文字)` | `首页 / 关于` | `回到顶部 / 主题切换`。分类、标签、归档不再占导航位，全部从首页进入。
 - 品牌点击回 `/`；当前页 `aria-current="page"` 且文字 `--accent`，底部 2px accent 下划线 `scaleX(1)`；hover 只让下划线滑入，不换底色。
 - 图标按钮统一 `.interact-btn-icon`（interact.css 提供）：28×28、1px 边框、透明底、hover 只变边框与前景色 + 2px 底部 accent 线。
 - 主题切换：保留点击旋转 300ms；`prefers-reduced-motion` 下取消旋转。
@@ -181,7 +181,7 @@
 
 - 布局：`.article-layout` 在 >=1100px 时为「正文 `--reading` + 目录 `--toc-width`」两列，整体居中；<1100px 单列居中。正文 `min-width: 0`，目录用 5.6。
 - 注意：目录触发按钮是 `position: fixed`，**不能**放进带 `transform` 的入场动画容器里（会变成局部定位）。
-- 文章头：`h1`（`--text-2xl`，中文标题可到 2 行）+ 元信息行（数字用 mono，中文单位用正文字体，避免中文走等宽字体回退；日期 / 阅读分钟 / 字数用间距分列，整行最多 1 个中点）+ **分类链接在前、标签在后**的一行：分类用 accent 方块前缀 + 文字，右侧 1px 分隔线分组（无标签时不显示分隔线），指向首页 `?category=...`；标签用小号 mono `#tag`，指向首页 `?tag=...`。分类/标签下方显示 frontmatter 的 `description`（一句话简介，作为正文前的 dek：正文字体、`--text-md`、secondary、无符号），再进入正文。
+- 文章头：`h1`（`--text-2xl`，中文标题可到 2 行）+ 元信息行（数字用 mono，中文单位用正文字体，避免中文走等宽字体回退；日期 / 阅读分钟 / 字数用间距分列，整行最多 1 个中点）+ **分类链接在前、标签在后**的一行：分类用 `/` 前缀 + accent 文字，标签用小号 mono `#tag`；两者都不加边框/背景/分隔线，指向首页 `?category=...` / `?tag=...`。分类/标签下方显示 frontmatter 的 `description`（一句话简介，正文字体、`--text-sm`、muted、无符号），再进入正文。
 - 骨架屏：加载时渲染 1 行标题条 + 1 行元信息 + 4~6 行正文灰条（`--bg-secondary`，轻微 pulse，reduced-motion 取消），不要全屏转圈。
 - 正文 `.content-prose`（`prose.css`）：见 5.14。
 - **文末「相关文章」**：同分类其它笔记（排除当前篇），最多 6 条，行式列表（标题 + 日期），样式与文章列表行同源。
@@ -255,14 +255,14 @@
 
 ## 9. 文件结构（当前）
 
-| 领域 | 文件 |
-|---|---|
-| 设计基础 | `DESIGN_SPEC.md`、`src/styles/theme.css`、`base.css`、`cards.css`、`interact.css`、`prose.css`、`src/style.css`、`index.html`、`src/main.ts` |
-| 外壳 | `src/App.vue`、`src/components/{TabNav,AppFooter,BackToTop,ScrollProgress,PageHead}.vue` |
-| 索引层 | `src/pages/Home.vue`、`src/components/ArticleCard.vue`、`src/utils/{tags,archive,homeFilter}.ts` |
-| 阅读层 | `src/pages/{ArticleView,About,NotFound}.vue`、`src/components/{ArticleContent,ArticleToc,TocList}.vue` |
+| 领域                      | 文件                                                                                                                                                          |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 设计基础                  | `DESIGN_SPEC.md`、`src/styles/theme.css`、`base.css`、`cards.css`、`interact.css`、`prose.css`、`src/style.css`、`index.html`、`src/main.ts`                  |
+| 外壳                      | `src/App.vue`、`src/components/{TabNav,AppFooter,BackToTop,ScrollProgress,PageHead}.vue`                                                                      |
+| 索引层                    | `src/pages/Home.vue`、`src/components/ArticleCard.vue`、`src/utils/{tags,archive,homeFilter}.ts`                                                              |
+| 阅读层                    | `src/pages/{ArticleView,About,NotFound}.vue`、`src/components/{ArticleContent,ArticleToc,TocList}.vue`                                                        |
 | 数据/渲染工具（保持稳定） | `src/utils/{content,markdown,reader,highlight,useContentRenderer,useTocObserver,useReadingProgress,usePageTitle}.ts`、`src/router/index.ts`、`vite.config.ts` |
-| 内容工具 | `scripts/normalize-frontmatter.ts`、`src/utils/{frontmatter,fs,contentIndexPlugin,rssPlugin}.ts`、`src/__tests__/contentFrontmatter.test.ts` |
+| 内容工具                  | `scripts/normalize-frontmatter.ts`、`src/utils/{frontmatter,fs,contentIndexPlugin,rssPlugin}.ts`、`src/__tests__/contentFrontmatter.test.ts`                  |
 
 **已删除**：`src/components/AppSidebar.vue`、`src/components/LoadingOverlay.vue`、`src/utils/useSidebar.ts`、`src/utils/useGlobalLoading.ts`、`src/styles/mobile.css`、`src/pages/DocsPage.vue`、`src/pages/Archive.vue`、`src/pages/CategoriesPage.vue`、`src/pages/TagsPage.vue`、`src/utils/categories.ts`（分类/标签/归档已合并进首页筛选）、`src/utils/categoryIcons.ts`（分类不再用 SVG 图标）。
 
@@ -302,9 +302,9 @@ Lead 最终验收：`npm test` + `npm run build` + 无头 Chrome 截图检查亮
 ```yaml
 ---
 title: 可选，仅当需要覆盖文件名标题时
-date: 2026-06-06          # 必填，yyyy-mm-dd
-tags: [java, coding]      # 可选，数组形式，全部小写
-description: 一句话说明这篇文章是干嘛的。  # 必填，只能一句话，以。结尾
+date: 2026-06-06 # 必填，yyyy-mm-dd
+tags: [java, coding] # 可选，数组形式，全部小写
+description: 一句话说明这篇文章是干嘛的。 # 必填，只能一句话，以。结尾
 ---
 ```
 

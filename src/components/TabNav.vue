@@ -57,7 +57,6 @@ function isActive(path: string): boolean {
   <nav class="nav-bar" aria-label="主导航">
     <div class="nav-inner page-shell">
       <RouterLink to="/" class="brand" aria-label="小窝，返回首页">
-        <span class="brand-mark" aria-hidden="true"></span>
         <span class="brand-text">小窝</span>
       </RouterLink>
 
@@ -143,7 +142,6 @@ function isActive(path: string): boolean {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
   flex-shrink: 0;
   color: var(--text-primary);
   font-size: var(--text-sm);
@@ -153,12 +151,6 @@ function isActive(path: string): boolean {
 }
 .brand:hover {
   color: var(--accent);
-}
-.brand-mark {
-  width: var(--space-2);
-  height: var(--space-2);
-  flex-shrink: 0;
-  background-color: var(--accent);
 }
 
 /* ── 导航项：hover 只滑入下划线，不换底色 ── */

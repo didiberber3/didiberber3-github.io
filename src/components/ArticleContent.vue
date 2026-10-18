@@ -76,7 +76,6 @@ onUnmounted(() => stopTocObserver())
           v-if="note.category"
           :to="{ path: '/', query: { category: note.category } }"
           class="article-cat-link"
-          :class="{ 'has-tags': note.tags.length }"
           >{{ note.category }}</router-link
         >
         <span v-if="note.tags.length" class="article-tags mono">
@@ -178,7 +177,7 @@ onUnmounted(() => stopTocObserver())
   font-variant-numeric: tabular-nums;
 }
 
-/* ── 分类 + 标签：方块前缀 + 细分隔线，同一套等宽小字 ── */
+/* ── 分类 + 标签：纯文字，分类用 / 前缀，标签用 # 前缀 ── */
 .article-taxonomy {
   display: flex;
   flex-wrap: wrap;
@@ -191,25 +190,16 @@ onUnmounted(() => stopTocObserver())
 }
 
 .article-cat-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
   font-weight: 500;
   color: var(--accent);
   text-decoration: none;
   transition: color var(--dur-fast) var(--ease-out);
 }
 .article-cat-link::before {
-  content: '';
-  display: block;
-  width: 6px;
-  height: 6px;
-  flex-shrink: 0;
-  background: var(--accent);
-}
-.article-cat-link.has-tags {
-  padding-right: var(--space-3);
-  border-right: 1px solid var(--border-secondary);
+  content: '/';
+  margin-right: 3px;
+  color: var(--border-secondary);
+  font-weight: 400;
 }
 .article-cat-link:hover {
   color: var(--accent-hover);
@@ -221,9 +211,9 @@ onUnmounted(() => stopTocObserver())
 .article-lead {
   margin-top: var(--space-4);
   font-family: var(--font-sans);
-  font-size: var(--text-md);
-  line-height: 1.8;
-  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.85;
+  color: var(--text-muted);
   text-wrap: pretty;
 }
 
